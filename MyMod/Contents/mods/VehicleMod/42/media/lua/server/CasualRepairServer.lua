@@ -43,8 +43,7 @@ local function onClientCommand(module, command, player, args)
     if module ~= MVR_MODULE or command ~= "doRepair" then return end
     if not player or not args then return end
 
-    -- [VERIFICAR] getVehicleByOnlineID — confirm exact global function name in b42
-    local vehicle = getVehicleByOnlineID and getVehicleByOnlineID(args.vehicleOnlineId)
+    local vehicle = args.vehicleId and getVehicleById(args.vehicleId)
     if not vehicle then
         sendServerCommand(player, MVR_MODULE, "repairResult", { success = false, reason = "vehicle_not_found" })
         return
@@ -132,7 +131,7 @@ local function onClientCommand(module, command, player, args)
         critSuccess       = critSuccess,
         extraMaterialUsed = extraMaterialUsed,
         newCondition      = vehiclePart:getCondition(),
-        vehicleOnlineId   = args.vehicleOnlineId,
+        vehicleId         = args.vehicleId,
         partId            = args.partId,
     })
 end

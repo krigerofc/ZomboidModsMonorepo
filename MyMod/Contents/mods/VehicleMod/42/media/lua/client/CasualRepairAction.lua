@@ -56,7 +56,6 @@ end
 local function randomHand(player)
     local bodyDamage = player:getBodyDamage()
     if not bodyDamage then return nil end
-    -- [VERIFICAR] BodyPartType.Hand_R / Hand_L constants in b42
     local handType = ZombRand(2) == 0 and BodyPartType.Hand_R or BodyPartType.Hand_L
     return bodyDamage:getBodyPart(handType)
 end
@@ -71,14 +70,14 @@ local function rollCosmeticEvents(player, config)
 
             if event.id == "injury" then
                 local bodyPart = randomHand(player)
-                -- [VERIFICAR] SetScratchedWindow — confirm correct wound method in b42
+                -- BodyPart.SetScratchedWindow(boolean) — Java method with PascalCase S (confirmed B42 docs)
                 if bodyPart then bodyPart:SetScratchedWindow(true) end
                 player:Say("Ouch, cut my hand!")
 
             elseif event.id == "burn" and config.requiresHeat then
                 local bodyPart = randomHand(player)
-                -- [VERIFICAR] setBurned method in b42
-                if bodyPart then bodyPart:setBurned(true) end
+                -- BodyPart.setBurned() takes no args in B42 (sets burnt=true internally)
+                if bodyPart then bodyPart:setBurned() end
                 player:Say("That's hot!")
 
             elseif event.id == "toolBreak" and #config.tools > 0 then
@@ -91,7 +90,6 @@ local function rollCosmeticEvents(player, config)
                 player:Say("That took a toll on my tool.")
 
             elseif event.id == "stress" then
-                -- [VERIFICAR] exact stats method names in b42
                 local stats = player:getStats()
                 if stats then
                     local current = stats:getUnhappyness()
@@ -134,8 +132,7 @@ function MVR_CasualRepairAction:waitToStart()
 end
 
 function MVR_CasualRepairAction:start()
-    -- Generic PZ "working on something" animation. Used by ISFixAction and other vanilla repair actions.
-    -- [VERIFICAR] alternatives: "VehicleWorkOnTire", "Mechanic", "Build"
+    -- Generic PZ "working on something" animation (also used by ISFixAction).
     self:setActionAnim("Loot")
 end
 
@@ -148,17 +145,14 @@ end
 
 function MVR_CasualRepairAction:perform()
     if isClient() then
-        -- MP: send command and wait for server result (cosmetic events fire on success in onServerCommand)
         local vehicle = self.vehiclePart:getVehicle()
         if vehicle then
-            -- [VERIFICAR] vehicle:getOnlineID() — confirm exact method name in b42
-            sendClientCommand(self.character, MVR_MODULE, "doRepair", {
-                vehicleOnlineId = vehicle:getOnlineID(),
-                partId          = self.vehiclePart:getId(),
+            sendClientCommand(MVR_MODULE, "doRepair", {
+                vehicleId = vehicle:getId(),
+                partId    = self.vehiclePart:getId(),
             })
         end
     else
-        -- SP: full authority, execute everything inline
         MVR_CasualRepairAction.executeRepair(self.character, self.vehiclePart, self.config)
     end
 
@@ -248,10 +242,9 @@ local function onServerCommand(module, command, args)
     end
 
     -- Look up the part to retrieve its config (needed for cosmetic event rolls — requiresHeat etc.)
-    -- [VERIFICAR] getVehicleByOnlineID — confirm exact global function name in b42
     local config
-    if args.vehicleOnlineId and getVehicleByOnlineID then
-        local vehicle = getVehicleByOnlineID(args.vehicleOnlineId)
+    if args.vehicleId then
+        local vehicle = getVehicleById(args.vehicleId)
         if vehicle and args.partId then
             local part = vehicle:getPartById(args.partId)
             if part then config = MVR_RepairConfig.getConfigForPart(part) end
