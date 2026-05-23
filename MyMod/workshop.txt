@@ -1,0 +1,6 @@
+version=1
+id=3643006111
+title=MoreVehiclesRepairs
+description=This mod was made as just a basic script to add the option to repair suspension and brakes for cars. The mod is not designed to reinvent the mechanics system or make it super enhanced, just an extra. It may contain errors and bugs; if you find anything, you can comment below, and if the idea is well-received, I will update the mod to fix the bugs. ...
+tags=Build 42
+visibility=public
