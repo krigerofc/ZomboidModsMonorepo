@@ -57,4 +57,41 @@ check(Core.giveKits(plain) == 0 and #plain.items == 0, "character without KRjobs
 check(Core.hasTrait(plain, "nope") == false and Core.hasTrait(nil, "x") == false, "hasTrait is safe")
 check(Core.giveKits(nil) == 0, "giveKits(nil) is safe")
 
+-- Separate actor replicas must not both mutate inventories in multiplayer.
+local clientSide = true
+isClient = function() return clientSide end
+local clientReplica = newPlayer({ Kits[1].trait })
+handlers[1](clientReplica, nil)
+check(#clientReplica.items == 0, "client representation receives no locally-created kit")
+check(not clientReplica.md[Core.MODDATA_KEY], "client does not mark a server kit as delivered")
+clientSide = false
+local serverReplica = newPlayer({ Kits[1].trait })
+handlers[1](serverReplica, nil)
+check(#serverReplica.items == #Kits[1].items, "server representation receives the kit")
+handlers[1](serverReplica, nil)
+check(#serverReplica.items == #Kits[1].items, "server event replay cannot duplicate the kit")
+
+-- A failed slot remains retryable without recreating slots already delivered.
+local retryPlayer = newPlayer({ Kits[1].trait })
+local reject = true
+local failedType = Kits[1].items[1]
+function retryPlayer:getInventory()
+    local owner = self
+    return { AddItem = function(_, fullType)
+        if reject and fullType == failedType then return nil end
+        table.insert(owner.items, fullType)
+        return { type = fullType }
+    end }
+end
+Core.giveKits(retryPlayer)
+check(not retryPlayer.md[Core.MODDATA_KEY], "partial kit is not marked complete")
+reject = false
+Core.giveKits(retryPlayer)
+check(#retryPlayer.items == #Kits[1].items, "failed slot retries without duplicating successful slots")
+check(retryPlayer.md[Core.MODDATA_KEY] == true, "successful retry completes delivery")
+local legacyPlayer = newPlayer({ Kits[1].trait })
+legacyPlayer.md[Core.MODDATA_KEY] = true
+Core.giveKits(legacyPlayer)
+check(#legacyPlayer.items == 0, "legacy completed marker remains authoritative")
+
 return failures

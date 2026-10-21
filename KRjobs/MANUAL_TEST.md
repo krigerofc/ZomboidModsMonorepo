@@ -35,3 +35,6 @@ Ativar só o KRjobs (e nada que mexa em profissões) para o primeiro teste. Idio
 ## O que anotar se algo falhar
 
 Profissão, build, idioma, SP/MP e o trecho do console.txt. Corrigir em `tools/data.js`, rodar `npm run gen` e `npm test`.
+
+## Autoridade e entrega parcial de kits
+Em host/dedicado, criar personagem no cliente e conferir que o kit aparece uma única vez em ambos os inventários observados; reconectar e reiniciar. Testar novo personagem após morte. Em instrumentação de teste, falhar um slot de entrega e repetir o evento: somente o item que faltou deve ser criado. Os testes offline usam representações separadas, mas não comprovam o evento e a replicação da engine.

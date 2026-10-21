@@ -60,10 +60,14 @@ Capas: poster 512 / icon 64 / preview 256 da pasta `zomboid-game-style-v2/krjobs
 ## Riscos não verificados
 - Nada testado dentro do jogo (ver MANUAL_TEST.md no repo). Validado só contra arquivos do 42.19.2 local; receitas renomeadas na 42.21 causariam RuntimeException.
 - B41 sem instalação local: perks/receitas/itens/ícones verificados contra fixtures (PassiveSkills + traduções oficiais 41.78), não contra o jogo. `NightOwl`/`Mechanics2` e `SetTraitDescription` assumidos da B41.78.
-- Kits via OnNewGame: em MP B42 o AddItem é client-side como o vanilla SpawnItems; confirmar que sincroniza.
+- Kits via OnNewGame: autoridade corrigida para o servidor/simulação solo; teste real com dois clientes e persistência continua necessário.
 - Ícones de mod por nome em `media/textures` (mesmo mecanismo do v1); confirmar no B42.
 
 ## Referências
 - Vanilla `media/scripts/generated/characters/*.txt` (42.19.2), `MainCreationMethods.lua`, classes `CharacterProfessionDefinitionScript`/`CharacterTraitDefinitionScript` (chaves aceitas).
 - testmod_registries (pz-wiki-modding/Archive.Project-Zomboid-Modding, TIS guides B42 unstable MP).
 - TheIndieStone/ProjectZomboidTranslations (41.78) Recipes_EN / ItemName_EN; PZwiki Occupation; notas 42.21.0.
+
+## Correção Codex — 21/10/2026
+
+Kits deixam de ser criados na representação cliente. O servidor/solo registra cada slot entregue e marca o conjunto completo somente após sucesso; falhas parciais permitem repetir sem duplicar os itens já entregues. Regressões de cliente/servidor e falha parcial falharam antes (4 por build) e passaram depois; runner e teste de ícones passaram. Isso corrige a autoridade no código, mas não substitui validação real de OnNewGame/replicação/reconexão em B41/B42.
