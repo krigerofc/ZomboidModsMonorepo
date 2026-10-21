@@ -1,5 +1,5 @@
 Sandbox_PTBR = {
-    Sandbox_ReduceMetalWood = "Reduce Metal&Wood",
+    Sandbox_ReduceMetalWood = "Build & Haul",
     Sandbox_ReduceMetalWood_WeightReductionPercent = "Redução de peso (%)",
-    Sandbox_ReduceMetalWood_WeightReductionPercent_tooltip = "Quanto mais leves ficam os materiais de madeira e metal (tábuas, toras, pregos, chapas, barras, lingotes, sucata, lâminas e cabeças forjadas). 50 = metade do peso. 0 = desativado. Produtos acabados não são afetados.",
+    Sandbox_ReduceMetalWood_WeightReductionPercent_tooltip = "Redução para madeira, metal, minérios e insumos minerais de construção elegíveis. 50 = metade do peso do material; 0 = desativado. Recipientes de construção mantêm o peso vazio e reduzem só o conteúdo. Ferramentas, combustíveis e produtos acabados ficam de fora.",
 }

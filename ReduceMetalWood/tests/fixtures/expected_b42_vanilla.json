@@ -1,13 +1,7 @@
 {
- "source": "scratchpad analysis/classify.js (B42.19.2 vanilla) minus user exclusions PropaneTank+ores",
+ "source": "Hand-checked B42.19.2 vanilla catalogue; 2026-10-21 materials scope includes ores and construction stock",
  "excluded_by_user": [
-  "PropaneTank",
-  "IronOre",
-  "CopperOre",
-  "Hematite",
-  "HematiteLarge",
-  "Malachite",
-  "MalachiteLarge"
+  "PropaneTank"
  ],
  "wood": [
   "Branch_Broken",
@@ -160,5 +154,37 @@
   "Wire",
   "WireStack",
   "WoodAxeHead"
+ ],
+ "ore": [
+  "CopperOre",
+  "Hematite",
+  "HematiteLarge",
+  "IronOre",
+  "Malachite",
+  "MalachiteLarge"
+ ],
+ "construction": [
+  "BucketCarvedClayCement",
+  "BucketCarvedConcreteFull",
+  "BucketCarvedPlasterFull",
+  "BucketClayCement",
+  "BucketConcreteFull",
+  "BucketPlasterFull",
+  "Clay",
+  "ClayBrick",
+  "ClayBrickUnfired",
+  "ClayShingle",
+  "ClayShingleUnfired",
+  "ClayTile",
+  "ClayTileUnfired",
+  "Claybag",
+  "ConcretePowder",
+  "FlintNodule",
+  "Gravelbag",
+  "Limestone",
+  "PlasterPowder",
+  "Sandbag",
+  "Stone2",
+  "StoneBlock"
  ]
 }

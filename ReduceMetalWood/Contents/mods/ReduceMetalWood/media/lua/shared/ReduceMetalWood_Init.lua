@@ -1,5 +1,5 @@
 --[[
-    Reduce Metal&Wood v2 - event wiring (engine side).
+    Build & Haul - event wiring (engine side).
 
     Loaded from lua/shared, so it runs on SP, MP clients and the dedicated server.
     Sandbox values are read from SandboxVars, which is only populated for the
@@ -46,7 +46,8 @@ local function apply(eventName, allowDefault)
     end
     local c = Core.applyAll(items, percent, isDebug())
     Core.log("applied (" .. eventName .. ", " .. side() .. "): reduction=" .. tostring(percent)
-        .. "% wood=" .. c.wood .. " metal=" .. c.metal .. " changed=" .. c.changed
+        .. "% wood=" .. c.wood .. " metal=" .. c.metal .. " ore=" .. c.ore
+        .. " construction=" .. c.construction .. " changed=" .. c.changed
         .. " unchanged=" .. c.unchanged .. " failed=" .. c.failed .. " scanned=" .. c.total)
 end
 
@@ -99,4 +100,4 @@ if Events then
     end
 end
 
-Core.log("loaded v2.0.0")
+Core.log("loaded v2.1.0")

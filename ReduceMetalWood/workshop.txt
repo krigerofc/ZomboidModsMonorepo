@@ -1,12 +1,10 @@
 version=1
 id=3140965857
-title=Reduce Metal&Wood v2
-description=[b]EN[/b] Reduces the weight of eligible wood and metal crafting materials, including forged parts and welding rods, by 50% by default. Adjustable from 0% to 99% in sandbox options. Finished products stay unchanged. Supports B41 and B42; PT-BR + EN.
+title=Build & Haul - Lightweight Materials
+description=[b]EN[/b] Reduces eligible wood, metal, ores and mineral construction materials by 50% by default (0-99% sandbox). Includes bricks, clay, stone, sand, gravel, concrete and plaster. Filled construction containers reduce contents only; empty containers, tools, fuel and finished products keep their weight. B41 + B42; EN + PT-BR.
 description=
-description=[b]PT-BR[/b] Reduz em 50%, por padrão, o peso dos materiais elegíveis de madeira e metal, incluindo peças forjadas e varetas de solda. Ajustável de 0% a 99% no sandbox. Produtos acabados mantêm o peso. B41 e B42; PT-BR + EN.
+description=[b]PT-BR[/b] Reduz em 50% o peso de madeira, metal, minérios e insumos minerais de construção (0-99% no sandbox). Inclui tijolos, argila, pedra, areia, cascalho, concreto e gesso. Recipientes de construção reduzem apenas o conteúdo; recipientes vazios, ferramentas, combustíveis e produtos acabados mantêm o peso. B41 + B42; EN + PT-BR.
 description=
-description=Finished items, ores and propane tanks are excluded. Matching of third-party materials uses categories, names and tags. / Itens acabados, minérios e botijões ficam de fora. Materiais de outros mods dependem da classificação por categoria, nome e tags.
-description=
-description=Development build: automated checks only. In-game validation on 42.21, hosted multiplayer and dedicated servers is pending. / Versão em desenvolvimento: verificações automatizadas; validação no jogo 42.21 e em multiplayer ainda pendente.
+description=Development build: automated checks only. In-game validation on B41/42.21, hosted multiplayer and dedicated servers is pending. / Versão em desenvolvimento: verificações automatizadas; validação no jogo B41/42.21 e em multiplayer ainda pendente.
 tags=Build 41;Build 42;Balance;Items
 visibility=public

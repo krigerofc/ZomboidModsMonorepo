@@ -28,7 +28,8 @@ local function itemTag(id) return setmetatable({ id = id }, tagMeta) end
 
 local function mockItem(o)
     local it = { module = o.module or "Base", name = o.name, dc = o.dc, w = o.w, we = o.we,
-                 tags = o.tags or {}, mv = o.mv, noSet = o.noSet }
+                 tags = o.tags or {}, mv = o.mv, noSet = o.noSet, replacement = o.replacement }
+    function it:getReplaceOnDeplete() return self.replacement end
     function it:getModuleName() return self.module end
     function it:getName() return self.name end
     function it:getFullName() return self.module .. "." .. self.name end
@@ -104,6 +105,55 @@ local p2 = mockItem({ name = "Log", dc = "Material", w = 9.0, tags = { itemTag("
 Core.applyAll({ p2 }, 50, false)
 check(near(p2.w, 4.5), "Lua list input")
 
+
+-- Regression boundaries: no raw-material substring may authorize a finished product.
+local C = require "ReduceMetalWood/Classifier"
+for _, sample in ipairs({
+    { module = "OtherMod", name = "IronOreDoor", displayCategory = "Furniture", tags = { "base:ironore" } },
+    { module = "OtherMod", name = "StoneHammer", displayCategory = "Tool", tags = { "base:stone" } },
+    { module = "OtherMod", name = "BucketConcreteEmpty", displayCategory = "Material", tags = { "base:concrete" } },
+    { module = "OtherMod", name = "ClayBrickMachine", displayCategory = "Material", tags = { "other:constructionmaterial" } },
+    { module = "OtherMod", name = "IronOreDoor", displayCategory = "Material", tags = { "other:ironore" } },
+    { module = "OtherMod", name = "StoneHammer", displayCategory = "Material", tags = { "other:constructionmaterial" } },
+    { module = "OtherMod", name = "OreCharcoal", displayCategory = "Material", tags = { "other:ironore", "base:charcoal" } },
+}) do
+    local _, included = C.classify(sample)
+    check(not included, "finished/lookalike excluded: " .. sample.name)
+end
+local m, inc = C.classify({ module = "OtherMod", name = "OreChunk", displayCategory = "Material", tags = { "other:ironore" } })
+check(m == "ore" and inc, "other-mod ore tag classified before generic hasmetal")
+m, inc = C.classify({ module = "OtherMod", name = "StoneBundle", displayCategory = "Material", tags = { "other:constructionmaterial" } })
+check(m == "construction" and inc, "explicit construction-material tag opts material-category item in")
+local ore = mockItem({name = "IronOre", dc = "Material", w = 40})
+local brick = mockItem({name = "ClayBrick", dc = "Material", w = 0.3})
+local counts = Core.applyAll({ore, brick}, 50, false)
+check(near(ore.w, 20) and near(brick.w, 0.15), "ore and brick reduced once")
+check(counts.ore == 1 and counts.construction == 1 and counts.changed == 2, "ore/construction diagnostic counters")
+Core.applyAll({ore, brick}, 50, false)
+check(near(ore.w, 20) and near(brick.w, 0.15), "ore/brick repeat does not compound")
+Core.applyAll({ore, brick}, 99, false)
+check(near(ore.w, 0.4) and near(brick.w, 0.003), "99 percent uses unreduced baseline")
+Core.applyAll({ore, brick}, 0, false)
+check(near(ore.w, 40) and near(brick.w, 0.3), "zero restores ore/brick")
+
+-- Installed vanilla interpolation: (full script weight - replacement weight) * uses + replacement weight.
+-- Test the mod's script writes at that engine boundary, not an invented per-tick hook.
+for _, sample in ipairs(DRAINABLE_CASES) do
+    local full = mockItem({name=sample.name,dc="Material",w=sample.full,replacement="Base." .. sample.empty})
+    local empty = mockItem({name=sample.empty,dc="WaterContainer",w=sample.emptyWeight})
+    local pair = {full, empty}
+    Core.applyAll(pair, 50, false)
+    check(near(full.w, sample.full50), sample.name .. " only contents halved; full got " .. tostring(full.w))
+    check(near((full.w-empty.w)*0.5+empty.w, sample.half50), sample.name .. " half uses follows vanilla interpolation")
+    check(near(empty.w, sample.emptyWeight), sample.name .. " depleted replacement retains vanilla baseline")
+    Core.applyAll(pair, 50, false)
+    check(near(full.w, sample.full50), sample.name .. " repeated scan does not compound")
+    Core.applyAll(pair, 99, false)
+    check(near(full.w, sample.full99) and full.w >= empty.w, sample.name .. " 99 percent cannot invert remaining-content weight")
+    Core.applyAll(pair, 0, false)
+    check(near(full.w, sample.full), sample.name .. " zero restores full baseline")
+end
+
 -- readPercent
 check(Core.readPercent(nil) == nil, "readPercent nil")
 check(Core.readPercent({}) == nil, "readPercent missing page")
@@ -152,7 +202,7 @@ check(near(invItem.w, 1.0), "inventory item refreshed")
 print = realPrint
 
 local joined = table.concat(logs, "\n")
-check(string.find(joined, "[ReduceMetalWood] loaded v2.0.0", 1, true) ~= nil, "log: loaded")
+check(string.find(joined, "[ReduceMetalWood] loaded v2.1.0", 1, true) ~= nil, "log: loaded")
 check(string.find(joined, "sandbox vars not ready at OnInitGlobalModData", 1, true) ~= nil, "log: waiting")
 check(string.find(joined, "applied (OnInitGlobalModData, sp): reduction=50% wood=1 metal=0", 1, true) ~= nil, "log: applied summary")
 check(string.find(joined, "Base.TreeBranch2 2.0 -> 1.0", 1, true) ~= nil or string.find(joined, "Base.TreeBranch2 2 -> 1", 1, true) ~= nil, "log: per-item debug")

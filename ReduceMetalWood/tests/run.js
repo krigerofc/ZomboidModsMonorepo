@@ -2,6 +2,7 @@
 // execution of the mod modules in fengari. Usage: npm test
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 const luaparse = require('luaparse');
 const { lua, lauxlib, lualib, to_luastring } = require('fengari');
 
@@ -55,6 +56,9 @@ for (const mi of ['mod.info', '42/mod.info']) {
 }
 ok('layout + mod ids');
 
+const generated = spawnSync(process.execPath, [path.join(ROOT, 'tools', 'gen-translations.js'), '--check'], { encoding: 'utf8' });
+if (generated.status !== 0) fail('generated resources stale: ' + generated.stdout + generated.stderr); else ok('generated translations/metadata match source');
+
 // ---------- 2. run Lua in fengari ----------
 function newLua(sharedDir) {
   const L = lauxlib.luaL_newstate();
@@ -94,24 +98,24 @@ function classifyAll(sharedDir, items) {
 const items42 = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'items_b42_vanilla.json'), 'utf8'));
 const golden = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'expected_b42_vanilla.json'), 'utf8'));
 const res42 = classifyAll(B42_SHARED, items42);
-const got = { wood: res42.filter((r) => r.inc && r.mat === 'wood').map((r) => r.name).sort(), metal: res42.filter((r) => r.inc && r.mat === 'metal').map((r) => r.name).sort() };
-for (const mat of ['wood', 'metal']) {
+const got = Object.fromEntries(['wood', 'metal', 'ore', 'construction'].map(mat => [mat, res42.filter(r => r.inc && r.mat === mat).map(r => r.name).sort()]));
+for (const mat of ['wood', 'metal', 'ore', 'construction']) {
   const exp = new Set(golden[mat]); const g = new Set(got[mat]);
   const missing = golden[mat].filter((n) => !g.has(n)); const extra = got[mat].filter((n) => !exp.has(n));
   if (missing.length || extra.length) fail(`B42 ${mat}: missing [${missing}] extra [${extra}]`);
   else ok(`B42 vanilla ${mat}: ${got[mat].length} items match golden list`);
 }
 const byName = Object.fromEntries(res42.map((r) => [r.name, r]));
-const mustInclude = ['Plank', 'Log', 'TreeBranch2', 'Nails', 'SheetMetal', 'IronIngot', 'SteelBar', 'ScrapMetal', 'SwordBlade', 'WoodAxeHead', 'Katana_Shard', 'IronBloom'];
-const mustExclude = ['PropaneTank', 'IronOre', 'CopperOre', 'Hematite', 'HematiteLarge', 'Malachite', 'MalachiteLarge', 'Charcoal', 'Coke',
-  'IronIngotMold', 'BlacksmithAnvilUntreated', 'CeramicCrucible_Iron', 'BucketConcreteFull', 'Hammer', 'Axe', 'Door', 'Pot', 'Katana', 'Sledgehammer'];
+const mustInclude = ['Plank', 'Log', 'TreeBranch2', 'Nails', 'SheetMetal', 'IronIngot', 'SteelBar', 'ScrapMetal', 'SwordBlade', 'WoodAxeHead', 'Katana_Shard', 'IronBloom', ...golden.ore, ...golden.construction];
+const mustExclude = ['PropaneTank', 'Charcoal', 'Coke',
+  'IronIngotMold', 'BlacksmithAnvilUntreated', 'CeramicCrucible_Iron', 'BucketEmpty', 'Bucket', 'BucketCarved', 'EmptySandbag', 'BucketWallpaperPaste', 'BucketCarvedWallpaperPaste', 'ClayJar', 'ClayPot', 'ClayTool', 'PlasterTrowel', 'Hammer', 'Axe', 'Door', 'Pot', 'Katana', 'Sledgehammer'];
 for (const n of mustInclude) if (!byName[n] || !byName[n].inc) fail('must include ' + n + (byName[n] ? ' (' + byName[n].why + ')' : ' (not in fixture)'));
 for (const n of mustExclude) if (byName[n] && byName[n].inc) fail('must exclude ' + n + ' (' + byName[n].why + ')');
 ok(`B42 asserts: ${mustInclude.length} must-include, ${mustExclude.length} must-exclude checked`);
 if (byName.Plank.w50 !== 1.5) fail('Plank 50% weight ' + byName.Plank.w50);
 const finished = items42.filter((i) => /^(Clothing|ProtectiveGear|Furniture|Weapon|Tool|ToolWeapon|Cooking|CookingWeapon|Container|Bag)$/.test(i.dc)).map((i) => byName[i.name]).filter((r) => r.inc);
 if (finished.length) fail('finished-product DC included: ' + finished.map((r) => r.name)); else ok('no finished-product DisplayCategory item included');
-console.log(`     counts B42 vanilla: scanned=${res42.length} wood=${got.wood.length} metal=${got.metal.length} total=${got.wood.length + got.metal.length}`);
+console.log(`     counts B42 vanilla: scanned=${res42.length} wood=${got.wood.length} metal=${got.metal.length} ore=${got.ore.length} construction=${got.construction.length} total=${Object.values(got).reduce((n, a) => n + a.length, 0)}`);
 
 // 2b. B41 sample, run through the root media (B41) copy
 const s41 = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'items_b41_sample.json'), 'utf8')).items;
@@ -124,6 +128,8 @@ if (!bad41) ok(`B41 sample: ${s41.length} items as expected (wood=${res41.filter
 for (const [label, dir] of [['B42', B42_SHARED], ['B41', B41_SHARED]]) {
   const L = newLua(dir);
   run(L, `package.path = "${__dirname.replace(/\\/g, '/')}/?.lua;" .. package.path`);
+  const drainable = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'drainable_b42.json'), 'utf8'));
+  run(L, 'DRAINABLE_CASES = {' + drainable.items.map(i => '{name=' + luaStr(i.name) + ',full=' + i.full + ',empty=' + luaStr(i.empty) + ',emptyWeight=' + i.emptyWeight + ',full50=' + i.full50 + ',half50=' + i.half50 + ',full99=' + i.full99 + '}').join(',') + '}');
   const n = run(L, 'return dofile("' + path.join(__dirname, 'core_spec.lua').replace(/\\/g, '/') + '")');
   if (n !== 0) fail(`${label} core_spec: ${n} failures`); else ok(`${label} runtime spec (Core + Init with mocks)`);
 }

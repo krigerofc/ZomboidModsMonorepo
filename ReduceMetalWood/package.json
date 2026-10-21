@@ -1,8 +1,8 @@
 {
   "name": "reduce-metal-wood-v2",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
-  "description": "Dev tooling (tests only) for the Project Zomboid mod Reduce Metal&Wood v2. Not shipped.",
+  "description": "Dev tooling (tests only) for Build & Haul - Lightweight Materials. Not shipped.",
   "scripts": {
     "test": "node tests/run.js"
   },

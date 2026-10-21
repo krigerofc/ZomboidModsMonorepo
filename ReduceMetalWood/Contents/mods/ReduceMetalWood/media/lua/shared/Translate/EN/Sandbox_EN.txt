@@ -1,5 +1,5 @@
 Sandbox_EN = {
-    Sandbox_ReduceMetalWood = "Reduce Metal&Wood",
+    Sandbox_ReduceMetalWood = "Build & Haul",
     Sandbox_ReduceMetalWood_WeightReductionPercent = "Weight reduction (%)",
-    Sandbox_ReduceMetalWood_WeightReductionPercent_tooltip = "How much lighter wood and metal crafting materials become (planks, logs, nails, sheets, bars, ingots, scrap, forged blades and heads). 50 = half weight. 0 = disabled. Finished products are not affected.",
+    Sandbox_ReduceMetalWood_WeightReductionPercent_tooltip = "Reduction for eligible wood, metal, ores and mineral construction stock. 50 = half material weight; 0 = disabled. Filled construction containers retain their empty-container weight and reduce contents only. Tools, fuel and finished products are excluded.",
 }

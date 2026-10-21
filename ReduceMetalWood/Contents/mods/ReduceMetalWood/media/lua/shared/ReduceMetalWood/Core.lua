@@ -1,5 +1,5 @@
 --[[
-    Reduce Metal&Wood v2 - runtime application of the weight reduction.
+    Build & Haul - runtime application of the weight reduction.
 
     Works on any object exposing the script Item API (real zombie.scripting.objects.Item
     in game, plain Lua tables in tests). Every engine call is wrapped in pcall so a
@@ -93,7 +93,9 @@ function Core.describe(item)
     local _, name = call(item, "getName")
     local _, dc = call(item, "getDisplayCategory")
     local okMv, mv = call(item, "getMetalValue")
+    local _, replacement = call(item, "getReplaceOnDeplete")
     return {
+        replaceOnDeplete = replacement and tostring(replacement) or nil,
         module = module and tostring(module) or "Base",
         name = name and tostring(name) or nil,
         displayCategory = dc and tostring(dc) or nil,
@@ -127,7 +129,7 @@ end
 
 --- Apply the reduction to one script item. Returns material, result, reason.
 -- result: "changed" | "unchanged" | "skipped" | "failed"
-function Core.applyItem(item, percent, debug)
+function Core.applyItem(item, percent, debug, replacementWeights)
     local info = Core.describe(item)
     if not info.name then return nil, "skipped", "no name" end
     local material, included, reason = Classifier.classify(info)
@@ -143,6 +145,17 @@ function Core.applyItem(item, percent, debug)
         Core.state[fullType] = st
     end
     local target = Classifier.computeWeight(st.orig, percent)
+    if material == "construction" and info.replaceOnDeplete and info.replaceOnDeplete ~= "" then
+        local replacement = info.replaceOnDeplete
+        if not string.find(replacement, ".", 1, true) then replacement = info.module .. "." .. replacement end
+        local empty = replacementWeights and replacementWeights[replacement]
+        if empty == nil or empty < 0 or empty > st.orig then
+            return material, "skipped", "unresolved construction container baseline"
+        end
+        -- Vanilla updateWeight interpolates from the replacement script weight.
+        -- Reduce only contents so 99% cannot make a full bucket lighter than empty.
+        target = empty + Classifier.computeWeight(st.orig - empty, percent)
+    end
     local how = "noop"
     if not near(cur, target) then
         how = setWeight(item, target)
@@ -153,7 +166,7 @@ function Core.applyItem(item, percent, debug)
         end
     end
     st.applied = target
-    scaleEmpty(item, st, percent)
+    if material ~= "construction" then scaleEmpty(item, st, percent) end
     if debug then
         log(fullType .. " " .. tostring(st.orig) .. " -> " .. tostring(target)
             .. " (" .. material .. ", " .. reason .. ", " .. how .. ")")
@@ -164,7 +177,7 @@ end
 
 --- Apply to every item of a Java ArrayList-like (size/get) or Lua list.
 function Core.applyAll(items, percent, debug)
-    local counts = { wood = 0, metal = 0, changed = 0, unchanged = 0, skipped = 0, failed = 0, total = 0 }
+    local counts = { wood = 0, metal = 0, ore = 0, construction = 0, changed = 0, unchanged = 0, skipped = 0, failed = 0, total = 0 }
     if items == nil then return counts end
     local n, get
     if type(items) == "table" and items.size == nil then
@@ -175,10 +188,16 @@ function Core.applyAll(items, percent, debug)
         n = ok and size or 0
         get = function(i) local _, v = call(items, "get", i); return v end
     end
+    local replacementWeights = {}
+    for i = 0, n - 1 do
+        local item = get(i)
+        local info = Core.describe(item)
+        if info.name then replacementWeights[info.module .. "." .. info.name] = getWeight(item) end
+    end
     for i = 0, n - 1 do
         local item = get(i)
         counts.total = counts.total + 1
-        local material, result = Core.applyItem(item, percent, debug)
+        local material, result = Core.applyItem(item, percent, debug, replacementWeights)
         counts[result] = counts[result] + 1
         if result ~= "skipped" and material then counts[material] = counts[material] + 1 end
     end

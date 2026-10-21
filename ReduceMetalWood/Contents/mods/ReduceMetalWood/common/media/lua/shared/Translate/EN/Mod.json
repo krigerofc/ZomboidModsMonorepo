@@ -1,4 +1,4 @@
 {
-    "name": "Reduce Metal&Wood v2",
-    "description": "Reduces the weight of eligible wood and metal crafting materials, including forged parts and welding rods, by 50% by default. Adjustable from 0% to 99% in sandbox options. Finished products stay unchanged. Supports B41 and B42; PT-BR + EN."
+    "name": "Build & Haul - Lightweight Materials",
+    "description": "Reduces eligible wood, metal, ores and mineral construction materials by 50% by default (0-99% sandbox). Includes bricks, clay, stone, sand, gravel, concrete and plaster. Filled construction containers reduce contents only; empty containers, tools, fuel and finished products keep their weight. B41 + B42; EN + PT-BR."
 }

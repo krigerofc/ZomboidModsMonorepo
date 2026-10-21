@@ -1,4 +1,4 @@
 {
-    "name": "Reduce Metal&Wood v2",
-    "description": "Reduz em 50%, por padrão, o peso dos materiais elegíveis de madeira e metal, incluindo peças forjadas e varetas de solda. Ajustável de 0% a 99% no sandbox. Produtos acabados mantêm o peso. B41 e B42; PT-BR + EN."
+    "name": "Build & Haul - Materiais Leves",
+    "description": "Reduz em 50% o peso de madeira, metal, minérios e insumos minerais de construção (0-99% no sandbox). Inclui tijolos, argila, pedra, areia, cascalho, concreto e gesso. Recipientes de construção reduzem apenas o conteúdo; recipientes vazios, ferramentas, combustíveis e produtos acabados mantêm o peso. B41 + B42; EN + PT-BR."
 }

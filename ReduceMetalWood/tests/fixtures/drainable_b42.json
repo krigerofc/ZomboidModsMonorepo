@@ -1,0 +1,86 @@
+{
+  "source": "Installed B42.19.2 media/scripts/generated/items/drainable.txt + DrainableComboItem.updateWeight bytecode; B42.21 and B41 engine validation pending.",
+  "items": [
+    {
+      "name": "Claybag",
+      "full": 2,
+      "empty": "EmptySandbag",
+      "emptyWeight": 0.5,
+      "full50": 1.25,
+      "half50": 0.875,
+      "full99": 0.515
+    },
+    {
+      "name": "Gravelbag",
+      "full": 2,
+      "empty": "EmptySandbag",
+      "emptyWeight": 0.5,
+      "full50": 1.25,
+      "half50": 0.875,
+      "full99": 0.515
+    },
+    {
+      "name": "Sandbag",
+      "full": 2,
+      "empty": "EmptySandbag",
+      "emptyWeight": 0.5,
+      "full50": 1.25,
+      "half50": 0.875,
+      "full99": 0.515
+    },
+    {
+      "name": "BucketClayCement",
+      "full": 10,
+      "empty": "Bucket",
+      "emptyWeight": 1,
+      "full50": 5.5,
+      "half50": 3.25,
+      "full99": 1.09
+    },
+    {
+      "name": "BucketConcreteFull",
+      "full": 10,
+      "empty": "Bucket",
+      "emptyWeight": 1,
+      "full50": 5.5,
+      "half50": 3.25,
+      "full99": 1.09
+    },
+    {
+      "name": "BucketPlasterFull",
+      "full": 10,
+      "empty": "Bucket",
+      "emptyWeight": 1,
+      "full50": 5.5,
+      "half50": 3.25,
+      "full99": 1.09
+    },
+    {
+      "name": "BucketCarvedClayCement",
+      "full": 10,
+      "empty": "BucketCarved",
+      "emptyWeight": 2,
+      "full50": 6,
+      "half50": 4,
+      "full99": 2.08
+    },
+    {
+      "name": "BucketCarvedConcreteFull",
+      "full": 10,
+      "empty": "BucketCarved",
+      "emptyWeight": 2,
+      "full50": 6,
+      "half50": 4,
+      "full99": 2.08
+    },
+    {
+      "name": "BucketCarvedPlasterFull",
+      "full": 10,
+      "empty": "BucketCarved",
+      "emptyWeight": 2,
+      "full50": 6,
+      "half50": 4,
+      "full99": 2.08
+    }
+  ]
+}

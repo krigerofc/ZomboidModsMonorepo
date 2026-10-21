@@ -1,5 +1,5 @@
 --[[
-    Reduce Metal&Wood v2 - pure classification logic.
+    Build & Haul - pure classification logic.
 
     NO engine calls in this file. It only receives plain Lua tables, so it can be
     unit-tested outside the game (see tests/run.js) and is shared verbatim by the
@@ -12,21 +12,16 @@
         tags            table    list of tag strings, any case, with or without "base:" prefix
         metalValue      number   MetalValue script property (0 / nil when absent)
 
-    Output: material ("wood" | "metal" | nil), included (boolean), reason (string)
+    Output: material ("wood" | "metal" | "ore" | "construction" | nil), included, reason
 
-    Rule (from the B42 material survey):
-      1. Explicit exclude list (finished products, ores, fuel, containers...)   -> excluded
-      2. Explicit include list (raw stock that lives outside the Material DCs)  -> included
-      3. Generic product/ore/fuel name or tag patterns                          -> excluded
-      4. Candidate pool: DisplayCategory Material / MaterialWeapon
-         METAL if metal tag, MetalValue > 0 or metal name pattern
-         WOOD  if wood tag or wood name pattern
-         names containing "Mold" are tools -> excluded
+    Exact vanilla inclusions precede conservative category/tag rules. Ores are a
+    separate family; construction buckets are exact full-type opt-ins only.
+    Explicit exclusion always wins over inclusion. Recipe use alone is not evidence.
 ]]
 
 local Classifier = {}
 
-Classifier.VERSION = "2.0.0"
+Classifier.VERSION = "2.1.0"
 
 Classifier.MATERIAL_CATEGORIES = {
     Material = true,
@@ -63,17 +58,17 @@ Classifier.WOOD_NAME_PATTERNS = {
     "Board", "Beam", "Handle$", "Stick",
 }
 
--- Generic finished-product / ore / fuel exclusions (catch other mods' items too)
+-- Conservative fallback exclusions; exact vanilla ore/construction opt-ins precede these.
 Classifier.EXCLUDE_NAME_PATTERNS = {
     "Mold",            -- casting molds are tools (used mode:keep)
     "Anvil",           -- workstations
     "Crucible",        -- containers holding molten metal
-    "^Bucket",         -- concrete / plaster / paste in a bucket
+    "^Bucket",         -- unknown buckets require explicit full-type inclusion
     "Charcoal", "^Coke", -- fuel, not wood
-    "%lOre$", "%lOre[%u_]", -- ores are stone, not metal yet (IronOre, CopperOre_Large...)
+    "Door$", "Machine$", "Hammer$", "Tool$", -- finished products with misleading material metadata
 }
 Classifier.EXCLUDE_TAGS = {
-    ironore = true, copperore = true, charcoal = true,
+    charcoal = true,
     concrete = true, plasterbucket = true, wallpaperpaste = true,
 }
 
@@ -83,9 +78,6 @@ Classifier.EXPLICIT_EXCLUDE = {
     ["Base.BlacksmithAnvilUntreated"] = "finished workstation (anvil)",
     ["Base.BlockAnvilUntreated"] = "finished workstation (anvil)",
     ["Base.BlowerFan"] = "appliance part",
-    ["Base.BucketClayCement"] = "concrete in a bucket",
-    ["Base.BucketConcreteFull"] = "concrete in a bucket",
-    ["Base.BucketPlasterFull"] = "plaster in a bucket",
     ["Base.BucketWallpaperPaste"] = "paste in a bucket",
     ["Base.CeramicCrucible_Iron"] = "crucible (container)",
     ["Base.CeramicCrucible_Steel"] = "crucible (container)",
@@ -103,16 +95,38 @@ Classifier.EXPLICIT_EXCLUDE = {
     ["Base.ElectronicsScrap"] = "electronics",
     ["Base.HeavyChain"] = "tool",
     ["Base.PropaneTank"] = "finished container (gas tank)",
-    ["Base.IronOre"] = "ore (stone)",
-    ["Base.CopperOre"] = "ore (stone)",
-    ["Base.Hematite"] = "ore mineral (stone)",
-    ["Base.HematiteLarge"] = "ore mineral (stone)",
-    ["Base.Malachite"] = "ore mineral (stone)",
-    ["Base.MalachiteLarge"] = "ore mineral (stone)",
     ["Base.PlankNail"] = "finished weapon (B41 plank with nails)",
 }
 
 Classifier.EXPLICIT_INCLUDE = {
+    ["Base.CopperOre"] = "ore",
+    ["Base.Hematite"] = "ore",
+    ["Base.HematiteLarge"] = "ore",
+    ["Base.IronOre"] = "ore",
+    ["Base.Malachite"] = "ore",
+    ["Base.MalachiteLarge"] = "ore",
+    ["Base.BucketCarvedClayCement"] = "construction",
+    ["Base.BucketCarvedConcreteFull"] = "construction",
+    ["Base.BucketCarvedPlasterFull"] = "construction",
+    ["Base.BucketClayCement"] = "construction",
+    ["Base.BucketConcreteFull"] = "construction",
+    ["Base.BucketPlasterFull"] = "construction",
+    ["Base.Clay"] = "construction",
+    ["Base.ClayBrick"] = "construction",
+    ["Base.ClayBrickUnfired"] = "construction",
+    ["Base.ClayShingle"] = "construction",
+    ["Base.ClayShingleUnfired"] = "construction",
+    ["Base.ClayTile"] = "construction",
+    ["Base.ClayTileUnfired"] = "construction",
+    ["Base.Claybag"] = "construction",
+    ["Base.ConcretePowder"] = "construction",
+    ["Base.FlintNodule"] = "construction",
+    ["Base.Gravelbag"] = "construction",
+    ["Base.Limestone"] = "construction",
+    ["Base.PlasterPowder"] = "construction",
+    ["Base.Sandbag"] = "construction",
+    ["Base.Stone2"] = "construction",
+    ["Base.StoneBlock"] = "construction",
     ["Base.UnusableMetal"] = "metal",
     ["Base.WeldingRods"] = "metal", -- script Item may not expose getMetalValue (B41/B42)
     ["Base.UnusableWood"] = "wood",
@@ -198,7 +212,7 @@ local function woodNameMatch(name)
 end
 
 --- Classify one item description.
--- @return material ("wood"|"metal"|nil), included (boolean), reason (string)
+-- @return material ("wood"|"metal"|"ore"|"construction"|nil), included (boolean), reason (string)
 function Classifier.classify(info)
     if type(info) ~= "table" or type(info.name) ~= "string" then
         return nil, false, "invalid input"
@@ -213,19 +227,32 @@ function Classifier.classify(info)
     local forced = Classifier.EXPLICIT_INCLUDE[fullType]
     if forced then return forced, true, "explicit include" end
 
+    local tags = tagSet(info.tags)
     for i = 1, #Classifier.EXCLUDE_NAME_PATTERNS do
         if string.find(name, Classifier.EXCLUDE_NAME_PATTERNS[i]) then
             return nil, false, "excluded name pattern " .. Classifier.EXCLUDE_NAME_PATTERNS[i]
         end
     end
 
-    local tags = tagSet(info.tags)
     for t, _ in pairs(tags) do
         if Classifier.EXCLUDE_TAGS[t] then return nil, false, "excluded tag " .. t end
     end
 
     if not Classifier.MATERIAL_CATEGORIES[info.displayCategory or ""] then
         return nil, false, "not a material DisplayCategory"
+    end
+
+    if Classifier.MATERIAL_CATEGORIES[info.displayCategory or ""] then
+        if tags.ironore or tags.copperore or tags.orematerial then
+            return "ore", true, "rule: ore material tag"
+        end
+        if tags.constructionmaterial then
+            return "construction", true, "rule: construction material tag"
+        end
+    end
+
+    if string.find(name, "%lOre$") or string.find(name, "%lOre[%u_]") then
+        return nil, false, "unknown ore-like name without an ore material tag"
     end
 
     local metalTag, woodTag = nil, nil
@@ -240,7 +267,7 @@ function Classifier.classify(info)
     if metalNameMatch(name) then return "metal", true, "rule: metal name" end
     if woodTag then return "wood", true, "rule: tag " .. woodTag end
     if woodNameMatch(name) then return "wood", true, "rule: wood name" end
-    return nil, false, "not wood/metal"
+    return nil, false, "not an eligible material"
 end
 
 --- Reduced weight for a given original weight and reduction percent (0..99).
