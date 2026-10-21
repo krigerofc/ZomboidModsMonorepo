@@ -1,0 +1,18 @@
+[
+  {
+    "mod": "KRjobs",
+    "chunk_id": "dfb8b1",
+    "wall_time_seconds": 0.5345512,
+    "exit_code": 0,
+    "original_token_count": 239,
+    "output": "ok   generated files up to date (scripts, registries, B41 Lua, kits, translations, mirrors)\nok   Lua syntax (5.1): 13 files, 0 errors\nok   JSON parse: 4 files\nok   layout, mod.info (id Krjobs, icon, versionMin 42.15), workshop id, image sizes, no v1 leftovers\nok   translations: EN == PTBR key sets (B42 96 keys + Mod.json, B41 80 keys), latin1 PTBR, no empty values\nok   B42 scripts: 24 professions, 24 traits, all registered; perks valid; 60 granted recipes exist + learnable; icons + translations present\nok   B41 Lua (fengari mocks): 20 professions, 20 traits, idempotent on re-run, no unknown perk/text, 25 recipes exist in 41.78, v1 types kept\nok   balance: formula vanilla MAE 1.36 (<= 2); B42 24 profs, worst |cost-expected| 2; B41 20 profs, worst |cost-expected| 2 (tolerance 2)\nok   B42 kits: 15 kits, items exist in vanilla, given once (kits_spec.lua)\nok   B41 kits: 14 kits, items exist in vanilla, given once (kits_spec.lua)\n\nALL TESTS PASSED\n"
+  },
+  {
+    "mod": "FieldMedicine",
+    "chunk_id": "f0c83b",
+    "wall_time_seconds": 1.0429214,
+    "exit_code": 0,
+    "original_token_count": 122,
+    "output": "ok   translations up to date with tools/i18n.js\nok   Lua syntax (5.1): 7 files, 0 errors\nok   JSON parse: 14 files\nok   layout (B42 only), mod.info, workshop.txt (no id), image sizes, no vanilla overwrite\nok   Knox guard: no zombie-infection API in mod Lua\nok   vanilla scan: 5092 items\nok   item references exist (vanilla or mod): 15\nok   translations: EN == PTBR (88 keys, placeholders), items/recipes/tooltips/sandbox covered\nok   core_spec.lua\nok   glue_spec.lua\n\nALL TESTS PASSED\n"
+  }
+]

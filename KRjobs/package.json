@@ -1,0 +1,14 @@
+{
+  "name": "krjobs-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Dev tooling (generator + tests only) for the Project Zomboid mod KRjobs v2. Not shipped.",
+  "scripts": {
+    "test": "node tests/run.js && node tests/icons.js",
+    "gen": "node tools/gen.js"
+  },
+  "devDependencies": {
+    "fengari": "0.1.4",
+    "luaparse": "0.3.1"
+  }
+}

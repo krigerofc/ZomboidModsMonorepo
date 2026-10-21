@@ -1,0 +1,6 @@
+{
+ "_source": "B42: Perks.<name> used by vanilla 42.19.2 Lua/scripts (copied from PassiveSkills fixtures, categories removed). B41: usable PerkFactory skills in 41.78 (B42-only skills absent). categories: parent perks that are NOT skills and must never get an XP boost.",
+ "b42": ["Woodwork","MetalWelding","Mechanics","Fitness","Strength","Fishing","Farming","Doctor","Blunt","Electricity","Tailoring","Butchering","Aiming","Reloading","Sneak","Lightfoot","Husbandry","Cooking","PlantScavenging","Masonry","Axe","Trapping","Nimble","Tracking","Sprinting","LongBlade","Spear","SmallBlunt","SmallBlade","Pottery","Maintenance","Glassmaking","FlintKnapping","Carving","Blacksmith"],
+ "b41": ["Woodwork","MetalWelding","Mechanics","Fitness","Strength","Fishing","Farming","Doctor","Blunt","Electricity","Tailoring","Aiming","Reloading","Sneak","Lightfoot","Cooking","PlantScavenging","Axe","Trapping","Nimble","Sprinting","LongBlade","Spear","SmallBlunt","SmallBlade","Maintenance"],
+ "categories": ["Agility","Melee","Combat","Firearm","Crafting","Survivalist","Passiv","None","MAX","Lightfooted"]
+}

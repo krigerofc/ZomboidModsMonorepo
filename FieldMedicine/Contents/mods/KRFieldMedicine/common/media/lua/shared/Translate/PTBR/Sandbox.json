@@ -1,0 +1,23 @@
+{
+    "Sandbox_KFM": "Medicina de Campo '93",
+    "Sandbox_KFM_Enabled": "Ativar Medicina de Campo",
+    "Sandbox_KFM_Enabled_tooltip": "Liga ou desliga todos os procedimentos deste mod. Torniquetes já aplicados continuam funcionando até serem removidos.",
+    "Sandbox_KFM_ExamEnabled": "Ativar exame clínico",
+    "Sandbox_KFM_ExamEnabled_tooltip": "Permite o exame clínico pelo painel de saúde e pelo estetoscópio / abaixador de língua.",
+    "Sandbox_KFM_ShowFeverInExam": "Exame mostra febre",
+    "Sandbox_KFM_ShowFeverInExam_tooltip": "O exame informa febre sem a causa (qualquer febre parece igual). Servidores hardcore podem esconder.",
+    "Sandbox_KFM_SkillRequirementOffset": "Ajuste do requisito de Primeiros Socorros",
+    "Sandbox_KFM_SkillRequirementOffset_tooltip": "Somado ao nível exigido por torniquete, cauterização, redução de fratura e debridamento (exame e irrigação sempre nível 0). Padrão 0.",
+    "Sandbox_KFM_FailChanceMultiplier": "Multiplicador da chance de falha",
+    "Sandbox_KFM_FailChanceMultiplier_tooltip": "0 = procedimentos nunca falham. Padrão 1.",
+    "Sandbox_KFM_ProcedurePainMultiplier": "Multiplicador da dor dos procedimentos",
+    "Sandbox_KFM_ProcedurePainMultiplier_tooltip": "Dor causada pelos procedimentos. Padrão 1.",
+    "Sandbox_KFM_IrrigationStrength": "Força da irrigação",
+    "Sandbox_KFM_IrrigationStrength_tooltip": "Quanto de infecção da ferida uma irrigação remove. Padrão 1.",
+    "Sandbox_KFM_TourniquetSafeHours": "Horas seguras do torniquete",
+    "Sandbox_KFM_TourniquetSafeHours_tooltip": "Horas de jogo antes de o membro começar a perder saúde e doer. Dano duradouro depois de 3x esse tempo. Padrão 2.",
+    "Sandbox_KFM_FractureReductionMax": "Redução máxima do tempo de fratura",
+    "Sandbox_KFM_FractureReductionMax_tooltip": "Limite do tempo de consolidação removido por uma redução de fratura bem-sucedida (0,40 = 40%). Padrão 0,40.",
+    "Sandbox_KFM_XPMultiplier": "Multiplicador de XP de Primeiros Socorros",
+    "Sandbox_KFM_XPMultiplier_tooltip": "XP dado pelos procedimentos (só em lesões reais, com intervalo por paciente). Padrão 1."
+}

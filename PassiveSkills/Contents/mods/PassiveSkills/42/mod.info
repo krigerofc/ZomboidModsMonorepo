@@ -1,0 +1,8 @@
+name=Passive Skills v2
+id=Passiveskillskr
+author=Kriger
+description=Skill magazines in five volumes. Each character learns once per volume and comments on the reading. All five grant 2775 XP at default settings. Eligible containers have a 12% chance of receiving a magazine. XP and spawn chance are configurable. 33 skills on B42 and 24 on B41; PT-BR + EN.
+poster=poster.png
+icon=icon.png
+modversion=2.0.0
+versionMin=42.15

@@ -1,0 +1,5 @@
+{
+ "_source": "Build 41.78 vanilla: profession icons (media/ui texture pack names used by MainCreationMethods.lua; smither/rancher are B42-only) and the vanilla profession-trait types this mod grants.",
+ "icons": ["profession_burgerflipper","profession_burglar2","profession_chef2","profession_constructionworker2","profession_doctor2","profession_electrician","profession_engineer","profession_farmer2","profession_fireofficer2","profession_fisher2","profession_fitnessinstructor","profession_hammer2","profession_lumberjack","profession_mechanic","profession_metalworker","profession_nurse","profession_parkranger2","profession_policeofficer2","profession_repairman2","profession_securityguard2","profession_tailor","profession_veteran2"],
+ "traits": ["Mechanics2","NightOwl","Desensitized","Cook2","Axeman","Burglar","Nutritionist2","Herbalist"]
+}

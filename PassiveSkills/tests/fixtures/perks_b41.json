@@ -1,0 +1,4 @@
+{
+  "_source": "Usable PerkFactory perks in Build 41.78 (B42-only skills such as Husbandry, Carving, FlintKnapping, Pottery, Tracking, Masonry, Glassmaking, Butchering do not exist; Blacksmith/Melting exist but are unused in B41)",
+  "perks": ["Woodwork","MetalWelding","Mechanics","Fitness","Strength","Fishing","Farming","Doctor","Blunt","Electricity","Tailoring","Aiming","Reloading","Sneak","Lightfoot","Cooking","PlantScavenging","Axe","Trapping","Nimble","Sprinting","LongBlade","Spear","SmallBlunt","SmallBlade","Maintenance","Combat"]
+}

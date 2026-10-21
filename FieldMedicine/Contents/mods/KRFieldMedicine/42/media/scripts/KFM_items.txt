@@ -1,0 +1,13 @@
+module Base
+{
+    item KFM_ImprovisedTourniquet
+    {
+        DisplayCategory = FirstAid,
+        ItemType = base:normal,
+        Weight = 0.2,
+        Icon = Rag,
+        Medical = true,
+        Tooltip = Tooltip_KFM_ImprovisedTourniquet,
+        WorldStaticModel = RippedSheets,
+    }
+}

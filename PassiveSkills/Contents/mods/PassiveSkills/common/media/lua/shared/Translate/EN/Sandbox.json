@@ -1,0 +1,7 @@
+{
+    "Sandbox_PassiveSkills": "Passive Skills",
+    "Sandbox_PassiveSkills_SpawnChance": "Skill magazine chance (%)",
+    "Sandbox_PassiveSkills_SpawnChance_tooltip": "Chance that an eligible container (bookshelves, magazine racks, desks, postboxes, libraries, bookstores...) gets one skill magazine when its loot is generated. Lower volumes are more common. 0 = magazines never spawn. Default 12.",
+    "Sandbox_PassiveSkills_XpPercent": "XP per magazine (%)",
+    "Sandbox_PassiveSkills_XpPercent_tooltip": "100 = reading the 5 volumes of a skill gives exactly the XP of level 5 (75/150/300/750/1500). Profession, trait and skill-book XP multipliers are ignored, so every character gains the same."
+}

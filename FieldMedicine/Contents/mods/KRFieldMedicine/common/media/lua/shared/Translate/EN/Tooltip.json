@@ -1,0 +1,10 @@
+{
+    "Tooltip_KFM_Exam": "Check the patient's general state, temperature, pulse, hydration and healing. What you notice depends on First Aid level. A stethoscope counts as +1 level; a tongue depressor (used up) lets anyone check hydration and throat.",
+    "Tooltip_KFM_Irrigate": "Flush an open, unbandaged wound with 0.25 L of water. Clean water lowers wound infection; tainted water makes it worse. Weaker than disinfectant, and it stings.",
+    "Tooltip_KFM_Tourniquet": "Arms and legs only. Stops the bleeding of this part and everything below it while applied. Buys time to stitch or bandage; it is not a treatment. After a few hours the limb starts to suffer.",
+    "Tooltip_KFM_TourniquetRemove": "Removes the tourniquet and gives it back. Untreated wounds below it start bleeding again.",
+    "Tooltip_KFM_Cauterize": "Close a deep wound with a heated blade (uses a lighter or matches). Leaves a burn that needs cleaning. Worse than stitches, better than bleeding out. Does not work on bites.",
+    "Tooltip_KFM_ReduceFracture": "Set the broken bone back in place: much faster healing, extremely painful. Once per fracture. The patient must be sitting or lying down. Painkillers taken before halve the pain.",
+    "Tooltip_KFM_Debride": "Cut away badly infected tissue with a scalpel. Clears the wound infection but the wound bleeds again: bandage it afterwards. Never affects any other infection.",
+    "Tooltip_KFM_ImprovisedTourniquet": "Cloth strips and a stick used as a windlass. Use it from the health panel on an arm or leg."
+}

@@ -1,0 +1,7 @@
+name=Reduce Metal&Wood v2
+id=ReduceMetal&Wood50x
+author=pedro
+description=Reduces the weight of eligible wood and metal crafting materials, including forged parts and welding rods, by 50% by default. Adjustable from 0% to 99% in sandbox options. Finished products stay unchanged. Supports B41 and B42; PT-BR + EN.
+poster=poster.png
+icon=icon.png
+versionMin=42.15

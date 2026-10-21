@@ -1,0 +1,42 @@
+[
+  {
+    "mod": "ReduceMetalWood",
+    "chunk_id": "0bde69",
+    "wall_time_seconds": 1.9673659,
+    "exit_code": 0,
+    "original_token_count": 187,
+    "output": "ok   Lua syntax: 9 files, 0 errors\nok   JSON translations parse\nok   B41 == B42 copy: ReduceMetalWood/Classifier.lua\nok   B41 == B42 copy: ReduceMetalWood/Core.lua\nok   B41 == B42 copy: ReduceMetalWood_Init.lua\nok   layout + mod ids\nok   B42 vanilla wood: 25 items match golden list\nok   B42 vanilla metal: 123 items match golden list\nok   B42 asserts: 12 must-include, 19 must-exclude checked\nok   no finished-product DisplayCategory item included\n     counts B42 vanilla: scanned=5092 wood=25 metal=123 total=148\nok   B41 sample: 35 items as expected (wood=8 metal=14)\ncore_spec: 33 passed, 0 failed\nok   B42 runtime spec (Core + Init with mocks)\ncore_spec: 33 passed, 0 failed\nok   B41 runtime spec (Core + Init with mocks)\n\nALL TESTS PASSED\n"
+  },
+  {
+    "mod": "PassiveSkills",
+    "chunk_id": "e21f53",
+    "wall_time_seconds": 7.5596986,
+    "exit_code": 0,
+    "original_token_count": 145,
+    "output": "ok   generated files up to date (Catalog, scripts, translations, B41 mirror of Lua)\nok   Lua syntax (5.1): 20 files, 0 errors\nok   JSON parse: 10 files\nok   layout, mod.info (id, icon, versionMin, typo), workshop id, image sizes, no v1 leftovers\nok   B42 script: 170 items, format + page counts OK\nok   B41 script: 125 items, format + page counts OK\nok   translations: EN == PTBR key sets (B42 json + B41 txt), item names cover scripts, sandbox + getText keys present\nok   B42 core_spec.lua\nok   B42 glue_spec.lua\nok   B41 core_spec.lua\nok   B41 glue_spec.lua\n\nALL TESTS PASSED\n"
+  },
+  {
+    "mod": "KRjobs",
+    "chunk_id": "02c1f2",
+    "wall_time_seconds": 0.6292695,
+    "exit_code": 0,
+    "original_token_count": 239,
+    "output": "ok   generated files up to date (scripts, registries, B41 Lua, kits, translations, mirrors)\nok   Lua syntax (5.1): 13 files, 0 errors\nok   JSON parse: 4 files\nok   layout, mod.info (id Krjobs, icon, versionMin 42.15), workshop id, image sizes, no v1 leftovers\nok   translations: EN == PTBR key sets (B42 96 keys + Mod.json, B41 80 keys), latin1 PTBR, no empty values\nok   B42 scripts: 24 professions, 24 traits, all registered; perks valid; 60 granted recipes exist + learnable; icons + translations present\nok   B41 Lua (fengari mocks): 20 professions, 20 traits, idempotent on re-run, no unknown perk/text, 25 recipes exist in 41.78, v1 types kept\nok   balance: formula vanilla MAE 1.36 (<= 2); B42 24 profs, worst |cost-expected| 2; B41 20 profs, worst |cost-expected| 2 (tolerance 2)\nok   B42 kits: 15 kits, items exist in vanilla, given once (kits_spec.lua)\nok   B41 kits: 14 kits, items exist in vanilla, given once (kits_spec.lua)\n\nALL TESTS PASSED\n"
+  },
+  {
+    "mod": "BasicVehicleMaintenance",
+    "chunk_id": "06042b",
+    "wall_time_seconds": 1.1317876,
+    "exit_code": 0,
+    "original_token_count": 100,
+    "output": "ok   Lua syntax (5.1): 7 files, 0 errors\nok   layout, mod.info, workshop.txt, image sizes, no v1 leftovers / invented APIs\nok   translation JSON up to date with tools/translations.js\nok   translations: 107 keys, EN == PTBR key sets + placeholders, sandbox + getText + dynamic keys present\n  core_spec.lua: 854 checks\nok   core_spec.lua\n  game_spec.lua: 66 checks\nok   game_spec.lua\n\nALL TESTS PASSED\n"
+  },
+  {
+    "mod": "FieldMedicine",
+    "chunk_id": "0e6e33",
+    "wall_time_seconds": 1.0612014,
+    "exit_code": 0,
+    "original_token_count": 122,
+    "output": "ok   translations up to date with tools/i18n.js\nok   Lua syntax (5.1): 7 files, 0 errors\nok   JSON parse: 14 files\nok   layout (B42 only), mod.info, workshop.txt (no id), image sizes, no vanilla overwrite\nok   Knox guard: no zombie-infection API in mod Lua\nok   vanilla scan: 5092 items\nok   item references exist (vanilla or mod): 15\nok   translations: EN == PTBR (88 keys, placeholders), items/recipes/tooltips/sandbox covered\nok   core_spec.lua\nok   glue_spec.lua\n\nALL TESTS PASSED\n"
+  }
+]

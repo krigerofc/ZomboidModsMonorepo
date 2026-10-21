@@ -1,0 +1,33 @@
+{
+  "path": "C:/Users/pedro/AppData/Local/Temp/claude/C--Users-pedro/304acafc-38be-4697-ab5c-05933cee30b2/scratchpad/pzserver/server-console.txt",
+  "bytes": 263913,
+  "mtime": "2026-10-17T23:31:45.217Z",
+  "sha256": "c5dbae350ff0ffe1a4848bda6862c675777d4c629a6773d4e4dabf1768fa5139",
+  "loadingIds": [
+    {
+      "id": "ReduceMetal&Wood50x",
+      "found": true
+    },
+    {
+      "id": "Passiveskillskr",
+      "found": true
+    },
+    {
+      "id": "Krjobs",
+      "found": true
+    },
+    {
+      "id": "MoreVehiclesRepairs",
+      "found": true
+    },
+    {
+      "id": "KRFieldMedicine",
+      "found": true
+    }
+  ],
+  "reduceBootLines": [
+    "LOG  : Lua          f:0 st:18,564,055> [ReduceMetalWood] loaded v2.0.0\r",
+    "LOG  : Lua          f:0 st:18,568,132> [ReduceMetalWood] applied (OnInitGlobalModData, server): reduction=50% wood=25 metal=123 changed=148 unchanged=0 failed=0 scanned=5263\r",
+    "LOG  : Lua          f:0 st:18,572,413> [ReduceMetalWood] applied (OnServerStarted, server): reduction=50% wood=25 metal=123 changed=0 unchanged=148 failed=0 scanned=5263\r"
+  ]
+}

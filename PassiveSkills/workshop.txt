@@ -1,0 +1,12 @@
+version=1
+id=3477846890
+title=Passive Skills v2
+description=[b]EN[/b] Skill magazines in five volumes. Each character learns once per volume and comments on the reading. All five grant 2775 XP at default settings. Eligible containers have a 12% chance of receiving a magazine. XP and spawn chance are configurable. 33 skills on B42 and 24 on B41; PT-BR + EN.
+description=
+description=[b]PT-BR[/b] Revistas de habilidade em cinco volumes. Cada personagem aprende uma vez por volume e comenta a leitura. Os cinco concedem 2775 XP nas opções padrão. Contêineres elegíveis têm 12% de chance de receber uma revista. XP e chance são configuráveis. 33 habilidades na B42 e 24 na B41; PT-BR + EN.
+description=
+description=At default XP settings, profession/trait/book multipliers are ignored; v1 read records are not migrated. / Nas opções padrão, os multiplicadores são ignorados; registros de leitura da v1 não são migrados.
+description=
+description=Development build: automated checks only. In-game validation on 42.21, hosted multiplayer and dedicated servers is pending. / Versão em desenvolvimento: verificações automatizadas; validação no jogo 42.21 e em multiplayer ainda pendente.
+tags=Build 41;Build 42;Skills;Literature;Items
+visibility=public
