@@ -29,7 +29,7 @@ Resultados detalhados: tests-importacao-2026-10-21.json. Esses resultados verifi
 
 - Certificação real no jogo alvo, incluindo interface, receitas e profissões.
 - Host e dedicado com dois clientes, reconexão, restart e save/load.
-- Conclusão documentada do smoke test anterior.
+- Repetir o smoke test na versão alvo; o relatório anterior em 42.19.2 já foi recebido e seus logs conferidos.
 - Revisão técnica, PT-BR/EN e testes de ZombieDisguise.
 - Arte final opcional para capa de FieldMedicine e ícones provisórios.
 - Upload Steam, somente depois da validação e mediante autorização própria.
