@@ -10,7 +10,7 @@ const ROOT = path.join(__dirname, '..');
 const MOD = path.join(ROOT, 'Contents', 'mods', 'PassiveSkills');
 const BUILDS = {
   42: { lua: path.join(MOD, '42', 'media', 'lua'), media: path.join(MOD, '42', 'media'), hook: 'shared/PassiveSkills_ReadHook.lua' },
-  41: { lua: path.join(MOD, 'media', 'lua'), media: path.join(MOD, 'media'), hook: 'client/PassiveSkills_ReadHook.lua' },
+
 };
 const TR42 = path.join(MOD, 'common', 'media', 'lua', 'shared', 'Translate');
 let failed = 0;
@@ -27,8 +27,8 @@ function walk(dir, out = []) {
 }
 const files = walk(path.join(ROOT, 'Contents'));
 
-// ---------- 1. generated files up to date (also proves B41 Lua == B42 Lua) ----------
-try { execFileSync(process.execPath, [path.join(ROOT, 'tools', 'gen.js'), '--check'], { stdio: 'pipe' }); ok('generated files up to date (Catalog, scripts, translations, B41 mirror of Lua)'); } catch (e) { fail('tools/gen.js --check: ' + e.stdout); }
+// ---------- 1. B42 generated resources ----------
+try { execFileSync(process.execPath, [path.join(ROOT, 'tools', 'gen.js'), '--check'], { stdio: 'pipe' }); ok('generated files up to date (Catalog, magazines, VHS, sandbox, B42 JSON)'); } catch (e) { fail('tools/gen.js --check: ' + e.stdout); }
 
 // ---------- 2. syntax ----------
 const luaFiles = files.filter((f) => f.endsWith('.lua') || /Translate[\\/][A-Z]+[\\/](IG_UI|Tooltip|Sandbox)_[A-Z]+\.txt$/.test(f));
@@ -45,13 +45,14 @@ for (const f of files.filter((f) => f.endsWith('.json'))) {
 }
 ok(`JSON parse: ${Object.keys(json).length} files`);
 
+if (fs.existsSync(path.join(MOD, 'media')) || fs.existsSync(path.join(MOD, 'mod.info'))) fail('active B41 root payload remains');
 // ---------- 3. layout, mod.info, v1 leftovers ----------
-for (const rel of ['mod.info', 'poster.png', 'icon.png', 'media/sandbox-options.txt', 'media/textures/Item_MagazineSkillsPhoto.png',
+for (const rel of [
   '42/mod.info', '42/poster.png', '42/icon.png', '42/media/sandbox-options.txt', '42/media/textures/Item_MagazineSkillsPhoto.png',
   'common/media/lua/shared/Translate/EN/Mod.json', 'common/media/lua/shared/Translate/PTBR/Mod.json']) {
   if (!fs.existsSync(path.join(MOD, rel))) fail('missing ' + rel);
 }
-for (const mi of ['mod.info', '42/mod.info']) {
+for (const mi of ['42/mod.info']) {
   const t = fs.readFileSync(path.join(MOD, mi), 'utf8');
   if (!/^id=Passiveskillskr$/m.test(t)) fail(mi + ' id');
   if (!/^icon=icon\.png$/m.test(t) || !/^poster=poster\.png$/m.test(t)) fail(mi + ' icon/poster');
@@ -61,7 +62,7 @@ for (const mi of ['mod.info', '42/mod.info']) {
 if (!/^versionMin=42\.15$/m.test(fs.readFileSync(path.join(MOD, '42/mod.info'), 'utf8'))) fail('42/mod.info versionMin=42.15');
 if (!/^id=3477846890$/m.test(fs.readFileSync(path.join(ROOT, 'workshop.txt'), 'utf8'))) fail('workshop.txt id');
 const png = (p) => { const b = fs.readFileSync(p); return [b.readUInt32BE(16), b.readUInt32BE(20)].join('x'); };
-if (png(path.join(MOD, 'poster.png')) !== '512x512' || png(path.join(MOD, 'icon.png')) !== '64x64' || png(path.join(ROOT, 'preview.png')) !== '256x256') fail('image sizes (poster 512, icon 64, preview 256)');
+if (png(path.join(MOD, '42', 'poster.png')) !== '512x512' || png(path.join(MOD, '42', 'icon.png')) !== '64x64' || png(path.join(ROOT, 'preview.png')) !== '256x256') fail('image sizes (poster 512, icon 64, preview 256)');
 for (const f of files) {
   if (/defines\.lua$/i.test(f)) fail('defines.lua must be deleted: ' + f);
   if (/\.(lua|txt|json)$/.test(f) && /GydeTraitMags|ZomboidGlobals|getPlayer\(\)|ProceduralDistributions|OnPreDistributionMerge/.test(fs.readFileSync(f, 'utf8'))) fail('v1 leftover / forbidden API in ' + path.relative(MOD, f));
@@ -72,7 +73,7 @@ ok('layout, mod.info (id, icon, versionMin, typo), workshop id, image sizes, no 
 const TIERS = ['one', 'two', 'three', 'four', 'five'];
 const PAGES = [10, 15, 20, 25, 30];
 const scriptItems = {};
-for (const b of ['42', '41']) {
+for (const b of ['42']) {
   const src = fs.readFileSync(path.join(BUILDS[b].media, 'scripts', 'PassiveSkills_Magazines.txt'), 'utf8');
   const opens = (src.match(/{/g) || []).length; const closes = (src.match(/}/g) || []).length;
   if (opens !== closes) fail(`B${b} script braces ${opens}/${closes}`);
@@ -87,44 +88,34 @@ for (const b of ['42', '41']) {
     if (props.Tooltip !== 'Tooltip_PassiveSkills_Magazine') fail(m[1] + ' tooltip');
     if (b === '42') {
       if (props.ItemType !== 'base:literature' || props.Type || props.DisplayName || props.Tags !== 'base:magazine') fail('B42 item format ' + m[1]);
-    } else if (props.Type !== 'Literature' || !props.DisplayName || props.ItemType) fail('B41 item format ' + m[1]);
+    }
   }
   scriptItems[b] = items;
   ok(`B${b} script: ${Object.keys(items).length} items, format + page counts OK`);
 }
 
 // ---------- 5. translations ----------
-const readB41 = (lang, file) => {
-  const p = path.join(BUILDS[41].lua, 'shared', 'Translate', lang, `${file}_${lang}.txt`);
-  const txt = fs.readFileSync(p, lang === 'EN' ? 'utf8' : 'latin1');
-  const out = {};
-  for (const l of txt.split(/\r?\n/)) { const mm = l.match(/^\s*([\w.]+)\s*=\s*"(.*)",\s*$/); if (mm) out[mm[1]] = mm[2]; }
-  return out;
-};
 const sets = {};
 for (const lang of ['EN', 'PTBR']) {
   sets['42' + lang] = {};
-  for (const f of ['ItemName', 'IG_UI', 'Tooltip', 'Sandbox', 'Mod']) sets['42' + lang][f] = json[path.join(TR42, lang, f + '.json')] || {};
-  sets['41' + lang] = {};
-  for (const f of ['ItemName', 'IG_UI', 'Tooltip', 'Sandbox']) sets['41' + lang][f] = readB41(lang, f);
+  for (const f of ['ItemName', 'IG_UI', 'Tooltip', 'Sandbox', 'Mod', 'Recorded_Media']) sets['42' + lang][f] = json[path.join(TR42, lang, f + '.json')] || {};
 }
 const sameKeys = (a, b) => JSON.stringify(Object.keys(a).sort()) === JSON.stringify(Object.keys(b).sort());
-for (const b of ['42', '41']) {
+for (const b of ['42']) {
   for (const f of Object.keys(sets[b + 'EN'])) {
     if (!sameKeys(sets[b + 'EN'][f], sets[b + 'PTBR'][f])) fail(`B${b} ${f}: EN and PTBR key sets differ`);
     for (const [k, v] of Object.entries(sets[b + 'PTBR'][f])) if (!v || v === k) fail(`B${b} PTBR empty ${k}`);
   }
   const names = sets[b + 'EN'].ItemName;
-  const prefix = b === '41' ? 'ItemName_' : '';
+  const prefix = '';
   const want = Object.keys(scriptItems[b]).map((k) => prefix + k).sort();
   if (JSON.stringify(Object.keys(names).sort()) !== JSON.stringify(want)) fail(`B${b} ItemName keys != script items`);
 }
-// PTBR B41 must decode as Cp1252/latin1 with accents intact
-if (!/Já li essa revista/.test(JSON.stringify(sets['41PTBR'].IG_UI))) fail('B41 PTBR encoding (latin1) broken');
+
 if (sets['42PTBR'].ItemName['Base.MagazineWoodwork_one'] !== 'Revista de Carpintaria Vol. 1') fail('PTBR item name sample');
-if (sets['41EN'].ItemName['ItemName_Base.MagazineMetalWelding_one'] !== 'Metalworking Magazine Vol. 1') fail('B41 EN uses Metalworking');
+
 // sandbox options <-> Sandbox translations
-for (const b of ['42', '41']) {
+for (const b of ['42']) {
   const sb = fs.readFileSync(path.join(BUILDS[b].media, 'sandbox-options.txt'), 'utf8');
   for (const m of sb.matchAll(/translation = (\w+)/g)) {
     for (const lang of ['EN', 'PTBR']) {
@@ -137,10 +128,10 @@ for (const b of ['42', '41']) {
 // literal getText keys used in Lua exist (dynamic skill keys are checked in glue_spec)
 for (const f of luaFiles.filter((f) => f.includes('Contents') && f.endsWith('.lua'))) {
   for (const m of fs.readFileSync(f, 'utf8').matchAll(/getText\("(\w+)"\s*[,)]/g)) {
-    for (const b of ['42', '41']) if (!sets[b + 'EN'].IG_UI[m[1]] && !sets[b + 'PTBR'].IG_UI[m[1]]) fail(`getText key ${m[1]} missing (B${b})`);
+    for (const b of ['42']) if (!sets[b + 'EN'].IG_UI[m[1]] && !sets[b + 'PTBR'].IG_UI[m[1]]) fail(`getText key ${m[1]} missing (B${b})`);
   }
 }
-ok('translations: EN == PTBR key sets (B42 json + B41 txt), item names cover scripts, sandbox + getText keys present');
+ok('translations: EN == PTBR key sets (B42 JSON, including80 original captions), item names cover scripts, sandbox + getText keys present');
 
 // ---------- 6. Lua specs in fengari ----------
 function newLua() {
@@ -156,12 +147,16 @@ function run(L, code) {
 }
 const luaSet = (arr) => '{' + arr.map((x) => `[${JSON.stringify(x)}]=true`).join(',') + '}';
 const luaMap = (obj) => '{' + Object.entries(obj).map(([k, v]) => `[${JSON.stringify(k)}]=${JSON.stringify(v)}`).join(',') + '}';
-for (const b of ['42', '41']) {
+for (const b of ['42']) {
   const perks = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', `perks_b${b}.json`), 'utf8')).perks;
   const tr = Object.assign({}, sets[b + 'EN'].IG_UI);
+  const native = process.env.PZ_MEDIA || 'E:/SteamLibrary/steamapps/common/ProjectZomboid/media';
+  const vanilla = path.join(native, 'lua/shared/RadioCom/ISRadioInteractions.lua');
+  if (fs.existsSync(vanilla)) ok('real native ISRadioInteractions.lua SHA256=' + require('crypto').createHash('sha256').update(fs.readFileSync(vanilla)).digest('hex'));
+  else console.log('SKIP real native integration: set PZ_MEDIA to a game media directory');
   const prelude = `BUILD=${b}; PERKS=${luaSet(perks)}; ITEMS=${luaSet(Object.keys(scriptItems[b]))}; TR=${luaMap(tr)};
-    MODROOT=${JSON.stringify(fwd(BUILDS[b].lua))}; HOOKFILE=${JSON.stringify(fwd(path.join(BUILDS[b].lua, BUILDS[b].hook)))};`;
-  for (const spec of ['core_spec.lua', 'glue_spec.lua']) {
+    MEDIA_TEXT=${luaMap(sets[b + 'EN'].Recorded_Media)}; VANILLA_RADIO=${fs.existsSync(vanilla) ? JSON.stringify(fwd(vanilla)) : 'nil'}; MODROOT=${JSON.stringify(fwd(BUILDS[b].lua))}; HOOKFILE=${JSON.stringify(fwd(path.join(BUILDS[b].lua, BUILDS[b].hook)))};`;
+  for (const spec of ['core_spec.lua', 'glue_spec.lua', 'vhs_spec.lua']) {
     const L = newLua();
     try {
       run(L, `package.path = ${JSON.stringify(fwd(BUILDS[b].lua) + '/shared/?.lua;')} .. package.path`);

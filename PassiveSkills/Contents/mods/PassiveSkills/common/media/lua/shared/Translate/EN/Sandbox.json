@@ -3,5 +3,9 @@
     "Sandbox_PassiveSkills_SpawnChance": "Skill magazine chance (%)",
     "Sandbox_PassiveSkills_SpawnChance_tooltip": "Chance that an eligible container (bookshelves, magazine racks, desks, postboxes, libraries, bookstores...) gets one skill magazine when its loot is generated. Lower volumes are more common. 0 = magazines never spawn. Default 12.",
     "Sandbox_PassiveSkills_XpPercent": "XP per magazine (%)",
-    "Sandbox_PassiveSkills_XpPercent_tooltip": "100 = reading the 5 volumes of a skill gives exactly the XP of level 5 (75/150/300/750/1500). Profession, trait and skill-book XP multipliers are ignored, so every character gains the same."
+    "Sandbox_PassiveSkills_XpPercent_tooltip": "100 = reading the 5 volumes of a skill gives exactly the XP of level 5 (75/150/300/750/1500). Profession, trait and skill-book XP multipliers are ignored, so every character gains the same.",
+    "Sandbox_PassiveSkills_VHSSpawnChance": "Skill VHS chance (%)",
+    "Sandbox_PassiveSkills_VHSSpawnChance_tooltip": "Independent chance of one original skill VHS in an eligible magazine container. 0 disables new VHS spawns; existing tapes remain playable. Default 2%. Vanilla tapes are unchanged.",
+    "Sandbox_PassiveSkills_VHSXpPercent": "Skill VHS base XP (%)",
+    "Sandbox_PassiveSkills_VHSXpPercent_tooltip": "100 = 250 base XP per complete tape (five teaching lines). Normal game XP multipliers and media level cutoff apply. Native cooldown/history rules apply. 0 disables learning without consuming unseen lines. Magazine XP is separate."
 }

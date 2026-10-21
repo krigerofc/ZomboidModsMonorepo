@@ -310,5 +310,13 @@ do
     check(ok and action and action.ignoreAction, "feedback error does not break read constructor")
 end
 
+do
+    resetWorld({})
+    local ch = newCharacter(false)
+    ch.md.PassiveSkills = { read = { Woodwork_3 = true, MetalWelding_1 = true, old_custom_key = true } }
+    read(ch, newItem(MAG3))
+    read(ch, newItem("Base.MagazineWelding_one"))
+    check(#log.xp == 0 and ch.md.PassiveSkills.read.old_custom_key == true, "existing v2 read history and unrelated keys survive unchanged")
+end
 check(#missingText == 0, "getText keys missing from translations: " .. table.concat(missingText, ", "))
 return failures

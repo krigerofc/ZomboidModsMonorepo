@@ -1,7 +1,7 @@
 name=Passive Skills v2
 id=Passiveskillskr
 author=Kriger
-description=Skill magazines in five volumes. Each character learns once per volume and comments on the reading. All five grant 2775 XP at default settings. Eligible containers have a 12% chance of receiving a magazine. XP and spawn chance are configurable. 33 skills on B42 and 24 on B41; PT-BR + EN.
+description=B42 only. 33 skills in five magazine volumes: 2775 fixed XP per skill at defaults; 12% magazine chance. 16 original VHS programs for eight skills play on compatible TVs. Each full tape offers 250 base XP; native XP multipliers and media level cutoff apply. Learn each recorded line once per character. Separate VHS chance (2%) and XP options. PT-BR + EN. Existing v2 magazine read history is preserved. Gameplay and multiplayer validation on 42.21 pending.
 poster=poster.png
 icon=icon.png
 modversion=2.0.0

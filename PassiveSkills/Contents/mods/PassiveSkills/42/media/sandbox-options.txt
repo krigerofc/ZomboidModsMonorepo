@@ -2,20 +2,40 @@ VERSION = 1,
 
 option PassiveSkills.SpawnChance
 {
-	type = integer,
-	min = 0,
-	max = 100,
-	default = 12,
-	page = PassiveSkills,
-	translation = PassiveSkills_SpawnChance,
+    type = integer,
+    min = 0,
+    max = 100,
+    default = 12,
+    page = PassiveSkills,
+    translation = PassiveSkills_SpawnChance,
 }
 
 option PassiveSkills.XpPercent
 {
-	type = integer,
-	min = 0,
-	max = 1000,
-	default = 100,
-	page = PassiveSkills,
-	translation = PassiveSkills_XpPercent,
+    type = integer,
+    min = 0,
+    max = 1000,
+    default = 100,
+    page = PassiveSkills,
+    translation = PassiveSkills_XpPercent,
+}
+
+option PassiveSkills.VHSSpawnChance
+{
+    type = integer,
+    min = 0,
+    max = 100,
+    default = 2,
+    page = PassiveSkills,
+    translation = PassiveSkills_VHSSpawnChance,
+}
+
+option PassiveSkills.VHSXpPercent
+{
+    type = integer,
+    min = 0,
+    max = 1000,
+    default = 100,
+    page = PassiveSkills,
+    translation = PassiveSkills_VHSXpPercent,
 }

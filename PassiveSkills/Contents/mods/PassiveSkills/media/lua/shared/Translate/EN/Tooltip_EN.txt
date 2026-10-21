@@ -1,3 +1,0 @@
-Tooltip_EN = {
-    Tooltip_PassiveSkills_Magazine = "Skill magazine (5 volumes per skill). Each character learns from each volume only once.",
-}

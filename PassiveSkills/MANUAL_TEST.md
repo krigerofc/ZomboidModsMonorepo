@@ -1,63 +1,85 @@
-# Teste manual - Passive Skills v2
+# Passive Skills v2 — B42 / Guia manual e evidências
 
-Testes automáticos (`npm test`) cobrem lógica pura e a integração com mocks. Este roteiro cobre o que só dá para ver no jogo.
-Referência: vanilla B42.19.2 (alvo 42.21). Mod id `Passiveskillskr`, Workshop 3477846890.
+PT-BR: esta versão distribui somente B42. Mod ID `Passiveskillskr`, Workshop `3477846890`. As revistas preservam IDs, XP, feedback e chaves de leitura da v2. O jogo não foi iniciado nesta etapa.
+EN: this package ships B42 only. Magazine IDs, XP, feedback and v2 read keys are preserved. No game was launched during this work.
 
-## 1. Preparação
+Referência local / local reference: arquivos instalados documentados como 42.19.2; alvo solicitado / requested target: 42.21. A inspeção local não certifica 42.21 / local inspection does not certify 42.21.
 
-1. Garanta que **não** há outra cópia do mod ativa: a pasta antiga `C:\Users\pedro\Zomboid\mods\PassiveSkills` foi removida; desinscreva o item do Workshop se estiver inscrito (ou deixe só esta cópia em `Zomboid\Workshop\PassiveSkills`).
-2. Steam > PZ > Propriedades > Opções de inicialização: `-debug -debugtranslation`.
-3. Menu Mods: ative **Passive Skills v2**. Confira nome/descrição em PT-BR (B42 lê `Mod.json`).
-4. Novo jogo > Sandbox personalizado > página **Passive Skills**:
-   - "Chance de revista de habilidade (%)" = 12 (padrão) e tooltip em PT-BR.
-   - "XP por revista (%)" = 100 (padrão) e tooltip em PT-BR.
-   - Com `-debugtranslation`, nenhuma chave crua (`Sandbox_PassiveSkills_...`) deve aparecer.
+## Comportamento / Behavior
 
-## 2. Itens e nomes
-
-1. Debug > Items List: busque `Magazine`. B42: 33 habilidades × 5 volumes (+5 legados `MagazineWelding_*`); B41: 24 × 5 (+5 legados).
-2. Nome em PT-BR, ex.: `Base.MagazineWoodwork_one` = "Revista de Carpintaria Vol. 1"; em EN "Carpentry Magazine Vol. 1" (B41 EN: Metalurgia = "Metalworking").
-3. Tooltip do item: "Revista de habilidade (5 volumes por habilidade)...". Categoria: Livro de habilidade.
-4. Não deve existir nenhuma revista de Fitness/Força. No B41 não devem existir Cuidado com Animais, Entalhe, Lascamento, Cerâmica, Rastreamento, Alvenaria, Forja, Vidraria, Açougue.
-
-## 3. Leitura (SP)
-
-Personagem novo (ex.: Desempregado), sem nível em Carpintaria.
-
-| Passo | Esperado |
+| PT-BR | EN |
 |---|---|
-| Spawnar `Base.MagazineWoodwork_one` e ler | Leitura ~20 min de jogo (10 páginas × 2 min). No fim: balão "Li isso e aprendi algo sobre Carpintaria." + texto flutuante verde "+ Carpintaria". XP de Carpintaria +75 (painel de habilidades / Debug > Player Stats). |
-| Ler a mesma revista de novo | A ação **não começa** (não trava a fila); balão "Já li essa revista. Nada de novo aqui." XP não muda. |
-| Spawnar outra cópia da mesma revista e tentar ler | Mesmo resultado (registro é por personagem, não por item). |
-| Ler Vol. 2..5 de Carpintaria | +150, +300, +750, +1500. Total 2775 = **nível 5** exato. |
-| Repetir com um profissional (ex.: Carpinteiro, que começa com nível) | Ganha os mesmos 75/150/300/750/1500 (sem multiplicador de profissão); termina **acima** do nível 5. |
-| Testar 3 habilidades novas (ex.: `MagazineSpear_five`, `MagazineRunning_one`, B42 `MagazineBlacksmith_three`) | XP vai para Lanças / Corrida / Forja. |
-| Interromper a leitura no meio (andar) | Sem XP; ler de novo continua de onde parou; ao terminar ganha XP normalmente. |
-| Ler um item legado `Base.MagazineWelding_two` depois de `MagazineMetalWelding_two` | "Já li essa revista" (mesma chave de leitura). |
-| Morrer e criar novo personagem | O novo personagem pode ler tudo de novo (registro fica no modData do personagem). |
-| Sandbox "XP por revista (%)" = 50 | Vol. 5 dá +750. |
+| 33 habilidades, cinco volumes, 2775 XP fixos por habilidade no padrão. Chance de revista: 12%. | 33 skills, five volumes, 2775 fixed XP per skill at defaults. Magazine chance: 12%. |
+| 16 programas VHS originais, dois para cada uma das oito habilidades abaixo; cinco legendas por programa, EN/PTBR. | 16 original VHS programs, two per skill below; five captions per program, EN/PTBR. |
+| VHS usa o item do jogo `Base.VHS_Retail`, com dados de mídia próprios. Inserir, transportar ou pegar a fita não ensina. | VHS uses the native `Base.VHS_Retail` item with its own recorded program. Inserting, carrying or picking up a tape does not teach. |
+| Chance de VHS: 2%, independente da revista, nos mesmos contêineres elegíveis. 0 impede novas fitas; fitas existentes permanecem reproduzíveis. | VHS chance: 2%, independent of magazines, in the same eligible containers. 0 stops new tapes; existing tapes remain playable. |
+| XP de VHS: 100% oferece 250 XP **base** por fita, 50 por trecho. Multiplicadores normais e `LevelForMediaXPCutoff` do jogo se aplicam. Não existe garantia de 250 XP finais. | VHS XP: 100% offers 250 **base** XP per tape, 50 per line. Normal multipliers and the game's `LevelForMediaXPCutoff` apply. Final XP is not guaranteed to equal 250. |
+| Cada personagem aprende cada trecho uma vez pelo histórico nativo; cópias, rebobinar e trocar de TV usam a mesma identidade. | Native per-character line history prevents replay through copies, rewinding or another TV. |
+| XP de VHS em 0 desativa aprendizado sem marcar novos trechos como vistos. XP de revistas é separado. | VHS XP 0 disables learning without consuming unseen lines. Magazine XP is separate. |
+| A regra nativa marca o trecho visto antes do limite de nível e do intervalo de 30 ticks por habilidade. Duas TVs ensinando a mesma habilidade ao mesmo tempo podem consumir um trecho sem dar XP. Assistir uma fita por vez evita essa disputa. | Native logic marks a line seen before the level cutoff and 30 tick same-skill cooldown. Concurrent TVs can consume a line without XP. Watch one tape at a time to avoid that contention. |
+| Adormecido, morto, fora do alcance de 5 quadrados em cada eixo, em outro piso ou do outro lado da separação interior/exterior não aprende, conforme o código nativo. | Native checks reject sleeping/dead viewers, viewers beyond 5 tiles on either axis, another floor or the opposite inside/outside boundary. |
 
-## 4. Spawn
+## Catálogo / Catalog
 
-1. Sandbox "Chance de revista" = **100**, novo jogo. Abra estantes de sala, expositores de revista, escrivaninhas, caixas de correio, biblioteca/livraria: **exatamente uma** revista de habilidade em cada contêiner elegível recém-gerado.
-2. Geladeira, guarda-roupa, prateleiras de mercado: **nenhuma** revista do mod.
-3. Chance = **0**: nenhuma revista em lugar nenhum (não há entradas nas tabelas vanilla).
-4. Chance = 12 (padrão): andar por ~50 contêineres elegíveis deve dar por volta de 6 revistas; volumes 1-2 bem mais comuns que 4-5.
+| Habilidade / Skill | Código nativo / Native code | Programas EN / PTBR |
+|---|---|---|
+| Carpintaria / Carpentry (`Woodwork`) | CRP | The Square Start / O começo no esquadro; Sunday Shelf Workshop / Oficina da prateleira de domingo |
+| Mecânica / Mechanics (`Mechanics`) | MEC | Driveway Checks with Dale / Revisão na garagem com Dale; The Wheel Routine / A rotina das rodas |
+| Primeiros Socorros / First Aid (`Doctor`) | DOC | Community First Aid: First Minutes / Primeiros socorros: primeiros minutos; Community First Aid: Clean Dressings / Primeiros socorros: curativos limpos |
+| Elétrica / Electrical (`Electricity`) | ELC | The Dead Circuit Rule / A regra do circuito desligado; Bench Radio: Finding the Fault / Rádio de bancada: encontrando a falha |
+| Metalurgia / Welding (`MetalWelding`) | MTL | Weld Shop: Preparation Pays / Oficina de solda: preparar compensa; Weld Shop: A Steady Bead / Oficina de solda: cordão constante |
+| Forja / Blacksmithing (`Blacksmith`) | BLA | Morning at the Forge / Manhã na forja; Forge Practice: Hook and Eye / Prática de forja: gancho e olhal |
+| Alvenaria / Masonry (`Masonry`) | MAS | Masonry Corner: The First Course / Canto da alvenaria: primeira fiada; Masonry Corner: The Brick Rhythm / Canto da alvenaria: ritmo dos tijolos |
+| Costura / Tailoring (`Tailoring`) | TAI | The Mending Basket / O cesto de consertos; A Working Hem / Uma barra bem feita |
 
-## 5. Multiplayer (B42)
+## Verificação automatizada / Automated verification
 
-Servidor dedicado local (ou host) + 2 clientes, mod ativo nos dois lados.
+`npm test` executa / runs:
 
-1. Cliente A lê `MagazineCooking_one`: balão e texto flutuante aparecem no cliente A; XP +75 aparece no A e é a mesma no servidor (relogar e conferir).
-2. Cliente A tenta reler: "Já li..." sem XP. Cliente B lê a mesma revista: ganha XP (registro por personagem).
-3. Cliente A sai e volta (e reinicie o servidor): tentar reler deve continuar bloqueado (o cliente pede a lista ao servidor ao entrar). **Se depois de reiniciar o servidor a leitura voltar a dar XP, o modData do jogador não persiste no servidor: reportar.**
+- Geração atualizada, layout somente B42, sintaxe Lua 5.1, 170 revistas e paridade de todas as chaves EN/PTBR / generated-resource checks, B42-only layout, Lua 5.1 syntax, 170 magazine definitions and EN/PTBR key parity.
+- Lógica e integração existentes das revistas, inclusive histórico v2 pré-existente e alias Welding / existing magazine logic/glue, including pre-existing v2 read history and the Welding alias.
+- Registro de 16 programas, identidades estáveis, itens VHS do jogo, spawn independente e nenhum XP por posse / registration of 16 programs, stable identities, native VHS items, independent spawning and no possession XP.
+- Integração com o arquivo **real instalado** `media/lua/shared/RadioCom/ISRadioInteractions.lua`, carregado no Fengari com objetos de motor simulados. Inclui todas as oito habilidades, duas pessoas, interrupção/repetição/cópias, mudança de posição da TV, histórico restaurado, distância/piso/sono, multiplicadores, cutoff, XP 0, cooldown e passagem inalterada de mídia de outros autores / real installed native Lua under Fengari with engine objects stubbed, covering all eight skills and these scenarios.
 
-## 6. Log
+Defina / set `PZ_MEDIA` para / to the installed game's `media` directory if needed. When it is unavailable the runner prints an explicit native-integration SKIP; it does not replace the native handler with a synthetic XP implementation. O runner informa SHA256 da fonte usada / the runner prints the native source SHA256.
 
-Depois de jogar:
+`node tools/gen.js --check` deve sair 0 / must exit 0. Não instala dependências / installs no dependencies.
 
-```
-grep -iE "error|exception|stack trace|PassiveSkills" "C:\Users\pedro\Zomboid\console.txt"
-```
+## Fontes e limites da API / API evidence and limits
 
-Esperado: linhas `[PassiveSkills] build 42: 33 skills, 170 magazine types` (B41: `build 41: 24 skills, 125 magazine types`) e `[PassiveSkills] read Base.Magazine... -> <Perk> +<XP> XP`. Nenhuma linha `[PassiveSkills] error ...`, `perk not found`, nem erro de script de item `PassiveSkills_Magazines.txt`. Com `-debugtranslation`, nenhuma chave `IGUI_PassiveSkills_*`/`Tooltip_PassiveSkills_*` faltando.
+Inspecionados somente em leitura / inspected read-only:
+
+- `media/lua/shared/RecordedMedia/ISRecordedMedia.lua`: `OnInitRecordedMedia`, `register`, `setTitle`, `setSubtitle`, `setAuthor`, `addLine`.
+- `media/lua/shared/RadioCom/ISRadioInteractions.lua`: oito códigos acima, `OnDeviceText`, 50×valor do código via `addXp`, gates de espectadores, cooldown e `isKnownMediaLine/addKnownMediaLine`.
+- `media/lua/client/RadioCom/RadioWindowModules/RWMMedia.lua`: teclado/controle procuram os tipos exatos `Base.VHS_Retail` e `Base.VHS_Home`.
+- `projectzomboid.jar`, classes `RecordedMedia`, `DeviceData`, `IsoGameCharacter`: registro e índices persistentes; categoria não-CD é mídia tipo1; tabelas de spawn varejista usam somente `Retail-VHS`; inserção não concede XP; reprodução verifica energia/volume e emite `OnDeviceText` durante cada linha; histórico nativo tem save/load por personagem.
+
+O adaptador só escala códigos dos80GUIDs próprios e chama o handler nativo uma vez. Nenhuma recompensa direta, timer próprio ou comando cliente de XP foi adicionado / the adapter scales only its 80 owned GUIDs and delegates native handling once. It adds no direct XP reward, custom playback timer or client XP command.
+
+Reproduzir a inspeção / reproduce the class inspection: `python tools/inspect-native.py <projectzomboid.jar>`. O resultado registra hashes de classe e instruções relevantes / output records class hashes and relevant bytecode. Isso comprova as referências locais, não execução real de Java ou rede / this checks local references, not actual Java or network execution.
+
+## Roteiro no jogo — ainda pendente / In-game matrix — still pending
+
+Use uma instalação de teste isolada e um mundo descartável; não altere saves ou fontes originais / use an isolated test install and disposable world; preserve original saves and sources.
+
+| Verificação / Check | Resultado esperado / Expected result |
+|---|---|
+| Menu Mods e sandbox EN/PTBR / Mods menu and sandbox | Somente B42, quatro opções localizadas, nenhum texto cru de chave / B42 only, four localized settings, no raw translation keys. |
+| Revistas / Magazines | IDs e nomes antigos; sem Fitness/Força; cinco volumes dão 75/150/300/750/1500 sem multiplicadores; balão e halo originais / old IDs/names; no Fitness/Strength; fixed tier XP and original speech/halo. |
+| Histórico v2 e legado / v2 history and legacy | Revista já lida continua bloqueada; `Welding` compartilha chave com `MetalWelding`; morte/nova pessoa tem histórico novo / saved reads stay blocked, alias shares key, new character has fresh history. |
+| Spawn 0/100 e raridades / spawn 0/100 and rarity | Configurações de revista/VHS independentes; contêiner elegível gera no máximo uma revista e uma fita do mod; mídia vanilla não muda / independent settings, at most one mod magazine and one mod tape per eligible fill, unchanged vanilla media. |
+| Inventário e inserção / Inventory and insertion | Nenhum XP por pegar, carregar, inserir ou retirar fita / no XP on pickup, carrying, insertion or removal. |
+| Televisão compatível / Compatible TV | Teclado e controle inserem VHS; títulos e cinco legendas legíveis nos dois idiomas; XP em cada trecho reproduzido / keyboard/controller insertion, readable title and five captions in both languages, XP on played lines. |
+| TV sem energia/desligada/volume0 / Unpowered/off/muted TV | Sem XP; retomar restaura comportamento nativo / no XP; restoring playback follows native behavior. |
+| Rádio/CD/aparelho incompatível / Radio/CD/unsupported device | Fita não entra em aparelho incompatível; sem XP / incompatible insertion rejected, no XP. |
+| Interromper após dois trechos / Stop after two lines | Apenas 100 XP base antes de multiplicadores; repetir não dá XP nos dois trechos; restantes aprendem / 100 base XP before multipliers, seen lines do not replay, unseen lines can teach. |
+| Duas cópias/TVs / Two copies/TVs | Mesmas identidades impedem XP repetido; duas TVs simultâneas podem disputar cooldown nativo / shared identity prevents duplicates; concurrent TVs can contend for native cooldown. |
+| Distância, piso, sono, interior/exterior / Distance, floor, sleep, inside/outside | Gates nativos aplicados; também testar paredes e obstáculos e registrar limitações reais / native gates apply; test walls/obstacles and record real limitations. |
+| Profissão/livro/cutoff / Profession/book/cutoff | VHS usa multiplicadores/limite nativos; revista mantém XP fixo; cutoff pode marcar trecho visto sem XP / VHS follows native multipliers/cutoff, magazines remain fixed; cutoff may consume seen line. |
+| Host e dedicado com 2 clientes / Host and dedicated with 2 clients | Ambos assistem à mesma sessão e têm progresso próprio; confira XP no servidor e no dono, nenhum duplicado entre cliente/servidor / independent progress, matching owner/server XP, no client/server duplicate. |
+| Reconectar/save/load/reiniciar / Reconnect/save/load/restart | XP e histórico parcial mantidos, índices de mídia estáveis, nenhum ganho repetido; novo personagem aprende / XP/history/index persistence, no replay, new character learns. |
+| Desativar e reativar mod / Disable/re-enable mod | Verificar preservação da fita física e histórico; registrar como mídia ausente aparece durante desativação / verify physical tape/history preservation and missing-media presentation while disabled. |
+| Console | Nenhuma exceção do mod, nenhuma tradução ou perk faltando / no mod exception, missing translation or invalid perk. |
+
+PT-BR: preencher versão exata do executável, SP/host/dedicado, idiomas, total real de XP e logs antes de anunciar compatibilidade.
+EN: record exact executable version, SP/host/dedicated mode, languages, actual XP totals and logs before claiming compatibility.
