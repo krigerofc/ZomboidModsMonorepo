@@ -1,3 +1,5 @@
+> **Documento histórico (B42.13.x).** Para o estado das versões atuais importadas, consulte [README.md](README.md) e [docs/API-CHECK-42.21.md](docs/API-CHECK-42.21.md). Este guia não certifica as versões novas.
+
 # guia.md — Workspace PZ Mods
 
 > Fonte de verdade do workspace. Gerado pelo zomboid-guia-bootstrapper em 2026-05-23.

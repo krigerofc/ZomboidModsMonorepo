@@ -1,0 +1,15 @@
+{
+  "name": "basic-vehicle-maintenance-v2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Dev tooling (tests only) for the Project Zomboid mod Basic Vehicle Maintenance v2 (More Vehicles Repairs). Not shipped.",
+  "scripts": {
+    "test": "node tests/run.js",
+    "tr": "node tools/translations.js",
+    "fixtures": "node tools/gen-fixtures.js"
+  },
+  "devDependencies": {
+    "fengari": "0.1.4",
+    "luaparse": "0.3.1"
+  }
+}

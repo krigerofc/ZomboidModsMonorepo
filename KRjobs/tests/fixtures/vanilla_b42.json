@@ -1,0 +1,1023 @@
+{
+ "_source": "vanilla 42.19.2 scripts/generated/characters",
+ "professions": {
+  "base:burglar": {
+   "cost": -6,
+   "xp": {
+    "Nimble": 2,
+    "Sneak": 2,
+    "Lightfoot": 2
+   },
+   "traits": [
+    "base:burglar"
+   ],
+   "recipes": 14,
+   "icon": "profession_burglar2",
+   "isProfessionTrait": false
+  },
+  "base:burgerflipper": {
+   "cost": 2,
+   "xp": {
+    "Cooking": 2,
+    "Maintenance": 1,
+    "SmallBlade": 1
+   },
+   "traits": [
+    "base:cook2"
+   ],
+   "recipes": 0,
+   "icon": "profession_burgerflipper",
+   "isProfessionTrait": false
+  },
+  "base:carpenter": {
+   "cost": -2,
+   "xp": {
+    "Woodwork": 4,
+    "Carving": 1,
+    "SmallBlunt": 1,
+    "Masonry": 1,
+    "Maintenance": 1
+   },
+   "traits": [],
+   "recipes": 19,
+   "icon": "profession_hammer2",
+   "isProfessionTrait": false
+  },
+  "base:chef": {
+   "cost": -2,
+   "xp": {
+    "Cooking": 4,
+    "Maintenance": 1,
+    "SmallBlade": 1,
+    "Butchering": 2
+   },
+   "traits": [
+    "base:cook2"
+   ],
+   "recipes": 20,
+   "icon": "profession_chef2",
+   "isProfessionTrait": false
+  },
+  "base:constructionworker": {
+   "cost": -2,
+   "xp": {
+    "SmallBlunt": 2,
+    "Blunt": 1,
+    "Masonry": 2,
+    "Woodwork": 1,
+    "Maintenance": 1
+   },
+   "traits": [],
+   "recipes": 0,
+   "icon": "profession_constructionworker2",
+   "isProfessionTrait": false
+  },
+  "base:doctor": {
+   "cost": 0,
+   "xp": {
+    "Doctor": 6,
+    "SmallBlade": 1
+   },
+   "traits": [],
+   "recipes": 0,
+   "icon": "profession_doctor2",
+   "isProfessionTrait": false
+  },
+  "base:electrician": {
+   "cost": -2,
+   "xp": {
+    "Electricity": 5
+   },
+   "traits": [],
+   "recipes": 12,
+   "icon": "profession_electrician",
+   "isProfessionTrait": false
+  },
+  "base:engineer": {
+   "cost": -4,
+   "xp": {
+    "Electricity": 1,
+    "Woodwork": 1,
+    "Masonry": 1
+   },
+   "traits": [],
+   "recipes": 13,
+   "icon": "profession_engineer",
+   "isProfessionTrait": false
+  },
+  "base:farmer": {
+   "cost": 0,
+   "xp": {
+    "Farming": 4,
+    "Husbandry": 1,
+    "Strength": 1
+   },
+   "traits": [],
+   "recipes": 63,
+   "icon": "profession_farmer2",
+   "isProfessionTrait": false
+  },
+  "base:fireofficer": {
+   "cost": 0,
+   "xp": {
+    "Sprinting": 1,
+    "Strength": 1,
+    "Fitness": 1,
+    "Axe": 1
+   },
+   "traits": [],
+   "recipes": 0,
+   "icon": "profession_fireofficer2",
+   "isProfessionTrait": false
+  },
+  "base:fisherman": {
+   "cost": -2,
+   "xp": {
+    "Fishing": 3,
+    "PlantScavenging": 1,
+    "Butchering": 1
+   },
+   "traits": [],
+   "recipes": 5,
+   "icon": "profession_fisher2",
+   "isProfessionTrait": false
+  },
+  "base:fitnessinstructor": {
+   "cost": -6,
+   "xp": {
+    "Fitness": 3,
+    "Sprinting": 2,
+    "Strength": 1
+   },
+   "traits": [
+    "base:nutritionist2"
+   ],
+   "recipes": 0,
+   "icon": "profession_fitnessinstructor",
+   "isProfessionTrait": false
+  },
+  "base:lumberjack": {
+   "cost": 0,
+   "xp": {
+    "Axe": 2,
+    "Strength": 1,
+    "Maintenance": 1
+   },
+   "traits": [
+    "base:axeman"
+   ],
+   "recipes": 0,
+   "icon": "profession_lumberjack",
+   "isProfessionTrait": false
+  },
+  "base:mechanics": {
+   "cost": -4,
+   "xp": {
+    "Mechanics": 4,
+    "MetalWelding": 1
+   },
+   "traits": [
+    "base:mechanics2"
+   ],
+   "recipes": 3,
+   "icon": "profession_mechanic",
+   "isProfessionTrait": false
+  },
+  "base:metalworker": {
+   "cost": -4,
+   "xp": {
+    "MetalWelding": 4
+   },
+   "traits": [],
+   "recipes": 85,
+   "icon": "profession_metalworker",
+   "isProfessionTrait": false
+  },
+  "base:nurse": {
+   "cost": 0,
+   "xp": {
+    "Doctor": 3,
+    "Lightfoot": 1,
+    "Fitness": 1
+   },
+   "traits": [
+    "base:nightowl"
+   ],
+   "recipes": 0,
+   "icon": "profession_nurse",
+   "isProfessionTrait": false
+  },
+  "base:parkranger": {
+   "cost": -4,
+   "xp": {
+    "Trapping": 1,
+    "Doctor": 1,
+    "PlantScavenging": 1,
+    "FlintKnapping": 1,
+    "Carving": 1
+   },
+   "traits": [
+    "base:herbalist_prof"
+   ],
+   "recipes": 5,
+   "icon": "profession_parkranger2",
+   "isProfessionTrait": false
+  },
+  "base:policeofficer": {
+   "cost": -4,
+   "xp": {
+    "Aiming": 4,
+    "Reloading": 1,
+    "Nimble": 1
+   },
+   "traits": [],
+   "recipes": 0,
+   "icon": "profession_policeofficer2",
+   "isProfessionTrait": false
+  },
+  "base:rancher": {
+   "cost": 0,
+   "xp": {
+    "Husbandry": 4,
+    "Butchering": 3,
+    "Fitness": 1
+   },
+   "traits": [],
+   "recipes": 1,
+   "icon": "profession_rancher",
+   "isProfessionTrait": false
+  },
+  "base:repairman": {
+   "cost": -2,
+   "xp": {
+    "Woodwork": 1,
+    "Maintenance": 2,
+    "SmallBlunt": 1,
+    "Masonry": 1
+   },
+   "traits": [
+    "base:inventive_prof"
+   ],
+   "recipes": 24,
+   "icon": "profession_repairman2",
+   "isProfessionTrait": false
+  },
+  "base:securityguard": {
+   "cost": -2,
+   "xp": {
+    "Sprinting": 2,
+    "Lightfoot": 1,
+    "SmallBlunt": 1
+   },
+   "traits": [
+    "base:nightowl"
+   ],
+   "recipes": 0,
+   "icon": "profession_securityguard2",
+   "isProfessionTrait": false
+  },
+  "base:smither": {
+   "cost": -6,
+   "xp": {
+    "Blacksmith": 4,
+    "Maintenance": 1,
+    "SmallBlunt": 1
+   },
+   "traits": [
+    "base:blacksmith2"
+   ],
+   "recipes": 86,
+   "icon": "profession_smither",
+   "isProfessionTrait": false
+  },
+  "base:tailor": {
+   "cost": 2,
+   "xp": {
+    "Tailoring": 4
+   },
+   "traits": [],
+   "recipes": 59,
+   "icon": "profession_tailor",
+   "isProfessionTrait": false
+  },
+  "base:unemployed": {
+   "cost": 8,
+   "xp": {},
+   "traits": [],
+   "recipes": 0,
+   "icon": "",
+   "isProfessionTrait": false
+  },
+  "base:veteran": {
+   "cost": -8,
+   "xp": {
+    "Aiming": 2,
+    "Reloading": 2
+   },
+   "traits": [
+    "base:desensitized"
+   ],
+   "recipes": 1,
+   "icon": "profession_veteran2",
+   "isProfessionTrait": false
+  }
+ },
+ "traits": {
+  "base:adrenalinejunkie": {
+   "cost": 4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:agoraphobic": {
+   "cost": -4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:allthumbs": {
+   "cost": -2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:artisan": {
+   "cost": 2,
+   "xp": {
+    "Glassmaking": 1,
+    "Pottery": 1
+   },
+   "recipes": 6,
+   "isProfessionTrait": false
+  },
+  "base:asthmatic": {
+   "cost": -5,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:athletic": {
+   "cost": 10,
+   "xp": {
+    "Fitness": 4
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:axeman": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:baseballplayer": {
+   "cost": 4,
+   "xp": {
+    "Blunt": 1
+   },
+   "recipes": 1,
+   "isProfessionTrait": false
+  },
+  "base:blacksmith": {
+   "cost": 6,
+   "xp": {
+    "Blacksmith": 2,
+    "Maintenance": 1
+   },
+   "recipes": 85,
+   "isProfessionTrait": false
+  },
+  "base:blacksmith2": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:brave": {
+   "cost": 4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:brawler": {
+   "cost": 6,
+   "xp": {
+    "Axe": 1,
+    "Blunt": 1
+   },
+   "recipes": 6,
+   "isProfessionTrait": false
+  },
+  "base:burglar": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:claustrophobic": {
+   "cost": -4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:clumsy": {
+   "cost": -2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:conspicuous": {
+   "cost": -4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:cook": {
+   "cost": 3,
+   "xp": {
+    "Cooking": 2,
+    "Butchering": 1
+   },
+   "recipes": 16,
+   "isProfessionTrait": false
+  },
+  "base:cook2": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:cowardly": {
+   "cost": -2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:crafty": {
+   "cost": 3,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:deaf": {
+   "cost": -12,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:desensitized": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:dextrous": {
+   "cost": 2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:disorganized": {
+   "cost": -6,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:eagleeyed": {
+   "cost": 4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:emaciated": {
+   "cost": -10,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:fasthealer": {
+   "cost": 6,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:fastlearner": {
+   "cost": 6,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:fastreader": {
+   "cost": 2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:feeble": {
+   "cost": -6,
+   "xp": {
+    "Strength": -2
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:firstaid": {
+   "cost": 2,
+   "xp": {
+    "Doctor": 1
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:fishing": {
+   "cost": 4,
+   "xp": {
+    "Fishing": 1
+   },
+   "recipes": 3,
+   "isProfessionTrait": false
+  },
+  "base:fit": {
+   "cost": 6,
+   "xp": {
+    "Fitness": 2
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:gardener": {
+   "cost": 2,
+   "xp": {
+    "Farming": 1
+   },
+   "recipes": 64,
+   "isProfessionTrait": false
+  },
+  "base:graceful": {
+   "cost": 4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:gymnast": {
+   "cost": 5,
+   "xp": {
+    "Lightfoot": 1,
+    "Nimble": 1
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:handy": {
+   "cost": 8,
+   "xp": {
+    "Carving": 1,
+    "Maintenance": 1,
+    "Masonry": 1,
+    "Woodwork": 1
+   },
+   "recipes": 24,
+   "isProfessionTrait": false
+  },
+  "base:hardofhearing": {
+   "cost": -4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:heartyappetite": {
+   "cost": -4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:hemophobic": {
+   "cost": -5,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:herbalist": {
+   "cost": 4,
+   "xp": {
+    "PlantScavenging": 1
+   },
+   "recipes": 9,
+   "isProfessionTrait": false
+  },
+  "base:herbalist_prof": {
+   "cost": 0,
+   "xp": {
+    "PlantScavenging": 1
+   },
+   "recipes": 9,
+   "isProfessionTrait": true
+  },
+  "base:hiker": {
+   "cost": 5,
+   "xp": {
+    "PlantScavenging": 1,
+    "Trapping": 1
+   },
+   "recipes": 3,
+   "isProfessionTrait": false
+  },
+  "base:highthirst": {
+   "cost": -2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:hunter": {
+   "cost": 8,
+   "xp": {
+    "Aiming": 1,
+    "Tracking": 1,
+    "Sneak": 1,
+    "SmallBlade": 1,
+    "Butchering": 1
+   },
+   "recipes": 6,
+   "isProfessionTrait": false
+  },
+  "base:tinkerer": {
+   "cost": 4,
+   "xp": {
+    "Maintenance": 1
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:target_shooter": {
+   "cost": 5,
+   "xp": {
+    "Aiming": 1
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:illiterate": {
+   "cost": -10,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:inconspicuous": {
+   "cost": 4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:inventive": {
+   "cost": 2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:inventive_prof": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:irongut": {
+   "cost": 2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:insomniac": {
+   "cost": -6,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:jogger": {
+   "cost": 4,
+   "xp": {
+    "Sprinting": 1
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:keenhearing": {
+   "cost": 6,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:lighteater": {
+   "cost": 2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:lowthirst": {
+   "cost": 2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:marksman": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:mason": {
+   "cost": 2,
+   "xp": {
+    "Masonry": 2
+   },
+   "recipes": 7,
+   "isProfessionTrait": false
+  },
+  "base:mechanics": {
+   "cost": 3,
+   "xp": {
+    "Mechanics": 1
+   },
+   "recipes": 2,
+   "isProfessionTrait": false
+  },
+  "base:mechanics2": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:needslesssleep": {
+   "cost": 3,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:needsmoresleep": {
+   "cost": -4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:nightowl": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:nightvision": {
+   "cost": 3,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:nutritionist": {
+   "cost": 2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:nutritionist2": {
+   "cost": 0,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:obese": {
+   "cost": 0,
+   "xp": {
+    "Fitness": -2
+   },
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:organized": {
+   "cost": 4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:outdoorsman": {
+   "cost": 2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:out": {
+   "cost": -6,
+   "xp": {
+    "Fitness": -2
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:overweight": {
+   "cost": 0,
+   "xp": {
+    "Fitness": -1
+   },
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:pacifist": {
+   "cost": -5,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:pronetoillness": {
+   "cost": -4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:resilient": {
+   "cost": 4,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:formerscout": {
+   "cost": 6,
+   "xp": {
+    "Doctor": 1,
+    "PlantScavenging": 1,
+    "Fishing": 1
+   },
+   "recipes": 3,
+   "isProfessionTrait": false
+  },
+  "base:shortsighted": {
+   "cost": -2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:slowhealer": {
+   "cost": -3,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:slowreader": {
+   "cost": -2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:slowlearner": {
+   "cost": -6,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:smoker": {
+   "cost": -3,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:speeddemon": {
+   "cost": 1,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:stout": {
+   "cost": 6,
+   "xp": {
+    "Strength": 2
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:strong": {
+   "cost": 10,
+   "xp": {
+    "Strength": 4
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:sundaydriver": {
+   "cost": -1,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:tailor": {
+   "cost": 4,
+   "xp": {
+    "Tailoring": 1
+   },
+   "recipes": 59,
+   "isProfessionTrait": false
+  },
+  "base:thickskinned": {
+   "cost": 8,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:thinskinned": {
+   "cost": -8,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:underweight": {
+   "cost": 0,
+   "xp": {
+    "Fitness": -1
+   },
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:unfit": {
+   "cost": -10,
+   "xp": {
+    "Fitness": -4
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:very": {
+   "cost": 0,
+   "xp": {
+    "Fitness": -2
+   },
+   "recipes": 0,
+   "isProfessionTrait": true
+  },
+  "base:weak": {
+   "cost": -10,
+   "xp": {
+    "Strength": -5
+   },
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:weakstomach": {
+   "cost": -2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:weightgain": {
+   "cost": -2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:weightloss": {
+   "cost": -2,
+   "xp": {},
+   "recipes": 0,
+   "isProfessionTrait": false
+  },
+  "base:whittler": {
+   "cost": 2,
+   "xp": {
+    "Carving": 2
+   },
+   "recipes": 19,
+   "isProfessionTrait": false
+  },
+  "base:wildernessknowledge": {
+   "cost": 8,
+   "xp": {
+    "PlantScavenging": 1,
+    "FlintKnapping": 1,
+    "Maintenance": 1,
+    "Carving": 1
+   },
+   "recipes": 29,
+   "isProfessionTrait": false
+  }
+ },
+ "icons": [
+  "profession_burgerflipper",
+  "profession_burglar2",
+  "profession_chef2",
+  "profession_constructionworker2",
+  "profession_doctor2",
+  "profession_electrician",
+  "profession_engineer",
+  "profession_farmer2",
+  "profession_fireofficer2",
+  "profession_fisher2",
+  "profession_fitnessinstructor",
+  "profession_hammer2",
+  "profession_lumberjack",
+  "profession_mechanic",
+  "profession_metalworker",
+  "profession_nurse",
+  "profession_parkranger2",
+  "profession_policeofficer2",
+  "profession_rancher",
+  "profession_repairman2",
+  "profession_securityguard2",
+  "profession_smither",
+  "profession_tailor",
+  "profession_veteran2"
+ ]
+}

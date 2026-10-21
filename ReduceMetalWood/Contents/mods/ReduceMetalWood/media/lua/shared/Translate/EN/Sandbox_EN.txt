@@ -1,0 +1,5 @@
+Sandbox_EN = {
+    Sandbox_ReduceMetalWood = "Reduce Metal&Wood",
+    Sandbox_ReduceMetalWood_WeightReductionPercent = "Weight reduction (%)",
+    Sandbox_ReduceMetalWood_WeightReductionPercent_tooltip = "How much lighter wood and metal crafting materials become (planks, logs, nails, sheets, bars, ingots, scrap, forged blades and heads). 50 = half weight. 0 = disabled. Finished products are not affected.",
+}

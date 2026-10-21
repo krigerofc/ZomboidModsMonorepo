@@ -1,0 +1,11 @@
+{
+    "ContextMenu_KFM_Root": "Medicina de Campo",
+    "ContextMenu_KFM_Exam": "Exame clínico",
+    "ContextMenu_KFM_ExamSelf": "Examinar a si mesmo",
+    "ContextMenu_KFM_Irrigate": "Irrigar ferida",
+    "ContextMenu_KFM_Tourniquet": "Aplicar torniquete",
+    "ContextMenu_KFM_TourniquetRemove": "Remover torniquete",
+    "ContextMenu_KFM_Cauterize": "Cauterizar ferida",
+    "ContextMenu_KFM_ReduceFracture": "Reduzir fratura",
+    "ContextMenu_KFM_Debride": "Debridar ferida"
+}

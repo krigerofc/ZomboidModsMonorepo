@@ -1,0 +1,10 @@
+{
+    "Tooltip_KFM_Exam": "Avalia estado geral, temperatura, pulso, hidratação e recuperação do paciente. O que você percebe depende do nível de Primeiros Socorros. Estetoscópio conta como +1 nível; abaixador de língua (consumido) permite a qualquer um checar hidratação e garganta.",
+    "Tooltip_KFM_Irrigate": "Lava uma ferida aberta e sem curativo com 0,25 L de água. Água limpa reduz a infecção da ferida; água contaminada piora. Mais fraco que desinfetante, e arde.",
+    "Tooltip_KFM_Tourniquet": "Só braços e pernas. Para o sangramento desta parte e de tudo abaixo dela enquanto estiver aplicado. Ganha tempo para suturar ou enfaixar; não é tratamento. Depois de algumas horas o membro começa a sofrer.",
+    "Tooltip_KFM_TourniquetRemove": "Remove o torniquete e o devolve. Feridas não tratadas abaixo dele voltam a sangrar.",
+    "Tooltip_KFM_Cauterize": "Fecha uma ferida profunda com uma lâmina aquecida (gasta isqueiro ou fósforo). Deixa uma queimadura que precisa ser limpa. Pior que sutura, melhor que sangrar até morrer. Não funciona em mordidas.",
+    "Tooltip_KFM_ReduceFracture": "Recoloca o osso quebrado no lugar: consolidação bem mais rápida, extremamente doloroso. Uma vez por fratura. O paciente precisa estar sentado ou deitado. Analgésico tomado antes reduz a dor pela metade.",
+    "Tooltip_KFM_Debride": "Remove com bisturi o tecido muito infectado. Elimina a infecção da ferida, mas ela volta a sangrar: faça um curativo depois. Nunca afeta outras infecções.",
+    "Tooltip_KFM_ImprovisedTourniquet": "Tiras de pano e um graveto usado como torniquete. Use pelo painel de saúde em um braço ou perna."
+}

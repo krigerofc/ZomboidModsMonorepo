@@ -1,0 +1,12 @@
+version=1
+id=3643006111
+title=Basic Vehicle Maintenance
+description=[b]EN[/b] Improvised vehicle repairs using scrap, tape and tools. Includes engine repairs, condition caps, failure risks, Mechanics XP, inspection, patch history and three quality tiers. Materials inside bags count. Sandbox options. Build 42 only; PT-BR + EN.
+description=
+description=[b]PT-BR[/b] Reparos improvisados de veículos com sucata, fita e ferramentas. Inclui reparo do motor, limites de condição, risco de falha, XP de Mecânica, inspeção, histórico de remendos e três faixas de qualidade. Materiais nas bolsas contam. Opções de sandbox. Só Build 42; PT-BR + EN.
+description=
+description=Bulbs must be replaced. Maximum caps: Patch 75, Repair 78, Overhaul 80; previous patches lower the cap. / Lâmpadas devem ser trocadas. Tetos máximos: Remendo 75, Reparo 78, Revisão 80; remendos anteriores reduzem o teto.
+description=
+description=Development build: automated checks only. In-game validation on 42.21, hosted multiplayer and dedicated servers is pending. / Versão em desenvolvimento: verificações automatizadas; validação no jogo 42.21 e em multiplayer ainda pendente.
+tags=Build 42;Vehicles;Mechanics;Multiplayer;Realistic
+visibility=public

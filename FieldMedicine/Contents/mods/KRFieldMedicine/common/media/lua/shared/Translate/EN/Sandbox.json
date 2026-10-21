@@ -1,0 +1,23 @@
+{
+    "Sandbox_KFM": "Field Medicine '93",
+    "Sandbox_KFM_Enabled": "Enable Field Medicine",
+    "Sandbox_KFM_Enabled_tooltip": "Turns every procedure of this mod on or off. Tourniquets already applied keep working until removed.",
+    "Sandbox_KFM_ExamEnabled": "Enable clinical exam",
+    "Sandbox_KFM_ExamEnabled_tooltip": "Allows the clinical exam from the health panel and from a stethoscope / tongue depressor.",
+    "Sandbox_KFM_ShowFeverInExam": "Exam shows fever",
+    "Sandbox_KFM_ShowFeverInExam_tooltip": "The exam reports fever without its cause (any fever looks the same). Hardcore servers can hide it.",
+    "Sandbox_KFM_SkillRequirementOffset": "First Aid requirement offset",
+    "Sandbox_KFM_SkillRequirementOffset_tooltip": "Added to the level needed by tourniquet, cauterization, fracture reduction and debridement (exam and irrigation always level 0). Default 0.",
+    "Sandbox_KFM_FailChanceMultiplier": "Failure chance multiplier",
+    "Sandbox_KFM_FailChanceMultiplier_tooltip": "0 = procedures never fail. Default 1.",
+    "Sandbox_KFM_ProcedurePainMultiplier": "Procedure pain multiplier",
+    "Sandbox_KFM_ProcedurePainMultiplier_tooltip": "Pain added by the procedures. Default 1.",
+    "Sandbox_KFM_IrrigationStrength": "Irrigation strength",
+    "Sandbox_KFM_IrrigationStrength_tooltip": "How much wound infection one irrigation removes. Default 1.",
+    "Sandbox_KFM_TourniquetSafeHours": "Tourniquet safe hours",
+    "Sandbox_KFM_TourniquetSafeHours_tooltip": "In-game hours before the limb starts losing health and hurting. Lasting damage after 3x this time. Default 2.",
+    "Sandbox_KFM_FractureReductionMax": "Max fracture time reduction",
+    "Sandbox_KFM_FractureReductionMax_tooltip": "Cap of the healing time removed by a successful fracture reduction (0.40 = 40%). Default 0.40.",
+    "Sandbox_KFM_XPMultiplier": "First Aid XP multiplier",
+    "Sandbox_KFM_XPMultiplier_tooltip": "XP given by the procedures (only on real injuries, with a cooldown per patient). Default 1."
+}

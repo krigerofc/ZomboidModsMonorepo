@@ -1,0 +1,119 @@
+VERSION = 1,
+
+option MVR.Enabled
+{
+	type = boolean,
+	default = true,
+	page = MVR,
+	translation = MVR_Enabled,
+}
+
+option MVR.MaterialCostMultiplier
+{
+	type = double,
+	min = 0.25,
+	max = 4.00,
+	default = 1.00,
+	page = MVR,
+	translation = MVR_MaterialCostMultiplier,
+}
+
+option MVR.ConditionGainMultiplier
+{
+	type = double,
+	min = 0.25,
+	max = 3.00,
+	default = 1.00,
+	page = MVR,
+	translation = MVR_ConditionGainMultiplier,
+}
+
+option MVR.CapOffset
+{
+	type = integer,
+	min = -30,
+	max = 20,
+	default = 0,
+	page = MVR,
+	translation = MVR_CapOffset,
+}
+
+option MVR.FailChanceMultiplier
+{
+	type = double,
+	min = 0.00,
+	max = 3.00,
+	default = 1.00,
+	page = MVR,
+	translation = MVR_FailChanceMultiplier,
+}
+
+option MVR.SevereFailEnabled
+{
+	type = boolean,
+	default = true,
+	page = MVR,
+	translation = MVR_SevereFailEnabled,
+}
+
+option MVR.SideEffectsEnabled
+{
+	type = boolean,
+	default = true,
+	page = MVR,
+	translation = MVR_SideEffectsEnabled,
+}
+
+option MVR.InjuryChanceMultiplier
+{
+	type = double,
+	min = 0.00,
+	max = 3.00,
+	default = 1.00,
+	page = MVR,
+	translation = MVR_InjuryChanceMultiplier,
+}
+
+option MVR.XPMultiplier
+{
+	type = double,
+	min = 0.00,
+	max = 5.00,
+	default = 1.00,
+	page = MVR,
+	translation = MVR_XPMultiplier,
+}
+
+option MVR.TimeMultiplier
+{
+	type = double,
+	min = 0.25,
+	max = 3.00,
+	default = 1.00,
+	page = MVR,
+	translation = MVR_TimeMultiplier,
+}
+
+option MVR.PatchHistoryEnabled
+{
+	type = boolean,
+	default = true,
+	page = MVR,
+	translation = MVR_PatchHistoryEnabled,
+}
+
+option MVR.WorkshopBonusEnabled
+{
+	type = boolean,
+	default = true,
+	page = MVR,
+	translation = MVR_WorkshopBonusEnabled,
+}
+
+option MVR.QualityTiersEnabled
+{
+	type = boolean,
+	default = true,
+	page = MVR,
+	translation = MVR_QualityTiersEnabled,
+}

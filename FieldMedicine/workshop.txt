@@ -1,0 +1,11 @@
+version=1
+title=Field Medicine '93
+description=[b]EN[/b] 1993 field medicine that complements vanilla health: clinical exams, wound irrigation, tourniquets, cauterization, fracture reduction and debridement. First Aid requirements, costs and risks, with sandbox options. Never identifies the Knox infection. Build 42 only; PT-BR + EN.
+description=
+description=[b]PT-BR[/b] Medicina de campo de 1993 que complementa a saúde vanilla: exame clínico, irrigação de feridas, torniquete, cauterização, redução de fratura e debridamento. Requisitos de Primeiros Socorros, custos e riscos, com opções de sandbox. Nunca identifica a infecção Knox. Só Build 42; PT-BR + EN.
+description=
+description=Fractures are described in broad healing stages, not exact days. Tourniquets can cause damage if left applied. / O exame mostra faixas de consolidação, sem dias exatos. Torniquetes prolongados podem causar dano.
+description=
+description=Development build: automated checks only. In-game validation on 42.21, hosted multiplayer and dedicated servers is pending. / Versão em desenvolvimento: verificações automatizadas; validação no jogo 42.21 e em multiplayer ainda pendente.
+tags=Build 42;Misc;Realistic
+visibility=public

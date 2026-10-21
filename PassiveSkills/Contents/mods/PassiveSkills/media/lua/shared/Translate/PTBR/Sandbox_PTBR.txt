@@ -1,0 +1,7 @@
+Sandbox_PTBR = {
+    Sandbox_PassiveSkills = "Passive Skills",
+    Sandbox_PassiveSkills_SpawnChance = "Chance de revista de habilidade (%)",
+    Sandbox_PassiveSkills_SpawnChance_tooltip = "Chance de um contêiner elegível (estantes de livros, expositores de revistas, escrivaninhas, caixas de correio, bibliotecas, livrarias...) receber uma revista de habilidade quando o loot é gerado. Volumes baixos são mais comuns. 0 = revistas nunca aparecem. Padrão 12.",
+    Sandbox_PassiveSkills_XpPercent = "XP por revista (%)",
+    Sandbox_PassiveSkills_XpPercent_tooltip = "100 = ler os 5 volumes de uma habilidade dá exatamente o XP do nível 5 (75/150/300/750/1500). Multiplicadores de profissão, traços e livros de habilidade são ignorados, então todo personagem ganha o mesmo.",
+}

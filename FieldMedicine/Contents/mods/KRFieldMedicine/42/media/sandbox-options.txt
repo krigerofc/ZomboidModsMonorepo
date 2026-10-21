@@ -1,0 +1,95 @@
+VERSION = 1,
+
+option KFM.Enabled
+{
+	type = boolean,
+	default = true,
+	page = KFM,
+	translation = KFM_Enabled,
+}
+
+option KFM.ExamEnabled
+{
+	type = boolean,
+	default = true,
+	page = KFM,
+	translation = KFM_ExamEnabled,
+}
+
+option KFM.ShowFeverInExam
+{
+	type = boolean,
+	default = true,
+	page = KFM,
+	translation = KFM_ShowFeverInExam,
+}
+
+option KFM.SkillRequirementOffset
+{
+	type = integer,
+	min = -3,
+	max = 3,
+	default = 0,
+	page = KFM,
+	translation = KFM_SkillRequirementOffset,
+}
+
+option KFM.FailChanceMultiplier
+{
+	type = double,
+	min = 0.0,
+	max = 3.0,
+	default = 1.0,
+	page = KFM,
+	translation = KFM_FailChanceMultiplier,
+}
+
+option KFM.ProcedurePainMultiplier
+{
+	type = double,
+	min = 0.0,
+	max = 2.0,
+	default = 1.0,
+	page = KFM,
+	translation = KFM_ProcedurePainMultiplier,
+}
+
+option KFM.IrrigationStrength
+{
+	type = double,
+	min = 0.0,
+	max = 2.0,
+	default = 1.0,
+	page = KFM,
+	translation = KFM_IrrigationStrength,
+}
+
+option KFM.TourniquetSafeHours
+{
+	type = integer,
+	min = 1,
+	max = 8,
+	default = 2,
+	page = KFM,
+	translation = KFM_TourniquetSafeHours,
+}
+
+option KFM.FractureReductionMax
+{
+	type = double,
+	min = 0.0,
+	max = 0.6,
+	default = 0.4,
+	page = KFM,
+	translation = KFM_FractureReductionMax,
+}
+
+option KFM.XPMultiplier
+{
+	type = double,
+	min = 0.0,
+	max = 5.0,
+	default = 1.0,
+	page = KFM,
+	translation = KFM_XPMultiplier,
+}

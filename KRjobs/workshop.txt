@@ -1,0 +1,12 @@
+version=1
+id=3149644183
+title=KRjobs v2
+description=[b]EN[/b] 24 uncommon 1990s professions on B42 and 20 on B41, with skill bonuses, profession traits, vanilla recipes and small starting kits. Includes rescue diver, fighter pilot, specialist surgeon, systems analyst and chemical engineer. PT-BR + EN.
+description=
+description=[b]PT-BR[/b] 24 profissões incomuns dos anos 90 na B42 e 20 na B41, com bônus de habilidades, traços profissionais, receitas vanilla e pequenos kits iniciais. Inclui mergulhador de resgate, piloto de caça, cirurgião especialista, analista de sistemas e engenheiro químico. PT-BR + EN.
+description=
+description=Starting kits are granted once at character creation. Some profession icons are temporary vanilla placeholders. / Kits são entregues uma vez na criação; parte dos ícones ainda é provisória.
+description=
+description=Development build: automated checks only. In-game validation on 42.21, hosted multiplayer and dedicated servers is pending. / Versão em desenvolvimento: verificações automatizadas; validação no jogo 42.21 e em multiplayer ainda pendente.
+tags=Build 41;Build 42;Traits;Professions
+visibility=public
