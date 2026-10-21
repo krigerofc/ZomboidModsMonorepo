@@ -30,7 +30,7 @@ Antes de publicar:
 1. Validar em jogo na versão alvo, primeiro em save novo, depois persistência ao salvar/carregar.
 2. Testar host e servidor dedicado com dois clientes, reconexão e reinício.
 3. Validar revistas/XP/spawn, profissões/kits/receitas, reparos e procedimentos médicos.
-4. Concluir o relatório do teste de servidor; SMOKE-TEST.md não estava disponível no fechamento anterior.
+4. Repetir o teste de inicialização na versão alvo; o relatório de 42.19.2 agora está em [docs/SMOKE-TEST.md](docs/SMOKE-TEST.md), com conferência independente dos logs.
 5. Revisar ZombieDisguise, incluindo suporte de idioma e comportamento em rede. Ele não faz parte das cinco suítes aprovadas.
 6. Decidir se a capa de FieldMedicine e os ícones provisórios de profissões precisam de substituição.
 
@@ -54,6 +54,7 @@ Os quatro projetos com package-lock.json permitem npm ci. BasicVehicleMaintenanc
 - [Estado da importação e testes atuais](docs/IMPORTACAO-2026-10-21.md)
 - [Origem e hashes dos arquivos importados](docs/SOURCE-SNAPSHOT.json)
 - [Relatório da API alvo](docs/API-CHECK-42.21.md)
+- [Teste dedicado em 42.19.2](docs/SMOKE-TEST.md)
 - [Encerramento da revisão anterior](docs/review-2026-10-17/ENCERRAMENTO-ACOMPANHAMENTO.md)
 - [PRD de medicina](docs/PRD-Medical.md)
 - [PRD de veículos](docs/PRD-VehicleMaintenance-v2.md)

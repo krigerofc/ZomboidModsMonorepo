@@ -166,3 +166,7 @@ Corrigida validação de ferramentas/materiais na medicina (11 checks de regress
 
 ## Encerramento do acompanhamento Codex
 As seis verificações automáticas terminaram em 17/10/2026, após cerca de uma hora. Nenhuma prorrogação. Confirmei no log isolado o carregamento dos cinco mods e os contadores RMW de 148 itens com redução50%, sem reaplicar no OnServerStarted. Não há SMOKE-TEST.md ou confirmação final do Claude; não é certificação de gameplay/MP/42.21. Relatório: C:/Users/pedro/Documents/Codex/2026-10-17/estilo-base-colar-no-fim-de-2/outputs/revisao-mods-2026-10-17/ENCERRAMENTO-ACOMPANHAMENTO.md. Alterações locais preservadas; não reaplicar patches.
+
+## Atualização do monorepo — 21/10/2026
+
+O relatório SMOKE-TEST.md foi recebido após a importação e seus logs foram conferidos independentemente. Confirma inicialização dos cinco mods em 42.19.2 e correção do excesso de traces de getMetalValue; a correção já estava na cópia do monorepo. Isso resolve a ausência do relatório, não os testes de cliente/SP/MP/42.21. Os cinco runners passaram sobre os arquivos importados em 21/10; nenhum runtime mudou neste complemento. Veja IMPORTACAO-2026-10-21.md e smoke-log-verification-2026-10-21.json.

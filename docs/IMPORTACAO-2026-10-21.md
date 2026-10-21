@@ -35,3 +35,7 @@ Resultados detalhados: tests-importacao-2026-10-21.json. Esses resultados verifi
 - Upload Steam, somente depois da validação e mediante autorização própria.
 
 Os repositórios de origem continuam com suas alterações locais; o commit do monorepo conserva uma cópia dessas correções sem criar commits ou alterar branches na origem.
+
+## Complemento recebido em 21/10/2026
+
+SMOKE-TEST.md agora está disponível. Os logs existentes confirmam 10.526 avisos do getter ausente no primeiro run e zero no run corrigido. O stderr normalizado do segundo run coincide com o baseline sem mods. Os cinco IDs carregaram, LuaNet inicializou e os 148 materiais foram reduzidos sem reaplicação na segunda passagem. A correção de Core.call já estava incluída nos arquivos importados; nenhum código precisou ser alterado. Não houve execução nova de servidor ou cliente nesta conferência. Evidência: smoke-log-verification-2026-10-21.json.

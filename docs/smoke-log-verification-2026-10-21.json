@@ -1,0 +1,54 @@
+{
+  "verifiedAt": "2026-10-21T18:28:49.043Z",
+  "scope": "Independent re-reading of existing dedicated-server logs; no server or client launched in this verification",
+  "gameVersionReported": "42.19.2",
+  "runs": {
+    "base": {
+      "stdoutSha256": "a74e03e9f08df5346647f23405a99691ddba527e8a0cde363c8f0556b655b9a3",
+      "stderrSha256": "7889e8f23236bb6b01f602174b53a47e5bbf878f206e44d72e7e3b7b7c0c9146",
+      "stderrNormalizedSha256": "1bb353a6e24d357d76ee5baa13b8c09d5f6da3ea22872cd1f5d48d4e36f7a39b",
+      "missingMetalGetterCount": 0,
+      "ready": true,
+      "loadedMods": [],
+      "weight": []
+    },
+    "run1": {
+      "stdoutSha256": "cb1ddb36a6161cff913efbcb9865efe71a05115a534c7f225a56a0899fadbc7c",
+      "stderrSha256": "4d1ef233016a809f0afd0bcac0c506f5fc9993ca9e23147e5eeacd2470d5b5e3",
+      "stderrNormalizedSha256": "ba371c95a2c6e8ed1d58dd7037de3248ba017b868be5ce1219a717c26f922481",
+      "missingMetalGetterCount": 10526,
+      "ready": true,
+      "loadedMods": [
+        "LOG  : Mod          f:0 st:17,750,741> loading ReduceMetal&Wood50x",
+        "LOG  : Mod          f:0 st:17,750,774> loading Passiveskillskr",
+        "LOG  : Mod          f:0 st:17,750,782> loading Krjobs",
+        "LOG  : Mod          f:0 st:17,750,787> loading MoreVehiclesRepairs",
+        "LOG  : Mod          f:0 st:17,750,800> loading KRFieldMedicine"
+      ],
+      "weight": [
+        "LOG  : Lua          f:0 st:17,775,968> [ReduceMetalWood] loaded v2.0.0",
+        "LOG  : Lua          f:0 st:17,784,851> [ReduceMetalWood] applied (OnInitGlobalModData, server): reduction=50% wood=25 metal=123 changed=148 unchanged=0 failed=0 scanned=5263",
+        "LOG  : Lua          f:0 st:17,791,893> [ReduceMetalWood] applied (OnServerStarted, server): reduction=50% wood=25 metal=123 changed=0 unchanged=148 failed=0 scanned=5263"
+      ]
+    },
+    "run2": {
+      "stdoutSha256": "644a075280bfd0e886867d46a4890b8a252f056bb505df79bb55f1cb72c6cb02",
+      "stderrSha256": "152156f9949d41142eb39fed651fd13d1680c9c6d501d49d4f986fd7c887842f",
+      "stderrNormalizedSha256": "1bb353a6e24d357d76ee5baa13b8c09d5f6da3ea22872cd1f5d48d4e36f7a39b",
+      "missingMetalGetterCount": 0,
+      "ready": true,
+      "loadedMods": [
+        "LOG  : Mod          f:0 st:18,547,711> loading ReduceMetal&Wood50x",
+        "LOG  : Mod          f:0 st:18,547,715> loading Passiveskillskr",
+        "LOG  : Mod          f:0 st:18,547,724> loading Krjobs",
+        "LOG  : Mod          f:0 st:18,547,729> loading MoreVehiclesRepairs",
+        "LOG  : Mod          f:0 st:18,547,737> loading KRFieldMedicine"
+      ],
+      "weight": [
+        "LOG  : Lua          f:0 st:18,564,055> [ReduceMetalWood] loaded v2.0.0",
+        "LOG  : Lua          f:0 st:18,568,132> [ReduceMetalWood] applied (OnInitGlobalModData, server): reduction=50% wood=25 metal=123 changed=148 unchanged=0 failed=0 scanned=5263",
+        "LOG  : Lua          f:0 st:18,572,413> [ReduceMetalWood] applied (OnServerStarted, server): reduction=50% wood=25 metal=123 changed=0 unchanged=148 failed=0 scanned=5263"
+      ]
+    }
+  }
+}
