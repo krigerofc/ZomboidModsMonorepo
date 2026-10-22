@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-22",
+  "mod": "KRFieldMedicine",
+  "source": "C:/Users/pedro/.codex/generated_images/01a14af2-cd64-7a10-8d44-d2abde459204/exec-3098cbe1-ddd0-4b14-b6e2-9f7f5054e782.png",
+  "style": "Authentic Project Zomboid low-poly in-game 3D, isometric3/4,Kentucky1993,mutedpalette,no text or logos",
+  "scene": "Medic in green scrubs and surgical mask tending seated survivor forearm in rainy boarded farmhouse",
+  "assetSizes": {
+    "master": 1024,
+    "poster": 512,
+    "preview": 256,
+    "icon": 64,
+    "extraIcon": 128
+  },
+  "method": "Built-in image_gen; deterministic size reduction only; generated source preserved"
+}
