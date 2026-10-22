@@ -1,0 +1,13 @@
+{
+  "name": "field-medicine-zombie-disguise",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node tests/run.js",
+    "i18n": "node tools/i18n.js"
+  },
+  "devDependencies": {
+    "fengari": "0.1.4",
+    "luaparse": "0.3.1"
+  }
+}

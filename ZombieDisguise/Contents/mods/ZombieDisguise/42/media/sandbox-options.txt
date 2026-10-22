@@ -1,0 +1,40 @@
+VERSION = 1,
+option ZombieDisguise.Enabled
+{
+ type = boolean,
+ default = true,
+ page = ZombieDisguise,
+ translation = ZD_Enabled,
+}
+option ZombieDisguise.DurationMinutes
+{
+ type = integer,
+ min = 10,
+ max = 480,
+ default = 120,
+ page = ZombieDisguise,
+ translation = ZD_DurationMinutes,
+}
+option ZombieDisguise.RequiredCoverage
+{
+ type = double,
+ min = 0.1,
+ max = 1,
+ default = 0.65,
+ page = ZombieDisguise,
+ translation = ZD_RequiredCoverage,
+}
+option ZombieDisguise.BreakOnRun
+{
+ type = boolean,
+ default = true,
+ page = ZombieDisguise,
+ translation = ZD_BreakOnRun,
+}
+option ZombieDisguise.BreakOnAttack
+{
+ type = boolean,
+ default = true,
+ page = ZombieDisguise,
+ translation = ZD_BreakOnAttack,
+}

@@ -1,0 +1,9 @@
+{
+  "source": "outputs/zomboid-game-style-v2/zombie-disguise",
+  "master": "master-1024.png",
+  "poster": "512x512",
+  "icon": "64x64",
+  "preview": "256x256",
+  "prompt": "prompt.json",
+  "note": "Generated approved 3D gameplay-style artwork, no gameplay certification implied."
+}

@@ -1,7 +1,9 @@
-name=Zombie Disguise
+name=Field Medicine: Zombie Disguise
 id=ZombieDisguise
-description=Apply zombie entrails to disguise yourself from the undead. Use with caution — the bacteria will make you sick.
+require=KRFieldMedicine
 author=Kriger
-poster=foto.png
-icon=foto.png
-versionMin=42
+versionMin=42.15
+modversion=2.0.0
+poster=poster.png
+icon=icon.png
+description=B42 development expansion requiring Field Medicine. The shared blood-exposure and validated action lifecycle are implemented, but camouflage remains disabled until a supported native perception adapter is verified for ordinary players. No administrative privileges, Knox diagnosis or transmission changes.

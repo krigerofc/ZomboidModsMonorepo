@@ -1,0 +1,13 @@
+{
+    "Sandbox_ZombieDisguise": "Field Medicine: Zombie Disguise",
+    "Sandbox_ZD_Enabled": "Enable blood camouflage",
+    "Sandbox_ZD_Enabled_tooltip": "Disabling removes only camouflage protection owned by this expansion.",
+    "Sandbox_ZD_DurationMinutes": "Camouflage duration (game minutes)",
+    "Sandbox_ZD_DurationMinutes_tooltip": "Default120. Expiry does not wash blood or cure illness.",
+    "Sandbox_ZD_RequiredCoverage": "Required remaining blood coverage",
+    "Sandbox_ZD_RequiredCoverage_tooltip": "Default0.65. Uses actual regional blood, never wetness alone.",
+    "Sandbox_ZD_BreakOnRun": "Running breaks camouflage",
+    "Sandbox_ZD_BreakOnRun_tooltip": "Running or sprinting breaks protection; exposure remains until washing.",
+    "Sandbox_ZD_BreakOnAttack": "Attacking breaks camouflage",
+    "Sandbox_ZD_BreakOnAttack_tooltip": "Hostile actions break protection; exposure remains until washing."
+}

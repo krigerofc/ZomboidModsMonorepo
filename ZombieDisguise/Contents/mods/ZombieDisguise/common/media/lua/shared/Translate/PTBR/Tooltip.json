@@ -1,0 +1,8 @@
+{
+    "Tooltip_ZD_Backend": "Camuflagem desativada nesta versão de desenvolvimento: a integração com a percepção dos zumbis ainda não foi validada para jogadores comuns. Nenhum sangue é aplicado e nenhuma permissão administrativa é concedida.",
+    "Tooltip_ZD_HealthDisabled": "Medicina de Campo está desativado nas opções de sandbox. Ative-o antes de usar esta expansão.",
+    "Tooltip_ZD_Risk": "Aplique sangue sobre a pele. A camuflagem padrão dura 120 minutos de jogo. Correr ou atacar rompe o efeito. Sangue em feridas ou rosto pode causar doenças comuns pelo Medicina de Campo. Remova o sangue com lavagem para reduzir exposição; remédios não renovam camuflagem.",
+    "Tooltip_ZD_Dependency": "Exige Medicina de Campo (KRFieldMedicine) com API de exposição v1 compatível. Camuflagem indisponível.",
+    "Tooltip_ZD_Active": "A camuflagem existente não renova automaticamente. Expirar ou agir de forma hostil mantém exposição pelo sangue até a lavagem.",
+    "Tooltip_ZD_Reach": "Use cadáver zumbi acessível no mesmo piso a até dois quadrados. Fique parado até concluir a ação."
+}
