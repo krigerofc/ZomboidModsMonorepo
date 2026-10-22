@@ -1,66 +1,46 @@
 # Zomboid Mods
 
-Versões atuais dos mods de Kriger, importadas dos repositórios locais em 21/10/2026 com as correções da revisão conjunta. Esta branch organiza o código; a validação completa dentro do jogo continua pendente.
+Reestruturação local de seis mods do Kriger, em desenvolvimento na branch feat/mods-overhaul-20261021. As fontes originais de Workshop e os saves existentes permanecem preservados. Nenhuma alteração desta reestruturação foi publicada na Steam.
 
-| Pasta | Mod ID | Builds previstas | Situação |
+| Pasta | Nome / Mod ID | Builds | Estado atual |
 |---|---|---|---|
-| ReduceMetalWood | ReduceMetal&Wood50x | B41 + B42 | Implementado; testes automatizados passaram |
-| PassiveSkills | Passiveskillskr | B41 + B42 | Implementado; testes automatizados passaram |
-| KRjobs | Krjobs | B41 + B42 | Implementado; testes automatizados e de ícones passaram |
-| BasicVehicleMaintenance | MoreVehiclesRepairs | B42 | Implementado; testes automatizados passaram |
-| FieldMedicine | KRFieldMedicine | B42 | Implementado; testes automatizados passaram; capa provisória |
-| ZombieDisguise | ZombieDisguise | B42 declarada no pacote antigo | Preservado do repositório anterior; revisão e testes pendentes |
+| ReduceMetalWood | Build & Haul — Lightweight Materials / ReduceMetal&Wood50 x | B41+B42 | Materiais ampliados; suíte local e revisão de especificação/qualidade aprovadas |
+| PassiveSkills | Passive Skills / Passiveskillskr | B42 | Revistas preservadas e16 VHS nativos; suíte local e revisão aprovadas |
+| KRjobs | KRjobs / Krjobs | B41+B42 | 24 profissões B42 confirmadas no menu nativo; kits autoritativos com recuperação limitada |
+| BasicVehicleMaintenance | MoreVehiclesRepairs | B42 | Reparos, carga, potência e aparência implementados; validação em partida/MP pendente |
+| FieldMedicine | Field Medicine '93 / KRFieldMedicine | B42 | Doenças, lesões regionais, exame e prontuário implementados; build para teste |
+| ZombieDisguise | ZombieDisguise | B42 | Expansão dependente de KRFieldMedicine em implementação; camuflagem desativada enquanto o caminho de IA é corrigido |
 
-RetroProfessions foi substituído por KRjobs. VehicleMaintenance foi substituído por BasicVehicleMaintenance. Os identificadores de jogo das versões atuais foram preservados; ZombieDisguise não recebeu alterações de código nesta importação.
+## Escopo e decisões atuais
 
-## O que foi preservado
+- Build & Haul reduz por padrão 50% do peso de176 materiais elegíveis, incluindo madeira, metal, minérios e insumos de construção. Produtos acabados permanecem normais. Em recipientes de construção elegíveis, preserva a massa da embalagem vazia.
+- Passive Skills mantém33 habilidades e a progressão fixa das revistas. As16 fitas usam reprodução e histórico nativos:250 XP **base** por fita no padrão, com multiplicadores, cutoff e cooldown do jogo. Não concede XP por inserir ou carregar fita.
+- KRjobs: corrigido o carregamento nativo das definições; as24 profissões B42 aparecem traduzidas no widget real de criação. B41 tem20 definições, ainda sem execução real nesta revisão.
+- Veículos: melhorias limitadas de capacidade/potência por instância, pintura, remoção de ferrugem e lavagem nativa. Compatibilidade pretendida para modelos com peças genéricas do jogo; sistemas exclusivos de outros mods ficam fora do suporte obrigatório. Velocidade máxima não foi entregue porque a persistência nativa não foi comprovada.
+- Medicina: novas doenças sazonais, contaminação, cuidados específicos, lesões por frio, condições cardiorrespiratórias e psicológicas recuperáveis, exame detalhado e efeitos perceptivos locais estão implementados, com exame filtrado por habilidade/instrumento e prontuário por personagem. Ver HEALTH-PHASE2.md no projeto.
+- Disguise: somente B42, dependência obrigatória de medicina e exposição compartilhada. O antigo setter de proteção é restrito a permissões de cheat na instalação local; não há promessa de invisibilidade enquanto a alternativa legítima não estiver comprovada.
 
-- Materiais de madeira e metal, incluindo peças de ferreiro, recebem a redução padrão de 50%; itens acabados mantêm o peso e a redução não acumula.
-- Passive Skills mantém a quantidade anterior de XP, leitura única por volume por personagem e feedback PT-BR/EN. A proposta de revistas para habilidades adicionais continua fora do escopo aprovado.
-- Os cinco mods revisados incluem descrições e traduções PT-BR/EN, testes, ferramentas de geração e roteiro manual.
-- PRDs e decisões de medicina e veículos ficam em docs/. Propostas futuras nos documentos não são funcionalidades já implementadas.
+## Evidência e limites
 
-## Validação e pendências
+As suítes locais verificam sintaxe, recursos gerados, traduções e lógica com Fengari/objetos simulados. Algumas executam Lua nativo instalado sob simulação e inspecionam bytecode Java. Isso não certifica gameplay nem multiplayer.
 
-Em 21/10/2026, os cinco runners tests/run.js passaram na cópia importada; KRjobs também passou em tests/icons.js. Os testes verificam sintaxe, fixtures e lógica com simulação da engine; não substituem uma sessão real do jogo.
+A instalação consultada é 42.19.2; o alvo solicitado 42.21 ainda precisa de execução real. B41 também não foi executada. SP, host, dedicado com dois clientes, interface, ações concorrentes e save/reconnect fazem parte do aceite ainda pendente. Há um boot anterior da base de cinco mods documentado em [SMOKE-TEST.md](docs/SMOKE-TEST.md); ele não valida o código novo.
 
-A revisão anterior tinha como alvo 42.21. O boot real documentado foi observado em 42.19.2: carregou os cinco mods e confirmou a redução de 148 materiais sem aplicação duplicada. Isso não comprova ações, interface ou sincronização entre clientes. A versão instalada não foi atualizada nem novamente verificada nesta importação.
+Cada projeto contém package.json, tests/ e MANUAL_TEST.md. Execute npm test na pasta correspondente com as dependências de desenvolvimento disponíveis. Ferramentas e testes não pertencem ao pacote Contents/.
 
-Antes de publicar:
-1. Validar em jogo na versão alvo, primeiro em save novo, depois persistência ao salvar/carregar.
-2. Testar host e servidor dedicado com dois clientes, reconexão e reinício.
-3. Validar revistas/XP/spawn, profissões/kits/receitas, reparos e procedimentos médicos.
-4. Repetir o teste de inicialização na versão alvo; o relatório de 42.19.2 agora está em [docs/SMOKE-TEST.md](docs/SMOKE-TEST.md), com conferência independente dos logs.
-5. Revisar ZombieDisguise, incluindo suporte de idioma e comportamento em rede. Ele não faz parte das cinco suítes aprovadas.
-6. Decidir se a capa de FieldMedicine e os ícones provisórios de profissões precisam de substituição.
+See [current verification and test-build status](docs/STATUS-2026-10-22.md) before testing. Native server boot and character-creation checks do not certify treatment gameplay or two-client multiplayer.
 
-Nada foi enviado ao Steam Workshop nesta importação. Os IDs existentes em workshop.txt foram mantidos; FieldMedicine e ZombieDisguise ainda precisam de ID de publicação válido antes de upload.
+## Documentos
 
-## Desenvolvimento
+- [Plano da reestruturação](docs/superpowers/plans/2026-10-21-mods-overhaul.md)
+- [Escopo confirmado](docs/superpowers/specs/2026-10-21-overhaul/PROPOSTA-GERAL.md)
+- [Medicina dinâmica](FieldMedicine/HEALTH-PHASE2.md)
+- [Notas de implementação dos veículos](BasicVehicleMaintenance/IMPLEMENTATION_NOTES.md)
+- [Origem da importação](docs/IMPORTACAO-2026-10-21.md)
+- [Histórico de passagem](docs/HANDOFF.md)
 
-Cada mod tem sua própria pasta Contents/ e workshop.txt. Ferramentas e testes ficam fora de Contents/ e não pertencem ao pacote enviado ao jogo.
-
-Dentro de cada uma das cinco pastas revisadas, instale as dependências de desenvolvimento e execute:
-
-~~~sh
-npm install
-npm test
-~~~
-
-Os quatro projetos com package-lock.json permitem npm ci. BasicVehicleMaintenance ainda não tinha lockfile na fonte importada. Alguns checks consultam a instalação local do jogo; veja MANUAL_TEST.md e os comentários do runner de cada mod.
-
-## Evidências e histórico
-
-- [Estado da importação e testes atuais](docs/IMPORTACAO-2026-10-21.md)
-- [Origem e hashes dos arquivos importados](docs/SOURCE-SNAPSHOT.json)
-- [Relatório da API alvo](docs/API-CHECK-42.21.md)
-- [Teste dedicado em 42.19.2](docs/SMOKE-TEST.md)
-- [Encerramento da revisão anterior](docs/review-2026-10-17/ENCERRAMENTO-ACOMPANHAMENTO.md)
-- [PRD de medicina](docs/PRD-Medical.md)
-- [PRD de veículos](docs/PRD-VehicleMaintenance-v2.md)
-
-guia.md, review.md e o pipeline de skills na raiz são documentos históricos do repositório antigo. Não constituem aprovação das versões importadas e podem descrever APIs de uma versão anterior.
+RetroProfessions e VehicleMaintenance são as versões antigas substituídas por KRjobs e BasicVehicleMaintenance. Docs datados de 17/10 descrevem a base anterior e devem ser lidos como histórico quando conflitarem com o plano atual.
 
 ## English
 
-This repository contains the five updated mod sources plus the unchanged legacy ZombieDisguise. Automated tests passed for the five updated mods on October 21, 2026. Full gameplay and multiplayer validation is still pending; ZombieDisguise has not been reviewed or validated. B41 support is planned for ReduceMetalWood, PassiveSkills and KRjobs only. No Steam Workshop upload was performed.
+This branch contains the next local versions of six mods. Build & Haul and Passive Skills passed offline verification and task review. Vehicle customization and expanded health are implemented for testing; dependent camouflage remains in development. All24 KRjobs professions and4 starting medical traits were confirmed with translated labels in the native B42 character-creation widgets. No gameplay/multiplayer certification, Steam upload or existing-save changes are claimed.
