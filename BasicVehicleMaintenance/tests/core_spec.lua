@@ -212,12 +212,19 @@ check(hi.injury == nil, "high skill removes injury chance")
 -- ---------------------------------------------------------------- patch history
 local md = {}
 check(Core.getPatches(md, 7, opts) == 0, "no history")
-check(Core.addPatch(md, 7, "patch", opts) == 1 and Core.addPatch(md, 7, "repair", opts) == 2, "history counts")
-check(Core.getPatches(md, 7, opts) == 2 and md.MVR.last == "repair", "history read back")
+check(Core.addPatch(md, 7, "patch", opts) == 1 and Core.addPatch(md, 7, "repair", opts) == 1, "history counts")
+check(Core.getPatches(md, 7, opts) == 1 and md.MVR.last == "repair", "history read back")
 check(Core.getPatches(md, 8, opts) == 0, "new part item resets history")
 check(Core.addPatch(md, 8, "patch", opts) == 1, "history restarts for new item")
 check(Core.getPatches(md, 8, Core.readSandbox({ MVR = { PatchHistoryEnabled = false } })) == 0, "history disabled")
 check(Core.riskBand(0.05) == "low" and Core.riskBand(0.2) == "medium" and Core.riskBand(0.3) == "high", "risk bands")
+
+-- Professional work must improve repair history, not count as another emergency patch.
+local professional = { MVR = { patches = 3, itemId = "88", extra = "kept" }, MVRUpgrades = { tier = 2 } }
+check(Core.addPatch(professional, 88, "repair", opts) == 3, "durable repair does not add emergency penalty")
+check(Core.addPatch(professional, 88, "overhaul", opts) == 2, "overhaul removes one previous patch penalty")
+check(professional.MVR.extra == "kept" and professional.MVRUpgrades.tier == 2, "history preserves unrelated and upgrade state")
+check(Core.addPatch(professional, 88, "patch", opts) == 3, "emergency patch still increases penalty")
 
 print("  core_spec.lua: " .. checks .. " checks")
 return failures

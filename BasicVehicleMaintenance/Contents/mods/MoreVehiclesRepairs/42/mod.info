@@ -1,7 +1,7 @@
 name=Basic Vehicle Maintenance
 id=MoreVehiclesRepairs
 author=Kriger
-description=Improvised vehicle repairs using scrap, tape and tools. Includes engine repairs, condition caps, failure risks, Mechanics XP, inspection, patch history and three quality tiers. Materials inside bags count. Sandbox options. Build 42 only; PT-BR + EN.
+description=Emergency patches, durable repairs and overhauls, vehicle inspection, bounded trunk/glove-box and engine power upgrades, painting and gradual rust removal. Uses standard vehicle washing. Generic vanilla parts also work on modded vehicle models. B42 only; English and Brazilian Portuguese.
 poster=poster.png
 icon=icon.png
 modversion=2.0.0

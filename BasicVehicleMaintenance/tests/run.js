@@ -125,8 +125,8 @@ const luaSet = (arr) => '{' + arr.map((x) => `[${luaStr(x)}]=true`).join(',') + 
 const luaArr = (arr) => '{' + arr.map(luaStr).join(',') + '}';
 const luaMap = (obj) => '{' + Object.entries(obj).map(([k, v]) => `[${luaStr(k)}]=${luaStr(v)}`).join(',') + '}';
 const prelude = `PARTIDS=${luaArr(fixture.partIds)}; ITEMS=${luaSet(fixture.items)}; TR=${luaMap(all.EN)};
-  ACTIONFILE=${luaStr(fwd(path.join(LUA, 'shared/TimedActions/MVR_RepairAction.lua')))}; MENUFILE=${luaStr(fwd(path.join(LUA, 'client/MVR/Menu.lua')))};`;
-for (const spec of ['core_spec.lua', 'game_spec.lua']) {
+  EVENTFILE=${luaStr(fwd(path.join(LUA, 'server/MVR/WorkshopEvents.lua')))}; WORKSHOPACTIONFILE=${luaStr(fwd(path.join(LUA, 'shared/TimedActions/MVR_WorkshopAction.lua')))}; ACTIONFILE=${luaStr(fwd(path.join(LUA, 'shared/TimedActions/MVR_RepairAction.lua')))}; MENUFILE=${luaStr(fwd(path.join(LUA, 'client/MVR/Menu.lua')))};`;
+for (const spec of ['core_spec.lua', 'game_spec.lua', 'upgrades_spec.lua']) {
   const L = lauxlib.luaL_newstate();
   lualib.luaL_openlibs(L);
   try {

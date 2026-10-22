@@ -117,3 +117,19 @@ option MVR.QualityTiersEnabled
 	page = MVR,
 	translation = MVR_QualityTiersEnabled,
 }
+
+option MVR.UpgradesEnabled
+{
+	type = boolean,
+	default = true,
+	page = MVR,
+	translation = MVR_UpgradesEnabled,
+}
+
+option MVR.CustomizationEnabled
+{
+	type = boolean,
+	default = true,
+	page = MVR,
+	translation = MVR_CustomizationEnabled,
+}

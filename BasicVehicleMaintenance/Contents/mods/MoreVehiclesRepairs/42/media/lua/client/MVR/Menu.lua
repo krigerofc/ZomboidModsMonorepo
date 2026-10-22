@@ -2,6 +2,8 @@
 -- and feedback for results computed by the server (MP) or locally (SP).
 require "MVR/Game"
 require "TimedActions/MVR_RepairAction"
+require "TimedActions/MVR_WorkshopAction"
+require "Vehicles/TimedActions/ISWashVehicle"
 
 local Core = MVR.Core
 local Game = MVR.Game
@@ -77,6 +79,7 @@ function Client.buildTooltip(ev, part)
         end
     end
 
+    if ev.restorationOnly then s = s .. NOTE .. getText("Tooltip_MVR_HistoryRestoration") .. LINE end
     s = s .. INFO .. getText("Tooltip_MVR_Gain", ev.gain, ev.cap) .. LINE
     if (ev.ctx and ev.ctx.mech or 0) >= 4 then
         s = s .. NOTE .. getText("Tooltip_MVR_FailExact", pct(ev.fail)) .. LINE
@@ -158,6 +161,87 @@ local function addRepairOption(menu, label, playerObj, part, tierId, ev)
     return option
 end
 
+
+-- Workshop entries share the original mechanics menu and the standard transfer/path queues.
+function Client.workshopTooltip(ev, part)
+    local text = INFO .. getText("Tooltip_MVR_Workshop", partName(part)) .. LINE
+        .. (ev.status == "ok" and GOOD or BAD) .. getText("Tooltip_MVR_WorkshopStatus_" .. ev.status) .. LINE
+    if ev.target then
+        text = text .. INFO .. getText("Tooltip_MVR_WorkshopBenefit", ev.base, ev.target) .. LINE
+        local keys = { cargo = "Tooltip_MVR_WorkshopCargo", glove = "Tooltip_MVR_WorkshopGlove", power = "Tooltip_MVR_WorkshopPower" }
+        if keys[ev.role] then text = text .. INFO .. getText(keys[ev.role]) .. LINE end
+    elseif ev.operation == "paint" or ev.operation == "rust" then
+        text = text .. NOTE .. getText("Tooltip_MVR_CosmeticOnly") .. LINE
+        if ev.operation == "rust" then text = text .. INFO .. getText("Tooltip_MVR_RustStep") .. LINE end
+    end
+    for _, req in ipairs(ev.reqs or {}) do
+        text = text .. (req.ok and GOOD or BAD) .. getText("Tooltip_MVR_Req_" .. req.key, req.need, req.have) .. LINE
+    end
+    for _, t in ipairs(ev.tools or {}) do
+        text = text .. (t.item and GOOD or BAD) .. itemName(t.type) .. LINE
+    end
+    for _, r in ipairs(ev.report or {}) do
+        text = text .. (r.ok and GOOD or BAD) .. itemName(r.type) .. " " .. r.have .. "/" .. r.need .. LINE
+    end
+    return text .. INFO .. getText("Tooltip_MVR_WorkshopTime", ev.time) .. LINE
+        .. INFO .. getText("Tooltip_MVR_WorkshopRisk") .. LINE .. getText("Tooltip_MVR_WorkshopCost")
+end
+
+function Client.onWorkshop(playerObj, part, operation, choice)
+    local ev = Game.evaluateWorkshop(playerObj, part, operation, choice)
+    if ev.status ~= "ok" then return end
+    if playerObj:getVehicle() then ISVehicleMenu.onExit(playerObj) end
+    queueTransfers(playerObj, ev)
+    local vehicle = part:getVehicle()
+    ISTimedActionQueue.add(ISPathFindAction:pathToVehicleArea(playerObj, vehicle, part:getArea()))
+    local cover = part:getId() == "Engine" and vehicle:getPartById("EngineDoor") or nil
+    if cover and cover:getDoor() and cover:getInventoryItem() and not cover:getDoor():isOpen() then
+        if cover:getDoor():isLocked() then ISTimedActionQueue.add(ISUnlockVehicleDoor:new(playerObj, cover)) end
+        ISTimedActionQueue.add(ISOpenVehicleDoor:new(playerObj, vehicle, cover))
+        ISTimedActionQueue.add(MVR_WorkshopAction:new(playerObj, part, operation, choice))
+        ISTimedActionQueue.add(ISCloseVehicleDoor:new(playerObj, vehicle, cover))
+    else
+        ISTimedActionQueue.add(MVR_WorkshopAction:new(playerObj, part, operation, choice))
+    end
+end
+
+function Client.onWash(playerObj, part)
+    if playerObj:getVehicle() then ISVehicleMenu.onExit(playerObj) end
+    ISVehicleMenu.onWash(playerObj, part:getVehicle())
+end
+
+function Client.addWorkshopOptions(context, playerObj, part)
+    local parent = context:addOption(getText("ContextMenu_MVR_Workshop"), nil, nil)
+    local sub = ISContextMenu:getNew(context)
+    context:addSubMenu(parent, sub)
+    local function add(menu, key, operation, choice)
+        local ev = Game.evaluateWorkshop(playerObj, part, operation, choice)
+        -- Closure carries two explicit intent parameters; no client-computed final statistics.
+        local option = menu:addOption(getText(key), playerObj, function(chr)
+            Client.onWorkshop(chr, part, operation, choice)
+        end)
+        option.toolTip = newTooltip(Client.workshopTooltip(ev, part))
+        option.notAvailable = ev.status ~= "ok"
+        return option
+    end
+    if Game.partRole(part) then
+        add(sub, "ContextMenu_MVR_Upgrade1", "upgrade", 1)
+        add(sub, "ContextMenu_MVR_Upgrade2", "upgrade", 2)
+        add(sub, "ContextMenu_MVR_Restore", "upgrade", 0)
+    else
+        add(sub, "ContextMenu_MVR_Unsupported", "upgrade", 1)
+    end
+    local paint = sub:addOption(getText("ContextMenu_MVR_Paint"), nil, nil)
+    local colors = ISContextMenu:getNew(sub)
+    sub:addSubMenu(paint, colors)
+    for _, c in ipairs(Game.Palette) do add(colors, "ContextMenu_MVR_Color_" .. c.id, "paint", c.id) end
+    add(sub, "ContextMenu_MVR_Rust", "rust", 1)
+    local wash = sub:addOption(getText("ContextMenu_MVR_Wash"), playerObj, Client.onWash, part)
+    wash.notAvailable = not ISWashVehicle.hasBlood(part:getVehicle())
+        or ISWashVehicle.getWaterAmountForPlayer(playerObj) < 1
+    wash.toolTip = newTooltip(INFO .. getText("Tooltip_MVR_Wash"))
+end
+
 -- ---------------------------------------------------------------- inspection (v1.1)
 
 MVR_InspectAction = ISBaseTimedAction:derive("MVR_InspectAction")
@@ -206,7 +290,7 @@ function Client.inspectionText(playerObj, vehicle)
     for i = 0, vehicle:getPartCount() - 1 do
         local part = vehicle:getPartByIndex(i)
         if Game.isPartPresent(part) and part:getCategory() ~= "nodisplay" then
-            local cfg = Core.getConfig(part:getId())
+            local cfg = Game.partConfig(part)
             local cond = part:getCondition()
             local col = cond < 25 and BAD or (cond < 60 and NOTE or GOOD)
             local s = col .. getText("IGUI_MVR_Inspect_Line", partName(part), cond)
@@ -265,7 +349,7 @@ function Client.addOptions(mechanics, part)
     if not playerObj or not Game.isPartPresent(part) then return end
 
     local dark = Game.isDark(playerObj)
-    local cfg = Core.getConfig(part:getId())
+    local cfg = Game.partConfig(part)
     local label = getText("ContextMenu_MVR_Repair")
     if cfg.notRepairable then
         local ev = Game.evaluate(playerObj, part, "patch", dark, opts)
@@ -296,6 +380,8 @@ function Client.addOptions(mechanics, part)
         inspect.toolTip = newTooltip(INFO .. getText("Tooltip_MVR_Inspect"))
     end
 
+    Client.addWorkshopOptions(context, playerObj, part)
+
     if context.numOptions > 1 and not context:getIsVisible() then context:setVisible(true) end
 end
 
@@ -323,6 +409,10 @@ end
 
 function Client.showResult(chr, result)
     if not chr or type(result) ~= "table" then return end
+    if result.status == "customized" then
+        HaloTextHelper.addGoodText(chr, getText("IGUI_MVR_WorkshopDone"))
+        return
+    end
     if result.status ~= "done" then
         chr:Say(getText("IGUI_MVR_Fail_" .. tostring(result.status)))
         return

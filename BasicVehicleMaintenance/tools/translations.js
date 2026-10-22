@@ -117,7 +117,7 @@ const T = {
     Sandbox_MVR_TimeMultiplier: ['Work time multiplier', 'Multiplicador do tempo de trabalho'],
     Sandbox_MVR_TimeMultiplier_tooltip: ['Scales how long repairs take. Default 1.', 'Multiplica quanto tempo os reparos levam. Padrão 1.'],
     Sandbox_MVR_PatchHistoryEnabled: ['Patch history', 'Histórico de remendos'],
-    Sandbox_MVR_PatchHistoryEnabled_tooltip: ['Each successful improvised repair lowers that part cap by 3 (minimum 30) until the part is replaced.', 'Cada reparo improvisado bem-sucedido baixa o teto daquela peça em 3 (mínimo 30) até a peça ser trocada.'],
+    Sandbox_MVR_PatchHistoryEnabled_tooltip: ['Emergency patches lower the cap by 3 (minimum 30). Proper repairs preserve history; overhauls remove one patch penalty.', 'Remendos baixam o teto em 3 (mínimo 30). Reparos preservam o histórico; revisões removem uma penalidade de remendo.'],
     Sandbox_MVR_WorkshopBonusEnabled: ['Workshop modifiers', 'Modificadores de oficina'],
     Sandbox_MVR_WorkshopBonusEnabled_tooltip: ['Vehicle indoors: -3 points of failure chance. Darkness: +5. Jack: tires, brakes and suspension 15% faster.', 'Veículo em local coberto: -3 pontos na chance de falha. Escuro: +5. Macaco: pneus, freios e suspensão 15% mais rápidos.'],
     Sandbox_MVR_QualityTiersEnabled: ['Quality tiers', 'Faixas de qualidade'],
@@ -125,6 +125,71 @@ const T = {
   },
 };
 
+T.IG_UI.IGUI_MVR_Fail_work_area = ["Work beside the part on the same floor, with the vehicle stopped and engine off.", "Trabalhe junto da peça no mesmo piso, com o veículo parado e motor desligado."];
+
+
+Object.assign(T.ContextMenu, {
+ ContextMenu_MVR_Workshop: ["Vehicle workshop", "Oficina do veículo"],
+ ContextMenu_MVR_Upgrade1: ["Upgrade I", "Melhoria I"],
+ ContextMenu_MVR_Upgrade2: ["Upgrade II (sheltered workshop)", "Melhoria II (oficina coberta)"],
+ ContextMenu_MVR_Restore: ["Remove upgrade", "Remover melhoria"],
+ ContextMenu_MVR_Unsupported: ["Upgrade unavailable for this part", "Melhoria indisponível nesta peça"],
+ ContextMenu_MVR_Paint: ["Paint vehicle", "Pintar veículo"],
+ ContextMenu_MVR_Rust: ["Remove some rust", "Remover parte da ferrugem"],
+ ContextMenu_MVR_Wash: ["Wash blood (standard action)", "Lavar sangue (ação padrão)"],
+});
+for (const [id, en, pt] of [["red","Red","Vermelho"],["blue","Blue","Azul"],["green","Green","Verde"],["yellow","Yellow","Amarelo"],["orange","Orange","Laranja"],["purple","Purple","Roxo"],["brown","Brown","Marrom"],["black","Black","Preto"],["white","White","Branco"],["grey","Grey","Cinza"]]) T.ContextMenu["ContextMenu_MVR_Color_"+id] = [en,pt];
+Object.assign(T.Tooltip, {
+ Tooltip_MVR_Workshop: ["Vehicle workshop: %1", "Oficina do veículo: %1"],
+ Tooltip_MVR_WorkshopBenefit: ["Original %1 -> selected %2 (at full condition; native damage penalties still apply).", "Original %1 -> selecionado %2 (em condição plena; penalidades de dano do jogo continuam)."],
+ Tooltip_MVR_WorkshopCost: ["Requirements and costs are checked again when work finishes.", "Requisitos e custos são conferidos novamente ao concluir."],
+ Tooltip_MVR_WorkshopRisk: ["No random failure. This work grants no XP.", "Sem falha aleatória. Este trabalho não concede XP."],
+ Tooltip_MVR_WorkshopTime: ["Work time: %1 action units (before character speed modifiers).", "Tempo: %1 unidades de ação (antes dos modificadores do personagem)."],
+ Tooltip_MVR_WorkshopPower: ["Power only: +5% / +10%. Quality and noise are preserved.", "Somente potência: +5% / +10%. Qualidade e ruído são preservados."],
+ Tooltip_MVR_WorkshopCargo: ["Cargo: +10% / +20%, at most +40 capacity. Follows the physical part.", "Carga: +10% / +20%, no máximo +40 de capacidade. Acompanha a peça física."],
+ Tooltip_MVR_WorkshopGlove: ["Glove box: +25% / +50%, at most +5 capacity. Follows the physical part.", "Porta-luvas: +25% / +50%, no máximo +5 de capacidade. Acompanha a peça física."],
+ Tooltip_MVR_CosmeticOnly: ["Appearance only: paint and rust removal do not repair parts or add protection.", "Somente aparência: pintura e remoção de ferrugem não reparam peças nem adicionam proteção."],
+ Tooltip_MVR_RustStep: ["Removes up to 20 percentage points of rust per application.", "Remove até 20 pontos percentuais de ferrugem por aplicação."],
+ Tooltip_MVR_Wash: ["Uses the game's normal water-consuming vehicle washing action. Carry at least 1 unit of water and find blood to wash.", "Usa a lavagem normal do jogo, consumindo água. Leve ao menos 1 unidade de água e encontre sangue para lavar."],
+});
+const workshopStatuses = {
+ ok: ["Ready. Work beside the selected part, on the same floor, with engine off and vehicle stopped.", "Pronto. Trabalhe junto à peça selecionada, no mesmo piso, com motor desligado e veículo parado."],
+ disabled: ["This operation is disabled by the server.", "Esta operação está desativada pelo servidor."],
+ not_installed: ["The selected part must be installed.", "A peça selecionada precisa estar instalada."],
+ unsupported: ["Only the game's generic engine, trunk and glove-box parts have supported upgrades. Special systems are excluded.", "Somente motor, porta-malas e porta-luvas genéricos do jogo recebem melhorias. Sistemas especiais ficam de fora."],
+ unpaintable: ["This model does not enable native vehicle tinting.", "Este modelo não permite a coloração nativa de veículos."],
+ access: ["Unlock access using the vehicle key or the game's normal door/window access.", "Libere o acesso com a chave do veículo ou pelo acesso normal de portas e janelas do jogo."],
+ already: ["The selected result is already installed, or there is nothing left to remove.", "O resultado selecionado já está aplicado ou não resta nada para remover."],
+ overloaded: ["Unload cargo first. A downgrade cannot reduce capacity below the contents; damaged parts may require more unloading.", "Retire a carga primeiro. A redução não pode deixar a capacidade menor que o conteúdo; peças danificadas podem exigir retirar mais carga."],
+ conflict: ["Another system changed this part's base statistics. This upgrade is suspended to preserve that change.", "Outro sistema alterou os atributos de base desta peça. A melhoria está suspensa para preservar essa alteração."],
+ workshop: ["Tier II needs a sheltered vehicle and Mechanics 6.", "O nível II exige veículo em local coberto e Mecânica 6."],
+ skill: ["Your Mechanics level is too low.", "Seu nível de Mecânica é insuficiente."],
+ missing_tools: ["A required tool is missing or broken.", "Falta uma ferramenta obrigatória ou ela está quebrada."],
+ missing_materials: ["Required materials are missing.", "Faltam materiais obrigatórios."],
+ stale: ["The vehicle or installed part changed while you were working. Start again.", "O veículo ou a peça instalada mudou durante o trabalho. Inicie novamente."],
+ work_area: ["Work beside the part, on the same floor, with the vehicle stopped and engine off.", "Trabalhe junto à peça, no mesmo piso, com o veículo parado e motor desligado."],
+};
+for (const [status, pair] of Object.entries(workshopStatuses)) {
+ T.Tooltip["Tooltip_MVR_WorkshopStatus_"+status] = pair;
+ if (!T.IG_UI["IGUI_MVR_Fail_"+status]) T.IG_UI["IGUI_MVR_Fail_"+status] = pair;
+}
+Object.assign(T.IG_UI, {
+ IGUI_MVR_WorkshopJob: ["Vehicle workshop", "Oficina de veículo"],
+ IGUI_MVR_WorkshopDone: ["Workshop work finished.", "Trabalho de oficina concluído."],
+});
+Object.assign(T.Sandbox, {
+ Sandbox_MVR_UpgradesEnabled: ["Capacity and engine upgrades", "Melhorias de carga e motor"],
+ Sandbox_MVR_UpgradesEnabled_tooltip: ["Enables bounded cargo/glove-box capacity and engine power upgrades. Disabling restores original values when cargo permits; no items are discarded.", "Ativa melhorias limitadas de carga/porta-luvas e potência. Ao desligar, restaura valores originais quando a carga permitir; nenhum item é descartado."],
+ Sandbox_MVR_CustomizationEnabled: ["Vehicle painting and rust removal", "Pintura e remoção de ferrugem"],
+ Sandbox_MVR_CustomizationEnabled_tooltip: ["Enables resource-consuming cosmetic work. Washing still uses the game's normal action.", "Ativa trabalhos cosméticos com consumo de recursos. A lavagem continua usando a ação normal do jogo."],
+});
+T.Mod.description = ["Emergency patches, durable repairs and overhauls, vehicle inspection, bounded trunk/glove-box and engine power upgrades, painting and gradual rust removal. Uses standard vehicle washing. Generic vanilla parts also work on modded vehicle models. B42 only; English and Brazilian Portuguese.", "Remendos emergenciais, reparos duráveis e revisões, inspeção, melhorias limitadas de porta-malas/porta-luvas e potência, pintura e remoção gradual de ferrugem. Usa a lavagem padrão. Peças genéricas do jogo também funcionam em modelos de veículos de mods. Somente B42; português brasileiro e inglês."];
+
+T.Tooltip.Tooltip_MVR_Status_access = T.Tooltip.Tooltip_MVR_WorkshopStatus_access;
+T.Tooltip.Tooltip_MVR_Status_destroyed = ["A destroyed window must be replaced.", "Uma janela destruída precisa ser substituída."];
+T.IG_UI.IGUI_MVR_Fail_destroyed = T.Tooltip.Tooltip_MVR_Status_destroyed;
+T.Tooltip.Tooltip_MVR_HistoryRestoration = ["History restoration only: removes one patch penalty on success while preserving current condition.", "Somente restauração do histórico: remove uma penalidade de remendo no sucesso, preservando a condição atual."];
+T.Tooltip.Tooltip_MVR_Req_WorkshopShelter = ["Sheltered workshop: %2/%1", "Oficina coberta: %2/%1"];
 const ROOT = path.join(__dirname, '..', 'Contents', 'mods', 'MoreVehiclesRepairs', 'common', 'media', 'lua', 'shared', 'Translate');
 const LANGS = ['EN', 'PTBR'];
 const check = process.argv.includes('--check');

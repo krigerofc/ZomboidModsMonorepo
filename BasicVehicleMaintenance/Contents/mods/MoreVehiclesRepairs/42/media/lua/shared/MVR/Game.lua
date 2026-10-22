@@ -117,6 +117,36 @@ function Game.isPartPresent(part)
     return part ~= nil and (part:getId() == "Engine" or part:getInventoryItem() ~= nil)
 end
 
+-- Generic items identify a renamed part family without depending on the vehicle model name.
+function Game.partConfig(part)
+    local cfg, key = Core.getConfig(part:getId())
+    if key == "Default" then
+        local item = part:getInventoryItem()
+        if item then
+            local generic, family = Core.getConfig(item:getFullType())
+            if family ~= "Default" then return generic, family end
+        end
+    end
+    return cfg, key
+end
+
+-- Checked again on the simulation that applies effects, not only by client pathfinding.
+function Game.workAllowed(chr, part)
+    if not chr or not part then return false end
+    local vehicle = part:getVehicle()
+    if not vehicle or chr:getVehicle() then return false end
+    local z = safe(function() return chr:getZ() end)
+    local vz = safe(function() return vehicle:getZ() end)
+    if type(z) ~= "number" or type(vz) ~= "number" or math.floor(z) ~= math.floor(vz) then return false end
+    local speed = safe(function() return vehicle:getCurrentSpeedKmHour() end)
+    if type(speed) ~= "number" or math.abs(speed) > 0.1 then return false end
+    if safe(function() return vehicle:isEngineRunning() end) ~= false then return false end
+    if chr:DistTo(vehicle:getX(), vehicle:getY()) > 6 then return false end
+    local area = part:getArea()
+    if area and area ~= "" and safe(function() return vehicle:isInArea(area, chr) end) ~= true then return false end
+    return true
+end
+
 function Game.installedItemId(part)
     local item = part:getInventoryItem()
     return item and item:getID() or nil
@@ -152,7 +182,7 @@ end
 -- the repair can be done right now.
 function Game.evaluate(chr, part, tierId, dark, opts)
     opts = opts or Game.opts()
-    local cfg, key = Core.getConfig(part:getId())
+    local cfg, key = Game.partConfig(part)
     local tier = Core.getTier(tierId)
     if not opts.QualityTiersEnabled then tier = Config.Tiers[1] end
     local ev = { cfg = cfg, key = key, tier = tier, opts = opts, current = part:getCondition() }
@@ -164,6 +194,8 @@ function Game.evaluate(chr, part, tierId, dark, opts)
     if not opts.Enabled then return finish("disabled") end
     if cfg.notRepairable then return finish("not_repairable") end
     if not Game.isPartPresent(part) then return finish("not_installed") end
+    if key == "Window" and ev.current <= 0 then return finish("destroyed") end
+    if not Game.workAccess(chr, part) then return finish("access") end
 
     local ctx = Game.context(chr, part, dark)
     ev.ctx = ctx
@@ -187,8 +219,10 @@ function Game.evaluate(chr, part, tierId, dark, opts)
         if not item then ev.toolOk = false end
     end
 
-    if ev.current >= 100 then return finish("undamaged") end
-    if ev.current >= ev.cap then return finish("above_cap") end
+    ev.restorationOnly = tier.id == "overhaul" and ev.patches > 0 and ev.current >= ev.cap
+    if ev.current >= 100 and not ev.restorationOnly then return finish("undamaged") end
+    if ev.current >= ev.cap and not ev.restorationOnly then return finish("above_cap") end
+    if ev.restorationOnly then ev.cap = ev.current; ev.gain = 0 end
     if not ev.reqOk then return finish("skill") end
     if not ev.toolOk then return finish("missing_tools") end
     if not ev.matOk then return finish("missing_materials") end
@@ -281,6 +315,9 @@ function Game.setPartCondition(part, cond)
     end
     safe(function() vehicle:updatePartStats() end)
     vehicle:transmitPartCondition(part)
+    if Game.reapplyUpgrade then Game.reapplyUpgrade(part) end
+    if vehicle.updateBulletStats then vehicle:updateBulletStats() end
+    if item and vehicle.transmitPartItem then vehicle:transmitPartItem(part) end
 end
 
 function Game.xpKey(part)
@@ -307,6 +344,9 @@ end
 
 -- The whole repair, authoritative. Returns result table (sent to the client as feedback).
 function Game.applyRepair(chr, part, tierId, dark)
+    if isClient() then return { status = "disabled" } end
+    if not Game.workAccess(chr, part) then return { status = "access" } end
+    if not Game.workAllowed(chr, part) then return { status = "work_area" } end
     local opts = Game.opts()
     local ev = Game.evaluate(chr, part, tierId, dark, opts)
     if ev.status ~= "ok" then return { status = ev.status } end
@@ -347,5 +387,7 @@ function Game.feedback(chr, result)
         MVR.Client.showResult(chr, result)
     end
 end
+
+require("MVR/Workshop")(Game)
 
 return Game

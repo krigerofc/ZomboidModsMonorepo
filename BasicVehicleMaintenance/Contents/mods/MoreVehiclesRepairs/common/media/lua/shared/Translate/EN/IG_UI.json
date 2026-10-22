@@ -33,5 +33,18 @@
     "IGUI_MVR_Inspect_Vanilla": "standard repair possible",
     "IGUI_MVR_Inspect_Replace": "replace (cannot be patched)",
     "IGUI_MVR_Inspect_Critical": "Critical (below 25%): %1",
-    "IGUI_MVR_Inspect_NoCritical": "No critical parts."
+    "IGUI_MVR_Inspect_NoCritical": "No critical parts.",
+    "IGUI_MVR_Fail_work_area": "Work beside the part on the same floor, with the vehicle stopped and engine off.",
+    "IGUI_MVR_Fail_ok": "Ready. Work beside the selected part, on the same floor, with engine off and vehicle stopped.",
+    "IGUI_MVR_Fail_unsupported": "Only the game's generic engine, trunk and glove-box parts have supported upgrades. Special systems are excluded.",
+    "IGUI_MVR_Fail_unpaintable": "This model does not enable native vehicle tinting.",
+    "IGUI_MVR_Fail_access": "Unlock access using the vehicle key or the game's normal door/window access.",
+    "IGUI_MVR_Fail_already": "The selected result is already installed, or there is nothing left to remove.",
+    "IGUI_MVR_Fail_overloaded": "Unload cargo first. A downgrade cannot reduce capacity below the contents; damaged parts may require more unloading.",
+    "IGUI_MVR_Fail_conflict": "Another system changed this part's base statistics. This upgrade is suspended to preserve that change.",
+    "IGUI_MVR_Fail_workshop": "Tier II needs a sheltered vehicle and Mechanics 6.",
+    "IGUI_MVR_Fail_stale": "The vehicle or installed part changed while you were working. Start again.",
+    "IGUI_MVR_WorkshopJob": "Vehicle workshop",
+    "IGUI_MVR_WorkshopDone": "Workshop work finished.",
+    "IGUI_MVR_Fail_destroyed": "A destroyed window must be replaced."
 }

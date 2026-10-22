@@ -41,6 +41,7 @@ function syncPlayerStats() calls.statSync = calls.statSync + 1 end
 function sendServerCommand(p, mod, cmd, args) calls.server[#calls.server + 1] = { mod = mod, cmd = cmd, args = args } end
 function addXp(chr, perk, n) calls.xp[#calls.xp + 1] = n end
 SandboxVars = { MVR = {} }
+VehicleUtils = { CheckForUnlockedDoorsWindows = function() return false end, RequiredKeyNotFound = function(part) return part.needKey == true end }
 ItemTag = { WRENCH = "wrench", SCREWDRIVER = "screwdriver", SEWING_NEEDLE = "sewingneedle" }
 Perks = { Mechanics = "Mechanics", MetalWelding = "MetalWelding", Electricity = "Electricity" }
 BodyPartType = { Hand_L = "Hand_L", Hand_R = "Hand_R" }
@@ -75,14 +76,16 @@ local function walk(c, fn)
 end
 function Container:getFirstTagEvalRecurse(tag, pred) return walk(self, function(it) if it.tags[tag] and pred(it) then return it end end) end
 function Container:getFirstTypeRecurse(t) return walk(self, function(it) if it.t == t then return it end end) end
+function Container:haveThisKeyId() return self.key end
 function Container:containsTypeRecurse(t) return self:getFirstTypeRecurse(t) ~= nil end
 
 local function newItem(t, opt)
     opt = opt or {}
     nextId = nextId + 1
-    local it = { _item = true, t = t, id = nextId, tags = opt.tags or {}, cond = opt.cond or 10, uses = opt.uses }
+    local it = { _item = true, t = t, id = nextId, tags = opt.tags or {}, cond = opt.cond or 10, uses = opt.uses, md = {} }
     if opt.uses then it._class = "DrainableComboItem" end
     if opt.bag then it._class = "InventoryContainer"; it.inv = newContainer() end
+    function it:getModData() return self.md end
     function it:getFullType() return self.t end
     function it:getID() return self.id end
     function it:isBroken() return self.cond <= 0 end
@@ -122,6 +125,7 @@ local function newPlayer(levels)
     function p:getOnlineID() return 7 end
     function p:Say(t) self.said[#self.said + 1] = t end
     function p:getVehicle() return nil end
+    function p:getZ() return self.z or 0 end
     function p:isTimedActionInstant() return false end
     function p:DistTo() return 1 end
     function p:getPlayerNum() return 0 end
@@ -131,12 +135,20 @@ end
 local function newVehicle(outside)
     local v = { parts = {}, outside = outside ~= false }
     function v:getSquare() local me = self; return { isOutside = function() return me.outside end } end
+    function v:getRust() return 0 end
+    function v:isDoColor() return false end
+    function v:getEnginePower() return 1000 end
+    function v:getKeyId() return 42 end
     function v:getMechanicalID() return 42 end
     function v:transmitPartCondition() calls.transmitCond = calls.transmitCond + 1 end
     function v:transmitPartModData() calls.transmitMd = calls.transmitMd + 1 end
     function v:updatePartStats() end
     function v:getX() return 0 end
     function v:getY() return 0 end
+    function v:getZ() return self.z or 0 end
+    function v:getCurrentSpeedKmHour() return self.speed or 0 end
+    function v:isEngineRunning() return self.running == true end
+    function v:isInArea() return self.inArea ~= false end
     function v:getPartById(id) return self.parts[id] end
     function v:getPartCount() local n = 0; for _ in pairs(self.parts) do n = n + 1 end; return n end
     function v:getPartByIndex(i) local n = 0; for _, p in pairs(self.parts) do if n == i then return p end; n = n + 1 end end
@@ -153,7 +165,8 @@ local function newPart(vehicle, id, cond, installed)
     function p:getInventoryItem() return self.item end
     function p:getVehicle() return self.vehicle end
     function p:getModData() return self.md end
-    function p:getScriptPart() return { isRepairMechanic = function() return true end } end
+    function p:getItemContainer() return nil end
+    function p:getScriptPart() return { isRepairMechanic = function() return true end, isMechanicRequireKey = function() return self.needKey == true end } end
     function p:doInventoryItemStats() end
     function p:getMechanicSkillInstaller() return 0 end
     function p:isContainer() return false end
@@ -368,6 +381,8 @@ local function newMenu()
 end
 ISContextMenu = { getNew = function() return newMenu() end }
 ISToolTip = { new = function() return { initialise = function() end, setVisible = function() end } end }
+package.loaded["Vehicles/TimedActions/ISWashVehicle"] = true
+ISWashVehicle = { hasBlood = function() return false end, getWaterAmountForPlayer = function() return 0 end }
 local paused = false
 ISVehicleMechanics = {}
 function ISVehicleMechanics:doPartContextMenu(part, x, y)
@@ -389,7 +404,7 @@ do
     setmetatable(win, { __index = ISVehicleMechanics })
     win:doPartContextMenu(part, 0, 0)
     local opts = win.context.options
-    check(#opts == 2 and opts[1].sub and #opts[1].sub.options == 3, "repair submenu with 3 tiers + inspect option")
+    check(#opts == 3 and opts[1].sub and #opts[1].sub.options == 3, "repair submenu with 3 tiers + inspect option")
     local patch = opts[1].sub.options[1]
     check(patch.notAvailable == false and patch.toolTip.description:find("<LINE>", 1, true), "patch available, rich-text tooltip")
     check(opts[1].sub.options[3].notAvailable == true, "overhaul locked at Mechanics 0")
@@ -435,7 +450,7 @@ do
     thePlayer = chr
     local win = setmetatable({ playerNum = 0, chr = chr }, { __index = ISVehicleMechanics })
     win:doPartContextMenu(engine, 0, 0)
-    check(#win.context.options == 2, "Engine menu repair + inspect")
+    check(#win.context.options == 3, "Engine menu repair + inspect + workshop")
     check(MVR.Client.inspectionText(chr, v):find("Engine", 1, true) ~= nil, "inspection includes Engine")
     SERVER = true
     resetCalls()
@@ -467,7 +482,365 @@ do
     SERVER = false
 end
 
-for k in pairs(missing) do check(false, "getText key missing from EN translations: " .. k) end
 
+
+
+-- Work location and vehicle state are rechecked where server effects happen.
+do
+    local chr, part = setupBrake()
+    local vehicle = part:getVehicle()
+    chr.z = 1
+    check(not MVR_RepairAction:new(chr, part, "patch", false):isValid(), "different floor cannot repair")
+    chr.z = 0
+    vehicle.speed = 2
+    check(not MVR_RepairAction:new(chr, part, "patch", false):isValid(), "moving vehicle cannot be repaired")
+    vehicle.speed = 0
+    vehicle.running = true
+    check(not MVR_RepairAction:new(chr, part, "patch", false):isValid(), "running engine blocks work")
+    vehicle.running = false
+    vehicle.z = 0.2
+    check(MVR_RepairAction:new(chr, part, "patch", false):isValid(), "same-floor fractional physics height allowed")
+    vehicle.z = 1
+    check(not MVR_RepairAction:new(chr, part, "patch", false):isValid(), "vehicle on another floor rejected")
+    vehicle.z = 0
+    vehicle.inArea = false
+    check(not MVR_RepairAction:new(chr, part, "patch", false):isValid(), "outside actual part area blocks work")
+    resetCalls()
+    local result = Game.applyRepair(chr, part, "patch", false)
+    check(result.status == "work_area" and #calls.removed == 0, "direct server repair rejects unsafe work before consuming")
+end
+
+local function workshopFixture(kind)
+    local chr = newPlayer({ Mechanics = 10, MetalWelding = 10, Electricity = 10 })
+    local v = newVehicle(false)
+    function v:isDoColor() return true end
+    function v:getAnimalTrailerSize() return 0 end
+    v.power, v.quality, v.loud, v.rust, v.h, v.s, v.val = 1000, 72, 31, 0.6, 0, 0, 0.5
+    function v:getEnginePower() return self.power end
+    function v:getEngineQuality() return self.quality end
+    function v:getEngineLoudness() return self.loud end
+    function v:setEngineFeature(q, l, p) self.quality, self.loud, self.power = q, math.floor(l / 2.7), p end
+    function v:transmitEngine() self.enginePackets = (self.enginePackets or 0) + 1 end
+    function v:getRust() return self.rust end
+    function v:setRust(r) self.rust = r end
+    function v:transmitRust() self.rustPackets = (self.rustPackets or 0) + 1 end
+    function v:getColorHue() return self.h end
+    function v:getColorSaturation() return self.s end
+    function v:getColorValue() return self.val end
+    function v:setColorHSV(h, s, val) self.h, self.s, self.val = h, s, val end
+    function v:transmitColorHSV() self.colorPackets = (self.colorPackets or 0) + 1 end
+    function v:transmitPartItem() self.itemPackets = (self.itemPackets or 0) + 1 end
+    function v:transmitPartUsedDelta() end
+    function v:getScript() return { getName = function() return "Mod.UnknownModel" end, getHasLightbar = function() return false end } end
+    local part = newPart(v, kind == "power" and "Engine" or "RenamedCargo", 100, kind ~= "power")
+    local box = { capacity = kind == "glove" and 10 or 100, occupied = 0 }
+    function box:getCapacity() return self.capacity end
+    function box:setCapacity(c) self.capacity = c end
+    function box:getCapacityWeight() return self.occupied end
+    function part:getItemContainer() return kind ~= "power" and box or nil end
+    function part:isContainer() return kind ~= "power" end
+    function part:getContainerCapacity() return box.capacity end
+    function part:setContainerCapacity(n) box.capacity = n end
+    if part.item then
+        part.item.t = kind == "glove" and "Base.GloveBox1" or "Base.NormalTrunk1"
+        part.item.maxCapacity, part.item.md = kind == "glove" and 10 or 100, {}
+        function part.item:getMaxCapacity() return self.maxCapacity end
+        function part.item:setMaxCapacity(n) self.maxCapacity = n end
+        function part.item:getModData() return self.md end
+    end
+    function part:doInventoryItemStats(item)
+        box.capacity = math.floor(math.max(5, item:getMaxCapacity() * (self.cond + 20 * (100 - self.cond) / 100) / 100))
+    end
+    function part:getScriptPart() return { isRepairMechanic = function() return true end, isMechanicRequireKey = function() return self.needKey == true end } end
+    for _, t in ipairs({ "Base.Wrench", "Base.Screwdriver", "Base.Paintbrush" }) do
+        chr.inv:add(newItem(t, { tags = { wrench = true, screwdriver = true } }))
+    end
+    for i = 1, 60 do
+        for _, t in ipairs({ "Base.ScrapMetal", "Base.Screws", "Base.SheetMetal", "Base.RippedSheets" }) do chr.inv:add(newItem(t)) end
+    end
+    chr.inv:add(newItem("Base.DuctTape", { uses = 60 }))
+    chr.inv:add(newItem("Base.PaintRed", { uses = 20 }))
+    return chr, part, v, box
+end
+
+-- New production surface must exist before the behavioral checks can run.
+check(type(Game.evaluateWorkshop) == "function" and type(Game.applyWorkshop) == "function", "production workshop adapter exists")
+if Game.applyWorkshop then
+    SERVER = true
+    VehicleUtils = { CheckForUnlockedDoorsWindows = function() return false end, RequiredKeyNotFound = function(part) return part.needKey == true end }
+    do
+        local chr, part, v, box = workshopFixture("cargo")
+        local ev = Game.evaluateWorkshop(chr, part, "upgrade", 1)
+        check(ev.status == "ok" and ev.target == 110, "unknown model and renamed generic cargo offer +10%")
+        local r = Game.applyWorkshop(chr, part, "upgrade", 1, tostring(part.item.id), Game.workshopRevision(part))
+        check(r.status == "customized" and part.item.maxCapacity == 110 and box.capacity == 110, "upgrade applies item and native capacity")
+        check(part.item.md.MVRUpgrade.base == 100 and v.itemPackets > 0, "physical item owns saved immutable baseline and replicates")
+        local consumed = #calls.removed
+        check(Game.applyWorkshop(chr, part, "upgrade", 1, tostring(part.item.id), 0).status == "stale", "second actor with old revision rejected")
+        check(#calls.removed == consumed, "stale action consumes no resources")
+        check(Game.evaluateWorkshop(chr, part, "upgrade", 1).status == "already", "same tier cannot stack")
+        part.cond = 50; part:doInventoryItemStats(part.item); Game.reapplyUpgrade(part)
+        check(box.capacity == 66, "native condition reduction still applies to upgraded cargo")
+        part.cond = 100; Game.setPartCondition(part, 100)
+        check(box.capacity == 110, "repair reapplies capacity")
+        box.occupied = 108
+        check(Game.evaluateWorkshop(chr, part, "upgrade", 0).status == "overloaded", "occupied downgrade refused")
+        box.occupied = 0
+        check(Game.applyWorkshop(chr, part, "upgrade", 2, tostring(part.item.id), Game.workshopRevision(part)).status == "customized" and box.capacity == 120, "tier2 uses base100 not current110")
+        check(Game.applyWorkshop(chr, part, "upgrade", 0, tostring(part.item.id), Game.workshopRevision(part)).status == "customized" and box.capacity == 100, "removal restores original")
+    end
+    do
+        local a, p, v, box = workshopFixture("cargo")
+        Game.applyWorkshop(a, p, "upgrade", 2, tostring(p.item.id), Game.workshopRevision(p))
+        local old = p.item
+        local b, other, v2, box2 = workshopFixture("cargo")
+        check(box2.capacity == 100 and not other.item.md.MVRUpgrade, "same model second instance unaffected")
+        p.item = other.item
+        p:doInventoryItemStats(p.item)
+        Game.reapplyUpgrade(p)
+        check(box.capacity == 100, "replacement does not inherit former upgrade")
+        p.item = old
+        p:doInventoryItemStats(old)
+        Game.reapplyUpgrade(p)
+        check(box.capacity == 120, "reinstall same physical part keeps upgrade")
+        old.maxCapacity = 137
+        check(Game.evaluateWorkshop(a, p, "upgrade", 1).status == "conflict", "foreign capacity changes are refused")
+    end
+    do
+        local chr, part, v = workshopFixture("power")
+        check(Game.applyWorkshop(chr, part, "upgrade", 2, "", Game.workshopRevision(part)).status == "customized", "intrinsic engine upgrade")
+        check(v.power == 1100 and v.quality == 72 and v.loud == 31 and v.enginePackets == 1, "power packet preserves quality and loudness")
+        v.power = 1000; Game.reapplyUpgrade(part)
+        check(v.power == 1100, "engine power reapplied after load")
+        check(Game.applyWorkshop(chr, part, "upgrade", 0, "", Game.workshopRevision(part)).status == "customized" and v.power == 1000, "engine restore uses baseline")
+    end
+    do
+        local chr, part, v, box = workshopFixture("glove")
+        check(Game.applyWorkshop(chr, part, "upgrade", 2, tostring(part.item.id), Game.workshopRevision(part)).status == "customized" and box.capacity == 15, "glove +50% cap5")
+        part.item.t = "Base.SmallGasTank1"
+        check(Game.evaluateWorkshop(chr, part, "upgrade", 1).status == "unsupported", "liquid container never treated as cargo")
+    end
+    do
+        local chr, part, v = workshopFixture("power")
+        local initial = part.cond
+        check(Game.applyWorkshop(chr, part, "paint", "red", "", Game.workshopRevision(part)).status == "customized" and v.s > 0 and v.colorPackets == 1, "palette paint changes native instance HSV")
+        check(part.cond == initial, "paint does not repair/protect body")
+        check(Game.applyWorkshop(chr, part, "rust", 1, "", Game.workshopRevision(part)).status == "customized" and math.abs(v.rust - 0.4) < 0.001 and v.rustPackets == 1, "rust removal is gradual and replicated")
+        check(Game.evaluateWorkshop(chr, part, "paint", "injected").status == "unsupported", "server rejects unregistered pigment or arbitrary HSV")
+        part.needKey = true
+        check(Game.evaluateWorkshop(chr, part, "upgrade", 1).status == "access", "native key access required")
+        part.needKey = false; v.running = true
+        local count = #calls.removed
+        check(Game.applyWorkshop(chr, part, "upgrade", 1, "", Game.workshopRevision(part)).status == "work_area" and #calls.removed == count, "server rechecks moving/running vehicle before charge")
+        v.running = false
+        local result = Game.applyWorkshop(chr, part, "upgrade", 1, "changed", Game.workshopRevision(part))
+        check(result.status == "stale", "installed identity checked by authoritative apply")
+    end
+    SERVER = false
+end
+
+
+-- B42 serializes constructor-named fields, then rebuilds the shared action server-side.
+dofile(WORKSHOPACTIONFILE)
+check(type(MVR_WorkshopAction) == "table", "workshop action class is available to both simulations")
+do
+    local chr, part, v = workshopFixture("power")
+    local a = MVR_WorkshopAction:new(chr, part, "upgrade", 1)
+    local other = MVR_WorkshopAction:new(chr, part, "upgrade", 1)
+    for _, name in ipairs({ "character", "part", "operation", "choice", "expectedItemId", "expectedRevision" }) do
+        check(a[name] ~= nil, "workshop constructor field serialized: " .. name)
+    end
+    local rebuilt = MVR_WorkshopAction:new(chr, part, a.operation, a.choice, a.expectedItemId, a.expectedRevision)
+    check(rebuilt:isValid() and rebuilt:getDuration() == 450, "server-rebuilt intent has valid duration")
+    local n = #calls.removed
+    rebuilt:stop()
+    check(#calls.removed == n and v.power == 1000, "cancel consumes nothing and applies no upgrade")
+    SERVER = true
+    check(rebuilt:complete() and v.power == 1050, "server-rebuilt action applies authoritative target")
+    n = #calls.removed
+    check(not other:complete() and #calls.removed == n and v.power == 1050, "concurrent stale action cannot charge twice")
+    for i = 1, 100 do v.power = 1000; Game.reapplyUpgrade(part) end
+    check(v.loud == 31 and v.quality == 72 and v.power == 1050, "100 load/reapply cycles preserve engine quality and noise")
+    SERVER = false
+end
+check(type(MVR.Client.addWorkshopOptions) == "function", "production workshop is discoverable in mechanics menu")
+
+
+-- Native install/repair completion and the loaded-vehicle scan both call the production adapter.
+check(type(MVR.Client.addWorkshopOptions) == "function", "workshop menu extension exists")
+do
+    local chr, part, v, box = workshopFixture("cargo")
+    SERVER = true
+    Game.applyWorkshop(chr, part, "upgrade", 1, tostring(part.item.id), Game.workshopRevision(part))
+    local callbacks = {}
+    Events.OnTick = { Add = function(fn) callbacks[#callbacks + 1] = fn end }
+    function getCell() return { getVehicles = function() return jlist({ v }) end } end
+    package.loaded["Vehicles/TimedActions/ISInstallVehiclePart"] = true
+    package.loaded["Vehicles/TimedActions/ISRepairEngine"] = true
+    local originals = 0
+    ISInstallVehiclePart = { complete = function() originals = originals + 1; box.capacity = 100; return true end }
+    ISRepairEngine = { complete = function() originals = originals + 1; return true end }
+    if EVENTFILE then dofile(EVENTFILE) end
+    check(#callbacks == 1, "loaded authoritative scan hook registered once")
+    if #callbacks > 0 then
+        box.capacity = 100
+        for i = 1, 60 do callbacks[1]() end
+        check(box.capacity == 110, "loaded native recalculation is restored by scan")
+        local packets = v.itemPackets
+        for i = 1, 120 do callbacks[1]() end
+        check(v.itemPackets == packets, "unchanged loaded scan sends no packet storm")
+        check(ISInstallVehiclePart.complete({ vehicle = v }) == true and box.capacity == 110 and originals == 1, "install wrapper preserves native completion and reapplies physical-part state")
+    end
+    SERVER = false
+end
+do
+    local chr, part, v = workshopFixture("power")
+    SERVER = true
+    part.md.MVR = { patches = 2 }
+    chr.inv:add(newItem("Base.BlowTorch", { uses = 20 }))
+    local ev = Game.evaluate(chr, part, "overhaul", false)
+    check(ev.status == "ok" and ev.restorationOnly, "overhaul can remove patch history even at full condition")
+    if ev.status == "ok" then
+        RANDS = { 0.5, 0.99, 0.99, 0.99 }
+        local result = Game.applyRepair(chr, part, "overhaul", false)
+        check(result.status == "done" and part.cond == 100 and part.md.MVR.patches == 1, "professional history restoration conserves current condition")
+    end
+    local glass = newPart(v, "WindowFrontLeft", 0)
+    check(Game.evaluate(chr, glass, "patch", false).status == "destroyed", "destroyed windows require replacement")
+    part.needKey = true
+    check(Game.applyRepair(chr, part, "patch", false).status == "access", "repair completion validates native key access")
+    SERVER = false
+end
+
+
+do
+    local chr, part, v = workshopFixture("cargo")
+    chr.levels.Mechanics = 0
+    local ev = Game.evaluateWorkshop(chr, part, "upgrade", 1)
+    check(ev.status == "skill" and #ev.report > 0 and #ev.tools > 0, "locked skill preview still shows tools and materials")
+    chr.levels.Mechanics = 10; v.outside = true
+    ev = Game.evaluateWorkshop(chr, part, "upgrade", 2)
+    check(ev.status == "workshop" and #ev.report > 0, "shelter failure still shows all upgrade costs")
+    v.outside = false
+    local original = VehicleUtils.RequiredKeyNotFound
+    VehicleUtils.RequiredKeyNotFound = function() error("client mechanics UI is unavailable on dedicated server") end
+    check(Game.evaluateWorkshop(chr, part, "upgrade", 1).status == "ok", "dedicated access does not depend on client mechanics UI")
+    VehicleUtils.RequiredKeyNotFound = original
+end
+do
+    local chr, part, v = workshopFixture("power")
+    local old = v.isDoColor
+    v.isDoColor = function() return false end
+    check(Game.evaluateWorkshop(chr, part, "paint", "red").status == "unpaintable" and Game.evaluateWorkshop(chr, part, "rust", 1).status == "ok", "unsupported tint disables only paint")
+    v.isDoColor = old
+    local ev = Game.evaluateWorkshop(chr, part, "paint", "red")
+    local paint
+    for _, pick in ipairs(ev.picks) do if pick.entry.type == "Base.PaintRed" then paint = pick.entry.item end end
+    local uses = paint and paint.uses
+    SERVER = true
+    local xpBefore = #calls.xp
+    Game.applyWorkshop(chr, part, "paint", "red", "", Game.workshopRevision(part))
+    check(paint.uses == uses - 4 and #calls.xp == xpBefore, "paint consumes exactly four uses and grants no XP")
+    for _, color in ipairs(Game.Palette) do check(ITEMS[color.item], "palette paint is a real native item: " .. color.item) end
+    check(ITEMS["Base.Paintbrush"], "paintbrush is a real native item")
+    SERVER = false
+end
+
+
+do
+    local chr, part, v, box = workshopFixture("cargo")
+    SERVER = true
+    Game.applyWorkshop(chr, part, "upgrade", 1, tostring(part.item.id), Game.workshopRevision(part))
+    box.capacity = 117
+    check(Game.evaluateWorkshop(chr, part, "upgrade", 2).status == "conflict", "foreign container-only recalculation is refused")
+    check(not Game.reapplyUpgrade(part) and box.capacity == 117, "scan preserves foreign container capacity")
+    SERVER = false
+end
+do
+    local chr, part, v = workshopFixture("power")
+    part.needKey = true
+    chr.inv.key = false
+    check(not Game.workAccess(chr, part), "false key lookup is not access")
+    chr.inv.key = newItem("Base.CarKey")
+    check(Game.workAccess(chr, part), "native key item grants access")
+end
+do
+    local chr, part = workshopFixture("cargo")
+    part.item.t = "Base.NormalBrake1"
+    part.id = "RenamedAxlePad"
+    local ev = Game.evaluate(chr, part, "patch", false)
+    check(ev.key == "Brake", "renamed generic brake uses its native item family repair rules")
+end
+
+
+do
+    local chr, part, v, box = workshopFixture("cargo")
+    local context = newMenu()
+    MVR.Client.addWorkshopOptions(context, chr, part)
+    local sub = context.options[1].sub
+    check(sub and #sub.options == 6 and #sub.options[4].sub.options == 10, "workshop menu exposes two upgrade tiers, removal, ten paints, rust and native wash")
+    check(not sub.options[1].notAvailable and sub.options[3].notAvailable, "upgrade preview available while empty baseline removal disabled")
+    check(not sub.options[4].sub.options[1].notAvailable and sub.options[4].sub.options[2].notAvailable, "paint palette exposes resource availability per color")
+    local washed
+    ISVehicleMenu = { onWash = function(p, vehicle) washed = p == chr and vehicle == v end }
+    MVR.Client.onWash(chr, part)
+    check(washed, "wash invokes the original native water-consuming action")
+    SERVER = true
+    Game.applyWorkshop(chr, part, "upgrade", 1, tostring(part.item.id), Game.workshopRevision(part))
+    SandboxVars.MVR.UpgradesEnabled = false
+    box.occupied = 108
+    Game.reapplyVehicle(v)
+    check(part.item.maxCapacity == 110 and box.capacity == 110, "disabling waits for unloading rather than discarding cargo")
+    box.occupied = 0
+    Game.reapplyVehicle(v)
+    check(part.item.maxCapacity == 100 and box.capacity == 100, "disabled upgrades restore baseline when cargo permits")
+    SandboxVars.MVR.UpgradesEnabled = true
+    Game.reapplyVehicle(v)
+    check(box.capacity == 110 and part.item.md.MVRUpgrade.base == 100, "re-enable uses the saved original baseline")
+    local clientOriginal = isClient
+    function isClient() return true end
+    local n = #calls.removed
+    check(Game.applyWorkshop(chr, part, "upgrade", 2, tostring(part.item.id), Game.workshopRevision(part)).status == "disabled"
+        and #calls.removed == n and box.capacity == 110, "client cannot author workshop effects")
+    isClient = clientOriginal
+    SERVER = false
+end
+
+
+do
+    local chr, part, v, box = workshopFixture("cargo")
+    part.id, part.item.t = "TrailerTrunk", "Base.TrailerTrunk1"
+    -- Exact installed native setCondition special case overrides container capacity after stats.
+    function part:doInventoryItemStats(item) box.capacity = math.max(80, self.cond) end
+    check(Game.partRole(part) == "cargo", "ordinary native trailer is generic cargo")
+    SERVER = true
+    local result = Game.applyWorkshop(chr, part, "upgrade", 1, tostring(part.item.id), Game.workshopRevision(part))
+    check(result.status == "customized" and box.capacity == 110, "ordinary trailer reapplies capacity after native hard-coded reset")
+    if result.status == "customized" then
+        part.cond, box.capacity = 50, 80
+        Game.reapplyUpgrade(part)
+        check(box.capacity == 90, "trailer retains native damaged floor plus bounded original bonus")
+        local snapshot = part.item.md.MVRUpgrade
+        local clientOriginal = isClient
+        function isClient() return true end
+        box.capacity = 80
+        if Game.refreshReplica then Game.refreshReplica(v) end
+        check(box.capacity == 90 and part.item.md.MVRUpgrade == snapshot, "client reconstructs trailer capacity from published item state without authoring upgrades")
+        isClient = clientOriginal
+    end
+    part.id = "TrailerAnimalFood"
+    check(Game.partRole(part) == nil, "animal-food container reusing TrailerTrunk item is excluded")
+    part.id = "TrailerAnimalEggs"
+    check(Game.partRole(part) == nil, "animal-egg container reusing TrailerTrunk item is excluded")
+    SERVER = false
+end
+
+do
+    local chr, part, v, box = workshopFixture("cargo")
+    box.capacity = 137
+    check(Game.evaluateWorkshop(chr, part, "upgrade", 1).status == "conflict", "first upgrade refuses an existing foreign container-only recalculation")
+end
+
+for k in pairs(missing) do check(false, "getText key missing from EN translations: " .. k) end
 print("  game_spec.lua: " .. checks .. " checks")
 return failures

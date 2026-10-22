@@ -21,9 +21,13 @@
     "Sandbox_MVR_TimeMultiplier": "Work time multiplier",
     "Sandbox_MVR_TimeMultiplier_tooltip": "Scales how long repairs take. Default 1.",
     "Sandbox_MVR_PatchHistoryEnabled": "Patch history",
-    "Sandbox_MVR_PatchHistoryEnabled_tooltip": "Each successful improvised repair lowers that part cap by 3 (minimum 30) until the part is replaced.",
+    "Sandbox_MVR_PatchHistoryEnabled_tooltip": "Emergency patches lower the cap by 3 (minimum 30). Proper repairs preserve history; overhauls remove one patch penalty.",
     "Sandbox_MVR_WorkshopBonusEnabled": "Workshop modifiers",
     "Sandbox_MVR_WorkshopBonusEnabled_tooltip": "Vehicle indoors: -3 points of failure chance. Darkness: +5. Jack: tires, brakes and suspension 15% faster.",
     "Sandbox_MVR_QualityTiersEnabled": "Quality tiers",
-    "Sandbox_MVR_QualityTiersEnabled_tooltip": "Adds Repair (Mechanics 3) and Overhaul (Mechanics 6) with higher caps, more materials and time. Off = Patch only."
+    "Sandbox_MVR_QualityTiersEnabled_tooltip": "Adds Repair (Mechanics 3) and Overhaul (Mechanics 6) with higher caps, more materials and time. Off = Patch only.",
+    "Sandbox_MVR_UpgradesEnabled": "Capacity and engine upgrades",
+    "Sandbox_MVR_UpgradesEnabled_tooltip": "Enables bounded cargo/glove-box capacity and engine power upgrades. Disabling restores original values when cargo permits; no items are discarded.",
+    "Sandbox_MVR_CustomizationEnabled": "Vehicle painting and rust removal",
+    "Sandbox_MVR_CustomizationEnabled_tooltip": "Enables resource-consuming cosmetic work. Washing still uses the game's normal action."
 }

@@ -25,6 +25,8 @@ end
 -- name -> { default, min, max } (booleans: { default })
 Core.SandboxSpec = {
     Enabled = { true },
+    UpgradesEnabled = { true },
+    CustomizationEnabled = { true },
     MaterialCostMultiplier = { 1.0, 0.25, 4 },
     ConditionGainMultiplier = { 1.0, 0.25, 3 },
     CapOffset = { 0, -30, 20 },
@@ -362,11 +364,17 @@ function Core.getPatches(md, itemId, opts)
     return tonumber(h.patches) or 0
 end
 
--- Records one more patch (call on success only). Returns new count.
+-- Emergency patches add a penalty; durable repair preserves it, overhaul removes one.
 function Core.addPatch(md, itemId, tierId, opts)
     if not (opts and opts.PatchHistoryEnabled) or type(md) ~= "table" then return 0 end
-    local n = Core.getPatches(md, itemId, opts) + 1
-    md.MVR = { patches = n, itemId = itemId ~= nil and tostring(itemId) or nil, last = tierId }
+    local n = Core.getPatches(md, itemId, opts)
+    if tierId == "overhaul" then n = math.max(0, n - 1)
+    elseif tierId ~= "repair" then n = n + 1 end
+    local h = type(md.MVR) == "table" and md.MVR or {}
+    h.patches = n
+    h.itemId = itemId ~= nil and tostring(itemId) or nil
+    h.last = tierId
+    md.MVR = h
     return n
 end
 

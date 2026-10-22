@@ -1,7 +1,7 @@
 name=Basic Vehicle Maintenance
 id=MoreVehiclesRepairs
 author=Kriger
-description=Build 42 only; this B41 entry has no gameplay. / Só Build 42; esta entrada B41 não tem funcionalidades.
+description=Emergency patches, durable repairs and overhauls, vehicle inspection, bounded trunk/glove-box and engine power upgrades, painting and gradual rust removal. Uses standard vehicle washing. Generic vanilla parts also work on modded vehicle models. B42 only; English and Brazilian Portuguese.
 poster=poster.png
 icon=icon.png
 modversion=2.0.0

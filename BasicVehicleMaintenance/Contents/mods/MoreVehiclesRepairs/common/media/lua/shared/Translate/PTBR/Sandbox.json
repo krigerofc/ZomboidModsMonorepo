@@ -21,9 +21,13 @@
     "Sandbox_MVR_TimeMultiplier": "Multiplicador do tempo de trabalho",
     "Sandbox_MVR_TimeMultiplier_tooltip": "Multiplica quanto tempo os reparos levam. Padrão 1.",
     "Sandbox_MVR_PatchHistoryEnabled": "Histórico de remendos",
-    "Sandbox_MVR_PatchHistoryEnabled_tooltip": "Cada reparo improvisado bem-sucedido baixa o teto daquela peça em 3 (mínimo 30) até a peça ser trocada.",
+    "Sandbox_MVR_PatchHistoryEnabled_tooltip": "Remendos baixam o teto em 3 (mínimo 30). Reparos preservam o histórico; revisões removem uma penalidade de remendo.",
     "Sandbox_MVR_WorkshopBonusEnabled": "Modificadores de oficina",
     "Sandbox_MVR_WorkshopBonusEnabled_tooltip": "Veículo em local coberto: -3 pontos na chance de falha. Escuro: +5. Macaco: pneus, freios e suspensão 15% mais rápidos.",
     "Sandbox_MVR_QualityTiersEnabled": "Faixas de qualidade",
-    "Sandbox_MVR_QualityTiersEnabled_tooltip": "Adiciona Reparo (Mecânica 3) e Revisão (Mecânica 6) com tetos maiores, mais material e tempo. Desligado = só Remendo."
+    "Sandbox_MVR_QualityTiersEnabled_tooltip": "Adiciona Reparo (Mecânica 3) e Revisão (Mecânica 6) com tetos maiores, mais material e tempo. Desligado = só Remendo.",
+    "Sandbox_MVR_UpgradesEnabled": "Melhorias de carga e motor",
+    "Sandbox_MVR_UpgradesEnabled_tooltip": "Ativa melhorias limitadas de carga/porta-luvas e potência. Ao desligar, restaura valores originais quando a carga permitir; nenhum item é descartado.",
+    "Sandbox_MVR_CustomizationEnabled": "Pintura e remoção de ferrugem",
+    "Sandbox_MVR_CustomizationEnabled_tooltip": "Ativa trabalhos cosméticos com consumo de recursos. A lavagem continua usando a ação normal do jogo."
 }

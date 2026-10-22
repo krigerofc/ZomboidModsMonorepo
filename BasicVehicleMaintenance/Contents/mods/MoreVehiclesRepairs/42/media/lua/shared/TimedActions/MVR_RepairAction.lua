@@ -15,7 +15,7 @@ function MVR_RepairAction:isValid()
     if part:getVehicle() ~= self.vehicle then return false end
     if not MVR.Game.isPartPresent(part) then return false end
     if tostring(MVR.Game.installedItemId(part) or "") ~= self.expectedItemId then return false end
-    if self.character:getVehicle() then return false end
+    if not MVR.Game.workAllowed(self.character, part) then return false end
     return self.character:DistTo(self.vehicle:getX(), self.vehicle:getY()) <= MAX_DIST
 end
 
@@ -72,7 +72,7 @@ end
 function MVR_RepairAction:getDuration()
     if self.character:isTimedActionInstant() then return 1 end
     local opts = MVR.Game.opts()
-    local cfg = MVR.Core.getConfig(self.part:getId())
+    local cfg = MVR.Game.partConfig(self.part)
     local tier = opts.QualityTiersEnabled and MVR.Core.getTier(self.tierId) or MVR.Config.Tiers[1]
     return MVR.Core.duration(cfg, tier, opts, MVR.Game.hasJack(self.character))
 end

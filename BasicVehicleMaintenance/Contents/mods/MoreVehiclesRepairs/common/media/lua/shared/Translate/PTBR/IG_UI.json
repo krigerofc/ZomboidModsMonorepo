@@ -33,5 +33,18 @@
     "IGUI_MVR_Inspect_Vanilla": "reparo padrão possível",
     "IGUI_MVR_Inspect_Replace": "substituir (sem remendo)",
     "IGUI_MVR_Inspect_Critical": "Críticas (abaixo de 25%): %1",
-    "IGUI_MVR_Inspect_NoCritical": "Nenhuma peça crítica."
+    "IGUI_MVR_Inspect_NoCritical": "Nenhuma peça crítica.",
+    "IGUI_MVR_Fail_work_area": "Trabalhe junto da peça no mesmo piso, com o veículo parado e motor desligado.",
+    "IGUI_MVR_Fail_ok": "Pronto. Trabalhe junto à peça selecionada, no mesmo piso, com motor desligado e veículo parado.",
+    "IGUI_MVR_Fail_unsupported": "Somente motor, porta-malas e porta-luvas genéricos do jogo recebem melhorias. Sistemas especiais ficam de fora.",
+    "IGUI_MVR_Fail_unpaintable": "Este modelo não permite a coloração nativa de veículos.",
+    "IGUI_MVR_Fail_access": "Libere o acesso com a chave do veículo ou pelo acesso normal de portas e janelas do jogo.",
+    "IGUI_MVR_Fail_already": "O resultado selecionado já está aplicado ou não resta nada para remover.",
+    "IGUI_MVR_Fail_overloaded": "Retire a carga primeiro. A redução não pode deixar a capacidade menor que o conteúdo; peças danificadas podem exigir retirar mais carga.",
+    "IGUI_MVR_Fail_conflict": "Outro sistema alterou os atributos de base desta peça. A melhoria está suspensa para preservar essa alteração.",
+    "IGUI_MVR_Fail_workshop": "O nível II exige veículo em local coberto e Mecânica 6.",
+    "IGUI_MVR_Fail_stale": "O veículo ou a peça instalada mudou durante o trabalho. Inicie novamente.",
+    "IGUI_MVR_WorkshopJob": "Oficina de veículo",
+    "IGUI_MVR_WorkshopDone": "Trabalho de oficina concluído.",
+    "IGUI_MVR_Fail_destroyed": "Uma janela destruída precisa ser substituída."
 }
