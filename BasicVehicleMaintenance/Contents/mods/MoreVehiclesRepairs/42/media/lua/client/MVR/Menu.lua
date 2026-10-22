@@ -43,10 +43,16 @@ end
 
 -- ---------------------------------------------------------------- tooltip
 
+-- These evaluations reject work before a repair plan exists. Show the specific reason;
+-- a risk, duration, material plan or achievable cap would be misleading here.
+local EARLY_REPAIR_REJECTIONS = {
+    not_repairable = true, disabled = true, not_installed = true, destroyed = true, access = true,
+}
+
 function Client.buildTooltip(ev, part)
     local s = INFO .. getText("Tooltip_MVR_Title", partName(part)) .. LINE
-    if ev.status == "not_repairable" then
-        return s .. BAD .. getText("Tooltip_MVR_Status_not_repairable")
+    if EARLY_REPAIR_REJECTIONS[ev.status] then
+        return s .. BAD .. getText("Tooltip_MVR_Status_" .. ev.status)
     end
     local cur = ev.current or 0
     s = s .. INFO .. getText("Tooltip_MVR_Condition", cur, ev.cap) .. LINE

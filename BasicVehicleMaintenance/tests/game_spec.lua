@@ -841,6 +841,44 @@ do
     check(Game.evaluateWorkshop(chr, part, "upgrade", 1).status == "conflict", "first upgrade refuses an existing foreign container-only recalculation")
 end
 
+
+-- Early rejection is rendered by the actual menu builder, including both risk display branches.
+do
+    for _, case in ipairs({
+        { status = "destroyed", id = "WindowFrontLeft", condition = 0 },
+        { status = "access", id = "BrakeFrontLeft", condition = 20, locked = true },
+    }) do
+        for _, level in ipairs({ 0, 6 }) do
+            local chr, part = setupBrake({ partId = case.id, cond = case.condition, levels = { Mechanics = level } })
+            part.needKey = case.locked
+            local ev = Game.evaluate(chr, part, "patch", false)
+            check(ev.status == case.status and ev.ctx == nil, case.status .. ": evaluator rejects before a repair plan")
+            local ok, description = pcall(MVR.Client.buildTooltip, ev, part)
+            check(ok and description:find(TR["Tooltip_MVR_Status_" .. case.status], 1, true),
+                case.status .. ": actual tooltip renders the correct localized disabled reason at Mechanics " .. level)
+            check(ok and not description:find(TR.Tooltip_MVR_Time_short, 1, true)
+                and not description:find(TR.Tooltip_MVR_Risk_low, 1, true),
+                case.status .. ": no invented repair time or risk for a rejected operation")
+            thePlayer = chr
+            for _, tiers in ipairs({ true, false }) do
+                SandboxVars.MVR.QualityTiersEnabled = tiers
+                local context = newMenu()
+                local built = pcall(MVR.Client.addOptions, { context = context, playerNum = 0 }, part)
+                check(built and #context.options == 3, case.status .. ": actual menu retains repair, inspection and workshop with tiers " .. tostring(tiers))
+                local repair = context.options[1]
+                if repair and repair.sub then repair = repair.sub.options[1] end
+                check(repair and repair.notAvailable == true and repair.toolTip
+                    and repair.toolTip.description:find(TR["Tooltip_MVR_Status_" .. case.status], 1, true),
+                    case.status .. ": disabled repair retains the reason in the menu")
+            end
+            SandboxVars.MVR.QualityTiersEnabled = true
+            local window = setmetatable({ playerNum = 0, chr = chr }, { __index = ISVehicleMechanics })
+            window:doPartContextMenu(part, 0, 0)
+            check(window.context and #window.context.options == 3, case.status .. ": original menu hook completes all extensions")
+        end
+    end
+end
+
 for k in pairs(missing) do check(false, "getText key missing from EN translations: " .. k) end
 print("  game_spec.lua: " .. checks .. " checks")
 return failures
