@@ -6,7 +6,21 @@ Core.VERSION = "1.1.0"
 
 -- ---------------------------------------------------------------- sandbox
 Core.DEFAULTS = {
+    SeasonalIllnessEnabled = true,
+    MosquitoIllnessEnabled = true,
+    ColdInjuryEnabled = true,
+    MaskProtectionEnabled = true,
+    DynamicCardiorespiratoryEnabled = true,
+    PsychologicalConditionsEnabled = true,
+    PsychologicalEffectsEnabled = true,
+    SymptomEffectsEnabled = true,
+    FaintingEnabled = true,
     Enabled = true,
+    IllnessEnabled = true,
+    ContactTransmissionEnabled = true,
+    NewDiseaseMortalityEnabled = true,
+    DiseaseFrequency = 1.0,
+    DiseaseSeverity = 1.0,
     ExamEnabled = true,
     ShowFeverInExam = true,
     SkillRequirementOffset = 0,
@@ -18,6 +32,8 @@ Core.DEFAULTS = {
     XPMultiplier = 1.0,
 }
 Core.RANGES = {
+    DiseaseFrequency = { 0, 5 },
+    DiseaseSeverity = { 0, 3 },
     SkillRequirementOffset = { -3, 3 },
     FailChanceMultiplier = { 0, 3 },
     ProcedurePainMultiplier = { 0, 2 },
@@ -67,6 +83,7 @@ Core.PROCEDURES = {
     reduceFracture  = { minLevel = 5, helper = 2, baseFail = 0.30, perLevel = 0.03,  floor = 0.05, pain = 80, painPerLevel = 0, xp = 15, time = 250, timePerLevel = 5, minTime = 180, infect = 0 },
     debride         = { minLevel = 6, helper = 1, baseFail = 0.25, perLevel = 0.03,  floor = 0.05, pain = 70, painPerLevel = 2, xp = 15, time = 220, timePerLevel = 4, minTime = 150, infect = 0.15 },
 }
+for _,id in ipairs({"support","hygiene","antibacterial","topical","dry","burnCare","stabilize","rehab"}) do Core.PROCEDURES["care_"..id]={xp=3} end
 Core.PROCEDURE_IDS = { "exam", "irrigate", "tourniquet", "tourniquetOff", "cauterize", "reduceFracture", "debride" }
 Core.MAX_FAIL = 0.95
 Core.EXTRA_HEAT_TICKS = 60          -- heating the blade for cauterization
@@ -78,7 +95,8 @@ Core.XP_COOLDOWN_HOURS = 1          -- per patient + procedure + body part
 Core.EXAM_XP_COOLDOWN_HOURS = 6     -- per patient (PRD 6.1)
 
 function Core.levelClamp(l)
-    return Core.clamp(math.floor((tonumber(l) or 0) + 0.0001), 0, 10)
+    for id,_ in pairs(require "KFM/Conditions".TREATMENTS) do Core.PROCEDURES["care_"..id]={xp=3} end
+return Core.clamp(math.floor((tonumber(l) or 0) + 0.0001), 0, 10)
 end
 
 -- Effective level for gating / diagnosis: real level + bonus (stethoscope, profession soft hooks), 0..10.

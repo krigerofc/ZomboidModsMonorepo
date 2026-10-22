@@ -63,7 +63,7 @@ function KFM_ProcedureAction:hasRequiredItems()
     elseif self.procId == "tourniquet" then
         if not self.item then return false end
         local ft = self.item:getFullType()
-        return (ft == Game.ITEM_TOURNIQUET or ft == Game.ITEM_BELT) and not self.item:isWorn()
+        return (ft == Game.ITEM_TOURNIQUET or ft == Game.ITEM_BELT) and not self.item:isWorn() and not Game.boundItem(self.item)
     elseif self.procId == "cauterize" then
         return self.item ~= nil and Game.isBlade(self.item) and Game.isFireSource(self.item2)
     elseif self.procId == "debride" then
@@ -76,6 +76,8 @@ function KFM_ProcedureAction:hasRequiredItems()
 end
 
 function KFM_ProcedureAction:isValid()
+    -- Network reconstruction must not pair a nearby consented patient with another character's limb.
+    if not self.bodyPart or Game.partByName(self.otherPlayer,Game.partName(self.bodyPart))~=self.bodyPart then return false end
     if Game.patientMoved(self.character, self.otherPlayer, self.patientX, self.patientY) then return false end
     if not self:hasRequiredItems() then return false end
     return KFM_ProcedureAction.applies(self.procId, self.otherPlayer, self.bodyPart)
@@ -144,7 +146,7 @@ end
 -- Feedback for the doctor (translation key): direct in SP, server command in MP.
 function KFM_ProcedureAction:notify(key)
     if isServer() then
-        sendServerCommand(self.character, Game.MODULE, "result", { key = key })
+        sendServerCommand(self.character, Game.MODULE, "result", { key = key, id = self.character:getOnlineID() })
     elseif KFM.Client and KFM.Client.say then
         KFM.Client.say(self.character, key)
     end
@@ -154,13 +156,15 @@ local Effects = {}
 KFM_ProcedureAction.Effects = Effects
 
 function Effects.exam(self, cfg)
+    local view=KFM.Health.examine(self.otherPlayer,self.character,self.item,self.item2)
+    if not view then return end
     local v = Game.collectVitals(self.otherPlayer)
     local report = Core.buildExamReport(v, self.effLevel, cfg, { tongue = self.item2 ~= nil })
     if self.item2 then Game.removeItem(self.character, self.item2) end
     if Game.hasSomethingToDiagnose(v) then
         Game.grantXp(self.character, self.otherPlayer, "exam", nil, Core.EXAM_XP_COOLDOWN_HOURS)
     end
-    local payload = { patient = self.otherPlayer:getDisplayName(), self = (self.character == self.otherPlayer), lines = report }
+    local payload = { doctorId=self.character:getOnlineID(), patient = self.otherPlayer:getDisplayName(), self = (self.character == self.otherPlayer), lines = report, patientId=self.otherPlayer:getOnlineID(), accessUntil=view.accessUntil, health = view }
     if isServer() then
         sendServerCommand(self.character, Game.MODULE, "exam", payload)
     elseif KFM.Client and KFM.Client.showExam then
@@ -172,13 +176,14 @@ function Effects.irrigate(self, cfg)
     local kind = Game.waterKind(self.item)
     if not kind then return end
     local bp = self.bodyPart
-    local level, infect = Core.irrigate(bp:getWoundInfectionLevel(), self.doctorLevel, cfg, kind == "dirty")
+    local previous = bp:getWoundInfectionLevel()
+    local level, infect = Core.irrigate(previous, self.doctorLevel, cfg, kind == "dirty")
     bp:setWoundInfectionLevel(level)
     if infect then bp:setInfectedWound(true) end
     Game.useWater(self.item)
     Game.addPain(self.character, bp, Core.procedurePain("irrigate", self.doctorLevel, cfg, false))
     Game.sync(bp)
-    if not infect then Game.grantXp(self.character, self.otherPlayer, "irrigate", Game.partName(bp)) end
+    if not infect and level < previous then Game.grantXp(self.character, self.otherPlayer, "irrigate", Game.partName(bp)) end
     self:notify(infect and "IGUI_KFM_Result_IrrigateDirty" or "IGUI_KFM_Result_IrrigateOk")
 end
 
@@ -194,8 +199,8 @@ function Effects.tourniquet(self, cfg)
     end
     local wasBleeding = bp:getBleedingTime() > 0
     local fullType = self.item:getFullType()
-    Game.removeItem(self.character, self.item)
-    Game.applyTourniquet(self.otherPlayer, bp, fullType)
+    Game.moveItem(self.character, self.otherPlayer, self.item)
+    Game.applyTourniquet(self.otherPlayer, bp, fullType, self.item:getID())
     Game.sync(bp)
     if wasBleeding then Game.grantXp(self.character, self.otherPlayer, "tourniquet", Game.partName(bp)) end
     Game.pushTq(self.otherPlayer, self.character)
@@ -203,8 +208,11 @@ function Effects.tourniquet(self, cfg)
 end
 
 function Effects.tourniquetOff(self, cfg)
-    local fullType = Game.removeTourniquet(self.otherPlayer, Game.partName(self.bodyPart))
-    if fullType then Game.giveItem(self.character, fullType) end
+    local fullType, itemId = Game.removeTourniquet(self.otherPlayer, Game.partName(self.bodyPart))
+    if itemId then
+        local item = self.otherPlayer:getInventory():getItemById(itemId)
+        if item then Game.moveItem(self.otherPlayer, self.character, item) end
+    elseif fullType then Game.giveItem(self.character, fullType) end
     Game.pushTq(self.otherPlayer, self.character)
     self:notify("IGUI_KFM_Result_TourniquetRemoved")
 end
@@ -239,7 +247,10 @@ end
 function Effects.reduceFracture(self, cfg)
     local bp = self.bodyPart
     local failed = Core.roll(Core.failChance("reduceFracture", self.doctorLevel, cfg), Game.rng)
-    bp:setFractureTime(Core.reduceFracture(bp:getFractureTime(), self.doctorLevel, cfg, failed))
+    local current=bp:getFractureTime()
+    local proposed=Core.reduceFracture(current,self.doctorLevel,cfg,failed)
+    if not failed and KFM.Health then proposed=current-KFM.Health.recoveryReduction(self.otherPlayer,bp,"fracture",current-proposed) end
+    bp:setFractureTime(proposed)
     if not failed then Game.md(self.otherPlayer).reduced[Game.partName(bp)] = true end
     Game.addPain(self.character, bp, Core.procedurePain("reduceFracture", self.doctorLevel, cfg, Game.painkillers(self.otherPlayer)))
     Game.sync(bp)
@@ -266,8 +277,13 @@ function Effects.debride(self, cfg)
 end
 
 function KFM_ProcedureAction:complete()
+    if isClient() then return true end
+    if KFM.Health and (not KFM.Health.reachable(self.character,self.otherPlayer) or not KFM.Health.consent(self.character,self.otherPlayer)) then return true end
+    self.doctorLevel=Game.doctorLevel(self.character)
+    local bonus=(self.procId=="exam" and self.item~=nil) and 1 or 0
+    self.effLevel,self.noHeat=Game.effectiveLevel(self.character,self.procId,bonus)
     local cfg = Game.cfg()
-    if not cfg.Enabled or (self.procId == "exam" and not cfg.ExamEnabled) then return true end
+    if (not cfg.Enabled and self.procId ~= "tourniquetOff") or (self.procId == "exam" and not cfg.ExamEnabled) then return true end
     if not self:isValid() then return true end
     local level = Game.effectiveLevel(self.character, self.procId, 0)
     if self.procId ~= "exam" and not Core.canPerform(self.procId, level, cfg, Game.hasHelper(self.character, self.otherPlayer)) then
@@ -282,7 +298,7 @@ function KFM_ProcedureAction:getDuration()
     if self.character:isTimedActionInstant() then return 1 end
     local extra = 0
     if self.procId == "cauterize" and not self.noHeat then extra = Core.EXTRA_HEAT_TICKS end
-    return Core.duration(self.procId, self.doctorLevel, extra)
+    return Core.duration(self.procId, self.doctorLevel, extra) * (KFM.Health and KFM.Health.medicalTime(self.character) or 1)
 end
 
 function KFM_ProcedureAction:new(character, otherPlayer, bodyPart, procId, item, item2)

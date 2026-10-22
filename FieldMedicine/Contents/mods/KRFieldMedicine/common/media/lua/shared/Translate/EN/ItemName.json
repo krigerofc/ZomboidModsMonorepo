@@ -1,3 +1,12 @@
 {
-    "Base.KFM_ImprovisedTourniquet": "Improvised Tourniquet"
+    "Base.KFM_ImprovisedTourniquet": "Improvised Tourniquet",
+    "Base.KFM_SupportSachet": "Support sachet",
+    "Base.KFM_SkinOintment": "Skin care ointment",
+    "Base.KFM_BurnDressing": "Burn care dressing",
+    "Base.KFM_RehabWrap": "Rehabilitation wrap",
+    "Base.KFM_ThroatLozenges": "Throat-care lozenges",
+    "Base.KFM_BreathingAid": "Breathing-support aid",
+    "Base.KFM_CardiacSupport": "Cardiorespiratory support pack",
+    "Base.KFM_RecoveryJournal": "Recovery journal sheet",
+    "Base.KFM_InsectRepellent": "Insect repellent application"
 }

@@ -93,3 +93,119 @@ option KFM.XPMultiplier
 	page = KFM,
 	translation = KFM_XPMultiplier,
 }
+
+option KFM.IllnessEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_IllnessEnabled,
+}
+
+option KFM.ContactTransmissionEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_ContactTransmissionEnabled,
+}
+
+option KFM.NewDiseaseMortalityEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_NewDiseaseMortalityEnabled,
+}
+
+option KFM.DiseaseFrequency
+{
+ type = double,
+ min = 0,
+ max = 5,
+ default = 1.0,
+ page = KFM,
+ translation = KFM_DiseaseFrequency,
+}
+
+option KFM.DiseaseSeverity
+{
+ type = double,
+ min = 0,
+ max = 3,
+ default = 1.0,
+ page = KFM,
+ translation = KFM_DiseaseSeverity,
+}
+
+option KFM.SeasonalIllnessEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_SeasonalIllnessEnabled,
+}
+
+option KFM.MosquitoIllnessEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_MosquitoIllnessEnabled,
+}
+
+option KFM.ColdInjuryEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_ColdInjuryEnabled,
+}
+
+option KFM.MaskProtectionEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_MaskProtectionEnabled,
+}
+
+option KFM.DynamicCardiorespiratoryEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_DynamicCardiorespiratoryEnabled,
+}
+
+option KFM.PsychologicalConditionsEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_PsychologicalConditionsEnabled,
+}
+
+option KFM.PsychologicalEffectsEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_PsychologicalEffectsEnabled,
+}
+
+option KFM.SymptomEffectsEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_SymptomEffectsEnabled,
+}
+
+option KFM.FaintingEnabled
+{
+ type = boolean,
+ default = true,
+ page = KFM,
+ translation = KFM_FaintingEnabled,
+}

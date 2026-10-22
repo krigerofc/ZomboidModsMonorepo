@@ -76,7 +76,8 @@ end
 -- Effective level for gating/diagnosis (+ stethoscope etc. via extra). Returns level, noHeatPenalty.
 function Game.effectiveLevel(chr, procId, extra)
     local bonus, noHeat = Core.bonusFor(Game.identityIds(chr), procId)
-    return Core.effectiveLevel(Game.doctorLevel(chr), bonus + (extra or 0)), noHeat
+    local focus=(procId=="exam" and KFM.Health and KFM.Health.focusBonus(chr)) or 0
+    return Core.effectiveLevel(Game.doctorLevel(chr), bonus + (extra or 0) + focus), noHeat
 end
 
 function Game.players()
@@ -205,6 +206,21 @@ function Game.removeItem(chr, item)
     if isServer() then sendRemoveItemFromContainer(chr:getInventory(), item) end
 end
 
+-- Keep the actual item in an engine-serialized inventory, never a Java object in ModData.
+function Game.moveItem(from, to, item)
+ if from == to then return end
+ Game.removeItem(from, item)
+ to:getInventory():AddItem(item)
+ if isServer() then sendAddItemToContainer(to:getInventory(), item) end
+end
+function Game.boundItem(item)
+ for _, patient in ipairs(Game.players()) do
+  for _, st in pairs(Game.md(patient).tq) do
+   if st.itemId == item:getID() then return true end
+  end
+ end
+ return false
+end
 function Game.giveItem(chr, fullType)
     local item = instanceItem(fullType)
     if not item then return nil end
@@ -249,7 +265,7 @@ function Game.isFireSource(item)
 end
 
 -- ------------------------------------------------------------ tourniquet state (authoritative on server/SP)
--- md.tq[partName] = { t = worldHours applied, item = fullType, saved = { [part] = bleedingTime }, dmg = bool }
+-- md.tq[partName] = { t = worldHours applied, item = fullType, itemId = itemId, saved = { [part] = bleedingTime }, dmg = bool }
 function Game.tqSnapshot(patient)
     local out = {}
     for part, st in pairs(Game.md(patient).tq) do out[part] = { t = st.t, item = st.item } end
@@ -293,9 +309,9 @@ function Game.suppressBleeding(patient, part, st)
     return changed
 end
 
-function Game.applyTourniquet(patient, bp, fullType)
+function Game.applyTourniquet(patient, bp, fullType, itemId)
     local part = Game.partName(bp)
-    local st = { t = Game.nowHours(), item = fullType, saved = {}, dmg = false }
+    local st = { t = Game.nowHours(), item = fullType, itemId = itemId, saved = {}, dmg = false }
     Game.md(patient).tq[part] = st
     Game.suppressBleeding(patient, part, st)
 end
@@ -314,7 +330,7 @@ function Game.removeTourniquet(patient, part)
         end
     end
     md.tq[part] = nil
-    return st.item
+    return st.item, st.itemId
 end
 
 -- ------------------------------------------------------------ exam vitals (never reads zombie infection)

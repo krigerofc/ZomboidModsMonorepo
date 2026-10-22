@@ -56,6 +56,7 @@ local function newPart(name)
     function p:setDeepWounded(b) self.deep = b end
     function p:setDeepWoundTime(v) self.deepTime = v end
     function p:getAdditionalPain() return self.pain end
+    function p:getStiffness() return self.stiffness or 0 end
     function p:setAdditionalPain(v) self.pain = v end
     function p:getHealth() return self.health end
     function p:SetHealth(v) self.health = v end
@@ -135,6 +136,7 @@ local function newPlayer(opts)
     function pl:getModData() return self.md end
     function pl:getPerkLevel(perk) return self.level end
     function pl:getInventory() return self.inv end
+    function pl:getSquare() return {canReachTo=function() return true end,isSomethingTo=function() return false end} end
     function pl:getX() return self.x end
     function pl:getY() return self.y end
     function pl:getZ() return self.z end
@@ -174,7 +176,7 @@ local function resetWorld(opts)
     _G.KFM = nil
     _G.print = function() end
     _G.Perks = { Doctor = "Doctor" }
-    _G.CharacterStat = { TEMPERATURE = "TEMPERATURE", THIRST = "THIRST", HUNGER = "HUNGER", PANIC = "PANIC", ENDURANCE = "ENDURANCE" }
+    _G.CharacterStat = { TEMPERATURE = "TEMPERATURE", THIRST = "THIRST", HUNGER = "HUNGER", PANIC = "PANIC", WETNESS="WETNESS", FATIGUE="FATIGUE", UNHAPPINESS="UNHAPPINESS", ENDURANCE = "ENDURANCE" }
     _G.CharacterTrait = { HEMOPHOBIC = "HEMOPHOBIC" }
     _G.ItemBodyLocation = { HANDS = "HANDS", MASK = "MASK" }
     _G.Fluid = { Water = "Water", TaintedWater = "TaintedWater" }
@@ -185,6 +187,7 @@ local function resetWorld(opts)
     _G.SandboxVars = { KFM = opts.sandbox or {} }
     _G.getGameTime = function() return { getWorldAgeHours = function() return world.hours end } end
     _G.ZombRandFloat = function(a, b) return a + (b - a) * rngValue end
+    _G.getRandomUUID = function() nextId=nextId+1;return "fixture-uuid-"..nextId end
     _G.isClient = function() return opts.client == true end
     _G.isServer = function() return opts.server == true end
     _G.isMultiplayer = function() return opts.client == true or opts.server == true end
@@ -213,6 +216,7 @@ local function resetWorld(opts)
         function ISBaseTimedAction.stop(self) end
         return ISBaseTimedAction
     end
+    package.preload["TimedActions/ISEatFoodAction"]=function() ISEatFoodAction={complete=function() return true end} end
     package.preload["TimedActions/ISInventoryTransferUtil"] = function()
         ISInventoryTransferUtil = { newInventoryTransferAction = function(chr, item, from, to) return { transfer = item } end }
     end
@@ -233,12 +237,26 @@ local function loadClient()
 end
 
 local function act(doctor, patient, partName, procId, item, item2)
+    -- This helper models the pre-action walk and patient acceptance. Authority-denial tests construct directly.
+    if doctor~=patient then
+        doctor.x=patient.x;doctor.y=patient.y;doctor.z=patient.z
+        local H=KFM.Health;H.leases[patient]=H.leases[patient] or {};H.leases[patient][doctor]=world.hours+1
+    end
     local bp = patient:part(partName)
     local a = KFM_ProcedureAction:new(doctor, patient, bp, procId, item, item2)
     return a, bp
 end
-local function fire(name) for _, fn in ipairs(Events[name].fns) do fn() end end
+local function fire(name,...) for _, fn in ipairs(Events[name].fns) do fn(...) end end
 local function cmd(name) for _, c in ipairs(log.cmds) do if c.command == name then return c end end end
+
+-- Exercise the public opaque protocol while retaining native-state assertions below.
+local function care(H,doctor,patient,key,treatment,item)
+ local dynamic=string.match(key,"^trait:(%w+)$")
+ local raw=dynamic and H.dynamic(patient).states[dynamic]or H.state(patient).episodes[key]
+ if not raw then return false end
+ H.examine(patient,doctor,nil,nil)
+ return H.treat(doctor,patient,(dynamic and "d"or "e")..raw.id,treatment,item,raw.id)
+end
 
 -- ============================================================ scenarios
 -- 1. exam SP: report content, tongue depressor consumed, XP anti-farm, Knox never read
@@ -258,10 +276,12 @@ do
     a:complete()
     check(LAST_MODAL ~= nil, "report shown in SP")
     check(LAST_MODAL and string.find(LAST_MODAL, "High fever", 1, true), "fever line")
-    check(LAST_MODAL and string.find(LAST_MODAL, "<LowerLeg_L>: fracture", 1, true), "fracture line with translated part")
-    check(LAST_MODAL and string.find(LAST_MODAL, "<Hand_R>: the wound looks inflamed", 1, true), "early infection line (L4)")
+    check(LAST_MODAL and string.find(LAST_MODAL, "(LowerLeg_L): fracture", 1, true), "fracture line with translated part")
+    check(LAST_MODAL and string.find(LAST_MODAL, "(Hand_R): the wound looks inflamed", 1, true), "early infection line (L4)")
     check(LAST_MODAL and string.find(LAST_MODAL, "Throat red", 1, true), "throat via tongue depressor")
-    check(LAST_MODAL and not string.find(string.lower(LAST_MODAL), "zombie", 1, true), "no zombie mention")
+    local diagnosticText=""
+    for _,line in ipairs(Core.buildExamReport(Game.collectVitals(pat),a.effLevel,Game.cfg(),{tongue=true}))do diagnosticText=diagnosticText..getText(line.key)end
+    check(not string.find(string.lower(diagnosticText),"zombie",1,true),"diagnostic findings never identify zombie infection; prevention guide may discuss contact")
     check(doc.inv:has("Base.TongueDepressor") == 0 and doc.inv:has("Base.Stethoscope") == 1, "tongue consumed, stethoscope kept")
     check(#log.xp == 1 and log.xp[1].n == 2, "exam xp 2")
     local tongue2 = doc.inv:AddItem(newItem("Base.TongueDepressor"))
@@ -567,6 +587,398 @@ do
     check(not a:isValid(), "empty lighter cannot heat a blade")
     a:complete()
     check(bp.deep and lighter.uses == 0, "empty lighter does not cauterize or use negative charges")
+end
+
+
+-- Overhaul audit: five permanent reproductions.
+do
+ local Core, Game = resetWorld({sandbox={Enabled=false}})
+ local doc=newPlayer({level=10}); local bp=doc:part("UpperArm_L")
+ bp.cut=true; Game.md(doc).tq.UpperArm_L={t=90,item="Base.Belt2",saved={UpperArm_L=8}}
+ fire("EveryTenMinutes")
+ check(bp.health==100 and bp.fracture==0,"disabled old tourniquet cannot damage")
+ act(doc,doc,"UpperArm_L","tourniquetOff"):complete()
+ check(Game.md(doc).tq.UpperArm_L==nil,"disabled tourniquet remains removable")
+end
+do
+ resetWorld({}); local Client=loadClient(); local doc=newPlayer({})
+ local tongue=newItem("Base.TongueDepressor"); tongue.container=newInventory()
+ Client.queue(doc,doc,doc:part("Head"),"exam",nil,tongue)
+ check(#ISTimedActionQueue.queue==2 and ISTimedActionQueue.queue[1].transfer==tongue,"nil-first optional item transferred")
+end
+do
+ local Core,Game=resetWorld({});local doc=newPlayer({level=10})
+ local belt=doc.inv:AddItem(newItem("Base.Belt2"));belt.condition=7;belt.customName="Rescued belt"
+ act(doc,doc,"UpperArm_L","tourniquet",belt):complete()
+ act(doc,doc,"UpperArm_L","tourniquetOff"):complete()
+ check(doc.inv:contains(belt) and doc.inv:has("Base.Belt2")==1 and belt.condition==7 and belt.customName=="Rescued belt","actual belt object identity and properties returned")
+end
+do
+ resetWorld({});local doc=newPlayer({});local bp=doc:part("Hand_L");bp.cut=true
+ local bottle=doc.inv:AddItem(newItem("Base.WaterBottle",{water={amount=1,kind="Water"}}))
+ act(doc,doc,"Hand_L","irrigate",bottle):complete()
+ check(#log.xp==0,"zero benefit clean irrigation grants no XP")
+end
+do
+ local Core,Game=resetWorld({});local Client=loadClient()
+ check(type(Client.procedureFailChance)=="function","menu exposes same procedure chance policy")
+ if Client.procedureFailChance then
+  local doc=newPlayer({level=1});local belt=newItem("Base.Belt2")
+  check(near(Client.procedureFailChance(doc,"tourniquet",Game.cfg(),belt),Core.failChance("tourniquet",1,Game.cfg(),Core.BELT_EXTRA_FAIL)),"belt tooltip includes belt failure penalty")
+ end
+end
+
+
+-- Health adapter is authoritative, usable, and bounded; no fixed symptom assignments.
+do
+ local Core,Game=resetWorld({});local doc=newPlayer({level=10})
+ local loaded,H=pcall(require,"KFM/Health")
+ check(loaded,"health engine has production observation and care adapter")
+ if loaded then
+  check(KFM.Exposure and KFM.Exposure.version==1,"server-only shared exposure API")
+  local bp=doc:part("Hand_L");bp.cut=true
+  H.registerExposure(doc,"disguise:1",{Hand_L=1})
+  H.registerExposure(doc,"disguise:1",{Hand_L=1})
+  local I=require "KFM/Illness"
+  check(I.count(Game.md(doc).health.sources)==1,"disguise exposure API registers once")
+  for i=1,13 do H.tick(doc,1/6,function()return 0 end) end
+  check(I.count(Game.md(doc).health.episodes)==1,"registered blood has production disease path")
+  H.removeExposure(doc,"disguise:1","Hand_L")
+  check(I.count(Game.md(doc).health.sources)==0,"explicit source removal")
+  Game.md(doc).health=I.seed(I.new(),"flu","fixture",nil,false)
+  local ep=Game.md(doc).health.episodes["resp:general"];ep.age=8;ep.phase="symptomatic"
+  doc.stats.THIRSt=0.6
+  H.applyEffects(doc,{health=0,thirst=0.001,endurance=0,pain={},warnings={}})
+  check(doc.stats.THIRSt==0.6,"unrelated existing stats retained")
+  local supplies=doc.inv:AddItem(newItem("Base.KFM_SupportSachet"))
+  local ok=care(H,doc,doc,"resp:general","support",supplies)
+  check(ok and not doc.inv:contains(supplies),"real treatment consumes one supply on success")
+  local repeated=doc.inv:AddItem(newItem("Base.KFM_SupportSachet"))
+  local before=#log.xp
+  check(not care(H,doc,doc,"resp:general","support",repeated) and doc.inv:contains(repeated) and #log.xp==before,"early repeat consumes nothing or XP")
+ end
+end
+do
+ local Core,Game=resetWorld({});local doc=newPlayer({level=10});local other=newPlayer({})
+ local belt=doc.inv:AddItem(newItem("Base.Belt2"))
+ act(doc,doc,"UpperArm_L","tourniquet",belt):complete()
+ doc.inv:Remove(belt);other.inv:AddItem(belt)
+ fire("EveryOneMinute")
+ check(Game.md(doc).tq.UpperArm_L==nil,"missing/transferred real belt releases tourniquet")
+end
+
+
+do
+ local Core,Game=resetWorld({server=true});local H=require "KFM/Health"
+ local doctor=newPlayer({level=10});local patient=newPlayer({});local impostor=newPlayer({})
+ check(type(H.requestConsent)=="function","server issues patient-bound consent nonce")
+ if H.requestConsent then
+  local nonce=H.requestConsent(doctor,patient)
+  check(nonce and not H.consent(doctor,patient),"request is not consent")
+  check(not H.answerConsent(impostor,nonce,true),"other actor cannot grant consent")
+  check(H.answerConsent(patient,nonce,true) and H.consent(doctor,patient),"actual patient grants scoped lease")
+  H.revokeConsent(patient)
+  check(not H.consent(doctor,patient),"revocation blocks subsequent effects")
+  check(not H.answerConsent(patient,nonce,true),"answered/revoked nonce cannot replay")
+ end
+end
+
+
+do
+ local Core,Game=resetWorld({server=true});local H=require "KFM/Health";local I=require "KFM/Illness"
+ local doctor=newPlayer({level=10});local patient=newPlayer({})
+ local nonce=H.requestConsent(doctor,patient);world.players={patient}
+ check(not H.answerConsent(patient,nonce,true),"disconnected doctor cannot receive stale-session consent")
+ world.players={doctor,patient};nonce=H.requestConsent(doctor,patient)
+ H.answerConsent(patient,nonce,true)
+ local bp=patient:part("UpperLeg_L");bp.fracture=30;patient.sitting=true
+ Game.md(patient).health=I.seed(I.new(),"fracture","native",bp.name,true)
+ local splint=doctor.inv:AddItem(newItem("Base.Splint"))
+ check(type(H.recoveryReduction)=="function","native recovery budget shared")
+ if H.recoveryReduction then
+  local one=H.recoveryReduction(patient,bp,"fracture",10)
+  local two=H.recoveryReduction(patient,bp,"fracture",10)
+  check(one+two<=12,"native recovery reductions never exceed 40 percent baseline")
+ end
+ local Client=loadClient()
+ check(type(Client.addEpisodeOptions)=="function" and type(Client.episodeReport)=="function","episode care and follow-up are discoverable")
+end
+
+
+do
+ local Core,Game=resetWorld({});local H=require "KFM/Health";local doc=newPlayer({})
+ local bp=doc:part("Hand_L");bp.pain=12
+ H.applyEffects(doc,{health=0,thirst=0,endurance=0,pain={Hand_L=3},warnings={}})
+ check(bp.pain==12,"native/foreign stronger regional pain is not stacked or overwritten")
+ check(type(H.afterEating)=="function","dirty-hand ingestion has production viral cause")
+ if H.afterEating then
+  local item=newItem("Base.Apple")
+  local old=Game.rng;Game.rng=function()return 0 end
+  H.afterEating(doc,item,1,true)
+  check(next(H.state(doc).episodes)~=nil,"dirty ingestion creates one observable gastro episode")
+  Game.rng=old
+ end
+end
+
+
+do
+ local Core,Game=resetWorld({server=true});local H=require "KFM/Health";local I=require "KFM/Illness"
+ local source=newPlayer({});local target=newPlayer({})
+ Game.md(source).health=I.seed(I.new(),"flu","native",nil,true)
+ local ep=H.state(source).episodes["resp:general"];ep.phase="symptomatic";ep.age=12
+ H.contact(world.players);H.contact(world.players)
+ check(I.count(H.state(target).sources)==1,"sustained same-floor contact source created")
+ source.x=100;H.contact(world.players)
+ check(I.count(H.state(target).sources)==0 and next(Game.md(target).contacts)==nil,"walking away removes exposure source and contact clock")
+ source.x=10;H.contact(world.players);H.contact(world.players)
+ world.players={target};H.contact(world.players)
+ check(I.count(H.state(target).sources)==0,"source logout removes contact exposure")
+ world.players={source,target};H.contact(world.players);H.contact(world.players)
+ H.state(source).episodes["resp:general"].phase="resolved";H.contact(world.players)
+ check(I.count(H.state(target).sources)==0,"source recovery removes contact exposure")
+end
+do
+ local Core,Game=resetWorld({server=true});local H=require "KFM/Health";local I=require "KFM/Illness"
+ local doctor=newPlayer({level=10});local patient=newPlayer({})
+ H.answerConsent(patient,H.requestConsent(doctor,patient),true)
+ Game.md(patient).health=I.seed(I.new(),"viral","dirtyMeal",nil,false)
+ H.state(patient).episodes["gastro:general"].phase="symptomatic"
+ local supply=doctor.inv:AddItem(newItem("Base.KFM_SupportSachet"))
+ Game.rng=function()return 0 end
+ care(H,doctor,patient,"gastro:general","support",supply)
+ check(H.state(doctor).episodes["gastro:general"]~=nil and H.state(doctor).episodes["resp:general"]==nil,"viral care contact creates gastro episode, never flu")
+end
+do
+ local Core,Game=resetWorld({});local H=require "KFM/Health";local doc=newPlayer({})
+ local bp=doc:part("UpperLeg_L");bp.fracture=20
+ H.observe(doc);H.recoveryReduction(doc,bp,"fracture",8)
+ bp.fracture=0;H.observe(doc);bp.fracture=30;H.observe(doc)
+ check(H.recoveryReduction(doc,bp,"fracture",12)>0,"new fracture gets fresh capped allowance after healing")
+end
+
+
+do
+ local Core,Game=resetWorld({server=true});local H=require "KFM/Health"
+ local doctor=newPlayer({level=10});local patient=newPlayer({})
+ local bp=patient:part("Hand_L");bp.cut=true;bp.infLevel=5
+ local bottle=doctor.inv:AddItem(newItem("Base.WaterBottle",{water={amount=1,kind="Water"}}))
+ local a=KFM_ProcedureAction:new(doctor,patient,bp,"irrigate",bottle)
+ a:complete()
+ check(bp.infLevel==5,"legacy procedures also require server patient consent")
+ H.answerConsent(patient,H.requestConsent(doctor,patient),true)
+ doctor.x=100
+ a:complete()
+ check(bp.infLevel==5,"legacy procedures reject distant doctor")
+end
+do
+ local Core,Game=resetWorld({});local doc=newPlayer({level=10})
+ local bp=doc:part("UpperArm_L");bp.cut=true;bp.bleedingTime=8
+ local belt=doc.inv:AddItem(newItem("Base.Belt2"))
+ act(doc,doc,"UpperArm_L","tourniquet",belt):complete()
+ SandboxVars.KFM.Enabled=false
+ fire("EveryOneMinute")
+ check(Game.md(doc).tq.UpperArm_L==nil and bp.bleedingTime==8 and doc.inv:contains(belt),"disable releases owned tourniquet support and keeps actual item")
+end
+
+do
+ resetWorld({server=true});local doc=newPlayer({level=10});local bp=doc:part("Hand_L");bp.cut=true;bp.infLevel=5
+ local bottle=doc.inv:AddItem(newItem("Base.WaterBottle",{water={amount=1,kind="Water"}}))
+ local a=KFM_ProcedureAction:new(doc,doc,bp,"irrigate",bottle);doc.level=0;a:complete()
+ check(near(bp.infLevel,3.5),"server recomputes actual doctor skill at completion")
+end
+
+
+do
+ local Core,Game=resetWorld({server=true});local H=require "KFM/Health";local I=require "KFM/Illness"
+ local doc=newPlayer({level=10})
+ check(type(H.environment)=="function" and type(H.dynamic)=="function","production climate and reversible-state adapters exist")
+ if H.environment then
+  _G.getClimateManager=function()return {getAirTemperatureForCharacter=function()return -8 end,getWindIntensity=function()return 0.6 end,getHumidity=function()return 0.8 end}end
+  _G.getGameTime=function()return {getWorldAgeHours=function()return world.hours end,getMonth=function()return 0 end}end
+  doc.getSquare=function()return {isOutside=function()return true end}end
+  doc.stats.WETNESS=80
+  H.observe(doc)
+  check(H.state(doc).sources["env:cold:Hand_L"]~=nil,"actual cold/wet observation creates hand risk source")
+  local snapshot=H.snapshot(doc)
+  check(snapshot.environment.month==1 and snapshot.environment.temperature==-8 and snapshot.exposures,"exam receives verified context and exposure details")
+  Game.md(doc).health=I.seed(I.new(),"coldHands","cold:1","Hand_L",false)
+  H.state(doc).episodes["coldHands:Hand_L"].age=3
+  H.tick(doc,1/6)
+  check(doc:part("Hand_L").pain>=10 and doc:part("Hand_R").pain==0,"cold injury applies actual native hand pain, preserving other hand")
+ end
+ if H.dynamic then
+  local D=require "KFM/Dynamics"
+  Game.md(doc).dynamic=D.seed(D.new(),"lowMood","fixture")
+  check(H.medicalTime(doc)>1,"active low mood has an actual bounded procedure penalty")
+  doc.sitting=true
+  local journal=doc.inv:AddItem(newItem("Base.KFM_RecoveryJournal"))
+  check(care(H,doc,doc,"trait:lowMood","journaling",journal),"actual dynamic-state care path commits finite item")
+ end
+end
+
+
+do
+ local Core,Game=resetWorld({server=true});local H=require "KFM/Health";local I=require "KFM/Illness"
+ local doc=newPlayer({level=10});local flags={THIRST=1,ENDURANCE=2,FATIGUE=4}
+ SyncPlayerStatsPacket={getBitMaskForStat=function(stat)return flags[stat]or 0 end}
+ H.applyEffects(doc,{health=0,thirst=0,endurance=0,fatigue=0.02,enduranceRecovery=0.01,pain={}})
+ check(doc.stats.FATIGUE==0.02 and log.stats[1]==6,"native stat bit masks synchronize fatigue and recovery to owning client")
+ local empty=doc.inv:AddItem(newItem("Base.Pills",{uses=0}))
+ Game.md(doc).health=I.seed(I.new(),"mosquitoFever","fixture",nil,false)
+ check(not care(H,doc,doc,"mosquito:general","feverCare",empty) and empty.uses==0,"empty medicine cannot grant care or negative charges")
+end
+do
+ local Core,Game=resetWorld({});local H=require "KFM/Health";local doc=newPlayer({})
+ local mask=newItem("Base.Hat_SurgicalMask")
+ function mask:getCondition()return 10 end
+ doc.worn.MASK=mask
+ H.registerExposure(doc,"masked",{Head=1,Hand_L=1})
+ local head=H.state(doc).sources["masked:Head"];local hand=H.state(doc).sources["masked:Hand_L"]
+ check(head.intensity>0 and head.intensity<hand.intensity,"appropriate mask partially reduces face blood exposure without shielding hands/eyes completely")
+ doc.worn.MASK=nil
+ H.registerExposure(doc,"masked",{Head=1})
+ check(H.state(doc).sources["masked:Head"].intensity==1,"removing mask updates continuing blood exposure")
+end
+
+do
+ local Core,Game=resetWorld({server=true});local H=require "KFM/Health";local I=require "KFM/Illness"
+ local doc=newPlayer({stats={ENDURANCE=0.1},sitting=true,level=3})
+ function doc:isRunning()return false end;function doc:isSprinting()return false end;function doc:isPlayerMoving()return false end
+ function doc:getInventoryWeight()return 2 end;function doc:getMaxWeight()return 12 end
+ local axe={getType=function()return "Axe"end,isRanged=function()return false end}
+ function doc:getPrimaryHandItem()return axe end;function doc:getSecondaryHandItem()return axe end
+ for window=1,4 do
+  for hit=1,16 do world.hours=world.hours+1/600;fire("OnWeaponHitTree",doc,axe);fire("OnWeaponHitTree",doc,axe)end
+  H.observe(doc,1/6)
+ end
+ check(H.state(doc).episodes["muscle:ForeArm_R"] and H.state(doc).episodes["muscle:ForeArm_L"],"native exhausted tool-hit events reach bounded bilateral forearm strain")
+ local e=H.state(doc).episodes["muscle:ForeArm_R"];e.age=3
+ H.tick(doc,1/6)
+ check(doc:part("ForeArm_R").pain>10 and doc.stats.FATIGUE>0,"regional episode reaches native pain and actual effort-fatigue channels")
+ check(H.snapshot(doc).episodes["muscle:ForeArm_R"].symptoms.toolEffort,"authoritative examination includes regional function")
+ doc:part("ForeArm_R").stiffness=20
+ H.tick(doc,1/6)
+ check(doc:part("ForeArm_R").pain==0,"ordinary native stiffness supersedes additional true-strain symptoms without duplication")
+ doc:part("ForeArm_R").stiffness=0
+ H.tick(doc,1/6)
+ check(doc:part("ForeArm_R").pain>10,"recoverable true strain remains after ordinary native stiffness subsides")
+ local no=care(H,doc,doc,"muscle:ForeArm_R","rehab",nil)
+ check(not no,"rehabilitation requires its actual wrap")
+ doc.sitting=false
+ check(not care(H,doc,doc,"muscle:ForeArm_R","muscleRest",nil),"rest care cannot be claimed while active")
+ doc.sitting=true
+ check(care(H,doc,doc,"muscle:ForeArm_R","muscleRest",nil),"real resting patient may start rest care")
+ check(not care(H,doc,doc,"muscle:ForeArm_R","muscleRest",nil),"rest care interval blocks repeated XP/treatment")
+ doc:part("ForeArm_R").fracture=10
+ H.tick(doc,1/6)
+ check(doc:part("ForeArm_R").pain==0,"native fracture supersedes owned regional strain pain")
+ local other=newPlayer({stats={ENDURANCE=0.1}})
+ function other:isRunning()return true end;function other:isSprinting()return false end;function other:isPlayerMoving()return true end
+ function other:getInventoryWeight()return 20 end;function other:getMaxWeight()return 12 end
+ H.observe(other,0)
+ check(next(H.state(other).episodes)==nil,"first observation after reconnect has no workload catch-up")
+end
+
+
+do
+ local Core,Game=resetWorld({server=true});local H=require "KFM/Health";local I=require "KFM/Illness"
+ local patient=newPlayer({level=0,sitting=true});local doc=newPlayer({level=8,sitting=true});local stranger=newPlayer({level=8})
+ Game.md(patient).health=I.seed(I.new(),"respiratory","secretCause","Torso_Upper",false)
+ local e=H.state(patient).episodes["resp:Torso_Upper"];e.phase="symptomatic"
+ check(type(H.project)=="function"and type(H.examine)=="function","observer protocol is wired into health adapter")
+ if H.project and H.examine then
+  local function first(v)for key,x in pairs(v.episodes or {})do return key,x end end
+  local low=H.project(patient,patient);local key,f=first(low)
+  check(low.version==3 and key~="resp:Torso_Upper"and not f.condition and not f.phase and not f.remaining and not low.exposures,"routine sync is opaque and observation-only")
+  check(next(H.project(patient,doc).episodes)==nil,"unconsented other player cannot obtain health/history")
+  local nonce=H.requestConsent(doc,patient);check(H.answerConsent(patient,nonce,true),"clinical observer consent accepted")
+  local guessed=H.project(patient,doc);local _,unknown=first(guessed)
+  check(not unknown.condition,"high skill alone on ordinary sync cannot diagnose")
+  local basic=H.examine(patient,doc,nil,nil);local _,b=first(basic)
+  check(b.confidence=="suspected"and not b.condition,"genuine missing-tool examination downgraded")
+  local steth=doc.inv:AddItem(newItem(Game.ITEM_STETHOSCOPE))
+  local high=H.examine(patient,doc,steth,nil);local highKey,clinical=first(high)
+  check(clinical.condition=="respiratory"and clinical.confidence=="clinical","skill and owned instrument obtain clinical findings")
+  local _,patientFinding=first(H.project(patient,patient));check(not patientFinding.condition,"patient does not inherit doctor assessment")
+  check(#H.project(patient,patient).history==0 and #high.history==2,"exam history uses observer visibility")
+  local antibiotics=doc.inv:AddItem(newItem("Base.Antibiotics"))
+  check(not H.treat(stranger,patient,highKey,"antibacterial",antibiotics,clinical.id),"forged actor cannot use doctor offer")
+  doc.inv:Remove(steth)
+  check(not H.treat(doc,patient,highKey,"antibacterial",antibiotics,clinical.id)and doc.inv:contains(antibiotics),"removed instrument downgrades offer before resource mutation")
+  doc.inv:AddItem(steth)
+  check(not H.treat(doc,patient,"resp:Torso_Upper","antibacterial",antibiotics,clinical.id),"raw condition key cannot bypass clinical protocol")
+  check(not H.treat(doc,patient,highKey,"antibacterial",antibiotics,999),"stale episode fails before mutation")
+  check(H.treat(doc,patient,highKey,"antibacterial",antibiotics,clinical.id),"filtered clinical care targets real authoritative episode")
+  local count=#Game.md(patient).medicalHistory.events;local xp=#log.xp
+  local second=doc.inv:AddItem(newItem("Base.Antibiotics"))
+  check(not H.treat(doc,patient,highKey,"antibacterial",second,clinical.id)and doc.inv:contains(second)and #log.xp==xp and #Game.md(patient).medicalHistory.events==count,"replay consumes no resources/XP/history")
+  local own=H.project(patient,patient);check(own.history[1].kind=="care"and not own.history[1].condition,"successful care history shared without diagnosis")
+  H.revokeConsent(patient)
+  check(next(H.project(patient,doc).episodes)==nil and #H.project(patient,doc).history==0,"revocation removes observer data and history")
+  check(not H.treat(doc,patient,highKey,"support",nil,clinical.id),"revoked care fails")
+  local n=H.requestConsent(doc,patient);H.answerConsent(patient,n,true);world.hours=world.hours+2
+  check(next(H.project(patient,doc).episodes)==nil,"expired consent removes data")
+  Game.md(patient).health.episodes["resp:Torso_Upper"].phase="latent"
+  check(next(H.project(patient,patient).episodes)==nil,"routine hidden latent episode absent")
+ end
+end
+
+
+-- Exam knowledge belongs to an examined episode/condition and the observer character.
+do
+ local _,Game=resetWorld({server=true});local H=require "KFM/Health";local I=require "KFM/Illness"
+ local patient=newPlayer({sitting=true});local doctor=newPlayer({level=8,name="SameAccount"})
+ local n=H.requestConsent(doctor,patient);H.answerConsent(patient,n,true)
+ Game.md(patient).health=I.seed(I.new(),"flu","old","Torso_Upper",false)
+ local e=H.state(patient).episodes["resp:Torso_Upper"];e.phase="symptomatic"
+ local steth=doctor.inv:AddItem(newItem(Game.ITEM_STETHOSCOPE));H.examine(patient,doctor,steth,nil)
+ check(H.project(patient,doctor).episodes["e"..e.id].condition=="flu","current examined episode has supported finding")
+ e=H.state(patient).episodes["resp:Torso_Upper"];e.condition="respiratory";e.phase="complication"
+ check(H.project(patient,doctor).episodes["e"..e.id].condition==nil,"old assessment cannot identify a later complication without re-examination")
+ Game.md(patient).health=I.seed(H.state(patient),"dermatitis","new","Hand_L",false)
+ local skin=H.state(patient).episodes["skin:Hand_L"];skin.phase="symptomatic"
+ check(H.project(patient,doctor).episodes["e"..skin.id].condition==nil,"old assessment cannot identify a new episode")
+ local replacement=newPlayer({level=8,name="SameAccount"})
+ local nonce=H.requestConsent(replacement,patient);H.answerConsent(patient,nonce,true)
+ check(#H.project(patient,replacement).history==0,"new character on same account cannot inherit another character's medical observations")
+end
+
+-- A disposable diagnostic tool is validated before use, not required to reappear after consumption.
+do
+ local _,Game=resetWorld({});local Client=loadClient();local H=require "KFM/Health";local I=require "KFM/Illness"
+ local patient=newPlayer({level=8,sitting=true})
+ Game.md(patient).health=I.seed(I.new(),"soreThroat","throat","Head",false)
+ local e=H.state(patient).episodes["throat:Head"];e.phase="symptomatic"
+ local tongue=patient.inv:AddItem(newItem(Game.ITEM_TONGUE))
+ act(patient,patient,"Head","exam",nil,tongue):complete()
+ local offer=H.project(patient,patient).episodes["e"..e.id]
+ check(not patient.inv:contains(tongue)and offer.condition=="soreThroat","disposable tool records a completed valid examination")
+ local lozenges=patient.inv:AddItem(newItem(H.ITEMS.throatRemedy))
+ check(H.treat(patient,patient,"e"..e.id,"throatRemedy",lozenges,e.id),"completed throat assessment permits actual finite care after disposable use")
+end
+
+-- Revocation/expiry closes every matching window without walking deleted entries.
+do
+ resetWorld({client=true});local Client=loadClient();local doctor=newPlayer({});local patient=newPlayer({})
+ local closed=0
+ local function win()return {setVisible=function()end,removeFromUIManager=function()closed=closed+1 end,getIsVisible=function()return true end}end
+ for n=1,3 do Client.reports[n]={window=win(),payload={self=false,doctorId=doctor.id,patientId=patient.id,accessUntil=world.hours-1}}end
+ local ok=pcall(Client.expireReports)
+ check(ok and #Client.reports==0 and closed==3,"expiry clears multiple report windows without nil dereference")
+end
+
+
+-- Reconstructed procedures must bind the body part to the consented patient.
+do
+ local _,Game=resetWorld({server=true});local H=require "KFM/Health"
+ local doctor=newPlayer({level=8});local nearby=newPlayer({});local remote=newPlayer({x=100,y=100})
+ H.leases[nearby]={[doctor]=world.hours+1}
+ local wrong=remote:part("Hand_R");wrong.cut=true;wrong.infLevel=6
+ local water=doctor.inv:AddItem(newItem("Base.WaterBottle",{water={amount=1,kind="Water"}}))
+ local action=KFM_ProcedureAction:new(doctor,nearby,wrong,"irrigate",water,nil)
+ check(not action:isValid(),"foreign body part cannot be passed as consented nearby patient's limb")
+ action:complete()
+ check(wrong.infLevel==6 and water.water.amount==1 and #log.xp==0,"mismatched patient/limb cannot mutate remote health or resources/XP")
 end
 
 check(#missingText == 0, "missing translation keys: " .. table.concat(missingText, ","))

@@ -1,0 +1,10 @@
+{
+    "UI_trait_KFM_respiratory": "Histórico respiratório",
+    "UI_trait_KFM_respiratoryDesc": "Histórico respiratório. Histórico inicial selecionável cria estado recuperável do Medicina de Campo. Cuidado e contexto mudam efeitos ativos; não altera pontos de traços adquiridos.",
+    "UI_trait_KFM_cardiac": "Histórico cardiorrespiratório",
+    "UI_trait_KFM_cardiacDesc": "Histórico cardiorrespiratório. Histórico inicial selecionável cria estado recuperável do Medicina de Campo. Cuidado e contexto mudam efeitos ativos; não altera pontos de traços adquiridos.",
+    "UI_trait_KFM_stresssensitivity": "Histórico de sensibilidade ao estresse",
+    "UI_trait_KFM_stresssensitivityDesc": "Histórico de sensibilidade ao estresse. Histórico inicial selecionável cria estado recuperável do Medicina de Campo. Cuidado e contexto mudam efeitos ativos; não altera pontos de traços adquiridos.",
+    "UI_trait_KFM_resilience": "Hábitos de recuperação praticados",
+    "UI_trait_KFM_resilienceDesc": "Hábitos de recuperação praticados. Histórico inicial selecionável cria estado recuperável do Medicina de Campo. Cuidado e contexto mudam efeitos ativos; não altera pontos de traços adquiridos."
+}

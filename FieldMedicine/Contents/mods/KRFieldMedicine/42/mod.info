@@ -1,7 +1,7 @@
 name=Field Medicine '93
 id=KRFieldMedicine
 author=Kriger
-description=1993 field medicine that complements vanilla health: clinical exams, wound irrigation, tourniquets, cauterization, fracture reduction and debridement. First Aid requirements, costs and risks, with sandbox options. Never identifies the Knox infection. Build 42 only; PT-BR + EN.
+description=Field medicine with detailed exams, wound procedures, seasonal exposure, recoverable illness and regional strain. Specific care, temporary cardiorespiratory and psychological states, and finite local symptoms. Server-controlled resources and consent. Never identifies Knox. Build 42; PT-BR + EN. Development build: gameplay and multiplayer validation pending.
 poster=poster.png
 icon=icon.png
 modversion=1.1.0

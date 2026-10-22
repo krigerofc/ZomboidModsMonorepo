@@ -76,6 +76,10 @@ ok('Knox guard: no zombie-infection API in mod Lua');
 
 // ---------- 5. scripts: items, recipes, references exist in vanilla or mod
 const modScripts = read(path.join(MOD, '42/media/scripts/KFM_items.txt')) + '\n' + read(path.join(MOD, '42/media/scripts/KFM_recipes.txt'));
+for (const f of files.filter((f) => /[\\/]media[\\/]scripts[\\/].*\.txt$/.test(f))) {
+  // Native B42 parser does not treat a leading // generated header as a module prefix.
+  if (!/^\s*(?:\/\*[\s\S]*?\*\/\s*)*module\s+\w+\s*\{/.test(read(f))) fail('native module prefix ' + path.relative(MOD, f));
+}
 for (const [n, s] of [['items', read(path.join(MOD, '42/media/scripts/KFM_items.txt'))], ['recipes', read(path.join(MOD, '42/media/scripts/KFM_recipes.txt'))]]) {
   if ((s.match(/{/g) || []).length !== (s.match(/}/g) || []).length) fail('braces ' + n);
   if (!/^module Base\s*$/m.test(s)) fail('module Base ' + n);
@@ -145,7 +149,7 @@ function run(L, code) {
 }
 const luaMap = (obj) => '{' + Object.entries(obj).map(([k, v]) => `[${JSON.stringify(k)}]=${JSON.stringify(v)}`).join(',') + '}';
 const luaList = (arr) => '{' + arr.map((x) => JSON.stringify(x)).join(',') + '}';
-for (const spec of ['core_spec.lua', 'glue_spec.lua']) {
+for (const spec of ['core_spec.lua', 'glue_spec.lua', 'illness_spec.lua', 'phase2_spec.lua', 'symptoms_spec.lua', 'exam_spec.lua', 'effects_spec.lua', 'strain_spec.lua', 'clinical_spec.lua']) {
   const L = lauxlib.luaL_newstate();
   lualib.luaL_openlibs(L);
   try {

@@ -11,3 +11,83 @@ module Base
         WorldStaticModel = RippedSheets,
     }
 }
+
+module Base
+{
+ item KFM_SupportSachet
+ {
+ DisplayCategory = FirstAid,
+ ItemType = base:normal,
+ Weight = 0.15,
+ Icon = PillsVitamins,
+ Medical = true,
+ }
+ item KFM_SkinOintment
+ {
+ DisplayCategory = FirstAid,
+ ItemType = base:normal,
+ Weight = 0.15,
+ Icon = Disinfectant,
+ Medical = true,
+ }
+ item KFM_BurnDressing
+ {
+ DisplayCategory = FirstAid,
+ ItemType = base:normal,
+ Weight = 0.15,
+ Icon = Bandage,
+ Medical = true,
+ }
+ item KFM_RehabWrap
+ {
+ DisplayCategory = FirstAid,
+ ItemType = base:normal,
+ Weight = 0.15,
+ Icon = Rag,
+ Medical = true,
+ }
+}
+
+module Base
+{
+ item KFM_ThroatLozenges
+ {
+ DisplayCategory = FirstAid,
+ ItemType = base:normal,
+ Weight = 0.15,
+ Icon = PillsVitamins,
+ Medical = true,
+ }
+ item KFM_BreathingAid
+ {
+ DisplayCategory = FirstAid,
+ ItemType = base:normal,
+ Weight = 0.15,
+ Icon = PillsVitamins,
+ Medical = true,
+ }
+ item KFM_CardiacSupport
+ {
+ DisplayCategory = FirstAid,
+ ItemType = base:normal,
+ Weight = 0.15,
+ Icon = PillsVitamins,
+ Medical = true,
+ }
+ item KFM_RecoveryJournal
+ {
+ DisplayCategory = FirstAid,
+ ItemType = base:normal,
+ Weight = 0.15,
+ Icon = Notebook,
+ Medical = true,
+ }
+ item KFM_InsectRepellent
+ {
+ DisplayCategory = FirstAid,
+ ItemType = base:normal,
+ Weight = 0.15,
+ Icon = Disinfectant,
+ Medical = true,
+ }
+}

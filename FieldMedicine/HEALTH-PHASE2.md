@@ -1,0 +1,29 @@
+# Field Medicine phase 2 — seasonal exposure, clinical findings and reversible vulnerability
+Status: local implementation and focused regression suite complete on 22 October; native starting-trait registration on42.19.2 has passed; current clinical slice is under controller review and actual gameplay/MP validation remains pending. Priority: health first, disguise next, then KRjobs loading investigation by root.
+
+## Decisions
+- Retain B42-only KRFieldMedicine, authoritative episodes/care/XP, actual inventory resources, explicit patient consent, offline pause and native symptom precedence. No Knox reads/diagnosis/transmission changes.
+- Extend the existing ten-illness catalogue modestly with sore-throat syndrome, summer mosquito-associated febrile syndrome and reversible respiratory/cardiac vulnerability episodes (approximately14 illness/vulnerability definitions; existing four injury tracks retained). Names describe game syndromes, not an identified real pathogen.
+- Climate sources must use actual game month/temperature/wetness/outside/clothing/mask observations. Wet+cold and wet+heat have different accumulated exposure profiles, with hourly deterministic windows; no illness solely because a season changed.
+- Mosquito risk requires warm summer outdoor exposure and exposed skin over time. Clothing helps exposed regions; a face mask protects appropriate respiratory/face contamination routes, not all skin.
+- Respiratory masks use verified worn locations and item identities, with bounded risk reduction. Persistent dirty blood remains one regional source shared with Disguise.
+- Condition-specific support medicines, hygiene/topical care and rehabilitation remain limited by intervals and finite resources. Antibiotics remain inappropriate for viral illness. Existing native medicines are reused before adding distinct supplies.
+- Detailed examination will report region-specific observed findings, severity/priorities, uncertainty, next useful care/resource/skill/interval and warning signs. It will distinguish observation from suspicion and never assert an unmodelled pathogen or Knox.
+- Cough, fatigue and visual impairment need real verified engine/UI expression. Prefer bounded additive fatigue/endurance, local cough/audio feedback and an owned vision overlay; do not overwrite native/global symptoms. A faint episode must be short, server-issued, recoverable, nonfatal by itself and use only a verified engine action/animation. Any unavailable engine effect remains explicitly blocked rather than silently claimed.
+- Starting cardiorespiratory traits require a verified B42 registration path. Acquired conditions use versioned reversible episode state; never permanently add a native trait on a timer. Starting susceptibility remains player-selected; acquired functional state can recover.
+
+## Bounded phases and test-first evidence
+1. Native climate/mask/trait/symptom API inspection; pure environmental dose policies and dedicated switches, RED→GREEN.
+2. Server observations and episodic summer/winter/wet exposure causes; contact mask protection and care-specific medicine routes, RED→GREEN.
+3. Detailed bilingual medical findings/care UI, regional priority and follow-up, RED→GREEN.
+4. Actual cough/fatigue/visual/faint presentation and reversible starting/acquired vulnerability adapters after primary API proof, RED→GREEN.
+5. Fresh full FieldMedicine + dependent ZombieDisguise contract suites, generated translation/static checks; root independently reviews. Actual client/gameplay/network scenarios remain separate from harness evidence.
+
+## Disguise paused safely
+The approved action, exposure, state, UI, assets and regression infrastructure exist. Native bytecode proved setZombiesDontAttack is capability-gated and cannot deliver normal-player gameplay. No roles/capabilities/cheat-store bypass will be used. Runtime camouflage availability is disabled while selective local-zombie pursuit interruption is investigated. OnZombieUpdate dispatch precedes re-spotting in updateInternal; a target-only clear is insufficient proof. The next disguise phase must replace that primitive and replicate server-issued active state to zombie simulation owners; it may be balanced concealment with close attacks still dangerous. No invisibility/MP release claim.
+
+Additional user scope: cold finger injury uses existing Hand_L/Hand_R and real native hand-pain mechanics. Dynamic mental states develop/recover and carry bounded buffs/debuffs. Psychological audio/door/light perceptions are local-only owner effects; no actual doors/lights/world noise changes.
+
+Regional extension: exhausted native tool/combat hit events accumulate arm/forearm strain; sustained exhausted running accumulates lower-leg/foot strain; exhausted overloaded movement accumulates Torso_Lower strain. Ordinary native exercise stiffness is not an injury source. Arms reuse native pain; leg/foot symptoms use bounded movement endurance cost (no unsupported limp/speed claim); lower torso uses moving-overload fatigue. Native injuries take precedence. Distinct rest, finite-wrap rehabilitation and finite-sachet support appear in the bilingual examination. Acceptance scenarios and evidence limits: MANUAL_TEST.md.
+
+Clinical follow-through22/10: observer-filtered v3 snapshots, opaque care handles, episode-bound one-hour assessment grants, category-appropriate tools and a fifth History tab. Persistent UUID identifies the examiner character across reconnects without leaking another character's records on the same account. Raw snapshots remain server-only/internal; no secret phase/countdown crosses the public projection. History64events/20visible, coalesced examinations1h, immutable prior findings. Fresh controller regressions fixed stale-complication knowledge and multi-window expiry. No exhaustive pharmacology or surgery added.

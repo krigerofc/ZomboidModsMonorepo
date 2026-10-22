@@ -1,4 +1,4 @@
 {
     "name": "Field Medicine '93",
-    "description": "1993 field medicine that complements vanilla health: clinical exams, wound irrigation, tourniquets, cauterization, fracture reduction and debridement. First Aid requirements, costs and risks, with sandbox options. Never identifies the Knox infection. Build 42 only; PT-BR + EN."
+    "description": "Field medicine with clinical exams, wound procedures, seasonal exposure, recoverable illness and regional strain. Condition-specific care, temporary cardiorespiratory and psychological states, and finite local symptoms. Server-controlled resources and patient consent. Never identifies Knox. Build 42; EN + PT-BR. Development build: in-game and multiplayer validation pending."
 }

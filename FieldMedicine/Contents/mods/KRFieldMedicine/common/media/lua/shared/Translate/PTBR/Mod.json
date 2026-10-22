@@ -1,4 +1,4 @@
 {
     "name": "Medicina de Campo '93",
-    "description": "Medicina de campo de 1993 que complementa a saúde vanilla: exame clínico, irrigação de feridas, torniquete, cauterização, redução de fratura e debridamento. Requisitos de Primeiros Socorros, custos e riscos, com opções de sandbox. Nunca identifica a infecção Knox. Só Build 42; PT-BR + EN."
+    "description": "Medicina de campo com exame clínico, procedimentos em feridas, exposição sazonal, doenças recuperáveis e distensões regionais. Cuidados específicos, estados cardiorrespiratórios e psicológicos temporários e sintomas locais finitos. Recursos e consentimento controlados pelo servidor. Nunca identifica Knox. Build 42; EN + PT-BR. Em desenvolvimento: validação no jogo e multiplayer pendente."
 }

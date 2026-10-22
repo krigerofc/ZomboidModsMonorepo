@@ -1,0 +1,40 @@
+module Base
+{
+ character_trait_definition kfm:respiratory
+ {
+ IsProfessionTrait = false,
+ DisabledInMultiplayer = false,
+ CharacterTrait = kfm:respiratory,
+ Cost = 0,
+ UIName = UI_trait_KFM_respiratory,
+ UIDescription = UI_trait_KFM_respiratoryDesc,
+ MutuallyExclusiveTraits = base:asthmatic,
+ }
+ character_trait_definition kfm:cardiac
+ {
+ IsProfessionTrait = false,
+ DisabledInMultiplayer = false,
+ CharacterTrait = kfm:cardiac,
+ Cost = 0,
+ UIName = UI_trait_KFM_cardiac,
+ UIDescription = UI_trait_KFM_cardiacDesc,
+ }
+ character_trait_definition kfm:stresssensitivity
+ {
+ IsProfessionTrait = false,
+ DisabledInMultiplayer = false,
+ CharacterTrait = kfm:stresssensitivity,
+ Cost = 0,
+ UIName = UI_trait_KFM_stresssensitivity,
+ UIDescription = UI_trait_KFM_stresssensitivityDesc,
+ }
+ character_trait_definition kfm:resilience
+ {
+ IsProfessionTrait = false,
+ DisabledInMultiplayer = false,
+ CharacterTrait = kfm:resilience,
+ Cost = 2,
+ UIName = UI_trait_KFM_resilience,
+ UIDescription = UI_trait_KFM_resilienceDesc,
+ }
+}
