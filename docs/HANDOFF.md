@@ -1,6 +1,6 @@
 # HANDOFF — Mods Project Zomboid do Kriger
 
-> Coordenação ativa: leia CLAUDE-CODEX.md antes de editar. Há correções e descrições do Codex já aplicadas, ainda sem commit. Claude está verificando APIs 42.21; Codex está verificando comportamento.
+> Estado atual (21/10/2026): a reestruturação está na cópia separada work/ZomboidModsMonorepo, branch feat/mods-overhaul-20261021. As seções datadas de17/10 abaixo são histórico da base importada. Consulte docs/superpowers/plans/2026-10-21-mods-overhaul.md e as especificações vinculadas para o escopo atual. Não reaplique patches nem sobrescreva os repositórios Workshop originais.
 
 
 > Arquivo de passagem de bastão entre IAs (Claude, ChatGPT) e o dono dos mods (usuário "Kriger").
@@ -81,7 +81,7 @@ Todos os 5 mods estão **implementados, com `npm test` = ALL TESTS PASSED, e nen
 - Riscos: persistência do modData do jogador no servidor B42 após restart; `addXpNoMultiplier` vs. multiplicador global; B41 `AddXPNoMultiplier`, `HaloTextHelper`, `ignoreAction`; item criado em `OnFillContainer` no servidor chegar ao cliente; modelos `Magazine`/`MagazineGround` no B41.
 
 ### 5.3 KRjobs — riscos
-- Receitas validadas contra 42.19.2 (renomeação na 42.21 → RuntimeException no boot); B41 só contra fixtures; kits em `OnNewGame` são client-side no MP; ícones por nome em `media/textures` no B42; 13 profissões com ícone placeholder vanilla (prompts em `docs/ICON-PROMPTS.md`).
+- Receitas validadas contra 42.19.2 (renomeação na 42.21 → RuntimeException no boot); B41 só contra fixtures; kits agora são autoritativos: `giveKits` retorna no cliente e grava progresso por item; recuperação automática de entrega parcial está em revisão nesta branch; ícones por nome em `media/textures` no B42; 13 profissões com ícone placeholder vanilla (prompts em `docs/ICON-PROMPTS.md`).
 
 ### 5.4 Basic Vehicle Maintenance — riscos
 - `type = double` no sandbox; `SyncPlayerStatsPacket.getBitMaskForStat`; ação de inspeção só-cliente no MP; `transmitPartModData`; serialização de `VehiclePart` + string + boolean nos argumentos da ação; nada testado na 42.21.

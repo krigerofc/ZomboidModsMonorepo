@@ -6,6 +6,7 @@ local function check(cond, msg) if not cond then failures = failures + 1; print(
 local function newPlayer(traits)
     local p = { md = {}, items = {}, traits = {} }
     for _, t in ipairs(traits) do p.traits[t] = true end
+    function p:isDead() return self.dead == true end
     function p:getModData() return self.md end
     function p:getInventory()
         local owner = self
@@ -26,7 +27,22 @@ else
     CharacterTrait = nil
 end
 local handlers = {}
-Events = { OnNewGame = { Add = function(f) table.insert(handlers, f) end } }
+local minuteHandlers = {}
+Events = {
+    OnNewGame = { Add = function(f) table.insert(handlers, f) end },
+    EveryOneMinute = { Add = function(f) table.insert(minuteHandlers, f) end },
+}
+local serverPlayers, localPlayers = {}, {}
+local serverSide = true
+isServer = function() return serverSide end
+getOnlinePlayers = function()
+    return { size = function() return #serverPlayers end, get = function(_, i) return serverPlayers[i + 1] end }
+end
+getNumActivePlayers = function() return #localPlayers end
+getSpecificPlayer = function(i) return localPlayers[i + 1] end
+local function minute()
+    for _, h in ipairs(minuteHandlers) do h() end
+end
 
 package.loaded["KRjobs/Core"] = nil
 package.loaded["KRjobs/Kits"] = nil
@@ -83,15 +99,83 @@ function retryPlayer:getInventory()
         return { type = fullType }
     end }
 end
-Core.giveKits(retryPlayer)
+handlers[1](retryPlayer, nil)
 check(not retryPlayer.md[Core.MODDATA_KEY], "partial kit is not marked complete")
 reject = false
-Core.giveKits(retryPlayer)
+serverPlayers = { retryPlayer }
+minute()
 check(#retryPlayer.items == #Kits[1].items, "failed slot retries without duplicating successful slots")
 check(retryPlayer.md[Core.MODDATA_KEY] == true, "successful retry completes delivery")
 local legacyPlayer = newPlayer({ Kits[1].trait })
 legacyPlayer.md[Core.MODDATA_KEY] = true
 Core.giveKits(legacyPlayer)
 check(#legacyPlayer.items == 0, "legacy completed marker remains authoritative")
+
+-- A replacement player object retains pending delivery through saved ModData.
+local resumed = newPlayer({ Kits[1].trait })
+function resumed:getInventory() return nil end
+handlers[1](resumed, nil)
+check(not resumed.md[Core.MODDATA_KEY], "unavailable inventory leaves the new kit pending")
+local restored = newPlayer({ Kits[1].trait })
+restored.md = resumed.md
+serverPlayers = { restored }
+minute()
+check(#restored.items == #Kits[1].items, "pending new-character grant resumes on a replacement player object")
+
+-- Single-player/splitscreen recovery includes player one, not only player zero.
+serverSide = false
+local solo = newPlayer({ Kits[1].trait })
+local soloInventory = solo.getInventory
+local failSolo = true
+function solo:getInventory() if failSolo then return nil end return soloInventory(self) end
+handlers[1](solo, nil)
+failSolo = false
+local old = newPlayer({ Kits[1].trait })
+function old:getInventory() error("old character inventory must not be scanned") end
+localPlayers = { old, solo, legacyPlayer }
+minute()
+check(#solo.items == #Kits[1].items, "minute event recovers the second local player's pending kit")
+check(#old.items == 0 and not old.md[Core.MODDATA_KEY], "timer never grants an uninitiated old character")
+check(#legacyPlayer.items == 0, "timer preserves legacy completion")
+
+-- Even an explicitly pending replica is never retried on a client.
+clientSide = true
+local clientPending = newPlayer({ Kits[1].trait })
+clientPending.md = { KRjobsKitPending = 5, KRjobsKitItems = {} }
+localPlayers = { clientPending }
+serverPlayers = { clientPending }
+minute()
+check(#clientPending.items == 0 and clientPending.md.KRjobsKitPending == 5, "client timer cannot mutate a pending kit")
+clientSide = false
+
+-- Permanent failure is bounded and never marked successful.
+serverSide = true
+local stuck = newPlayer({ Kits[1].trait })
+local attempts = 0
+function stuck:getInventory()
+    return { AddItem = function() attempts = attempts + 1; return nil end }
+end
+handlers[1](stuck, nil)
+serverPlayers = { stuck }
+for i = 1, 100 do minute() end
+check(attempts > #Kits[1].items and attempts <= #Kits[1].items * 6, "failed delivery has at most five automatic recovery attempts")
+check(not stuck.md[Core.MODDATA_KEY], "exhausted recovery never claims delivery succeeded")
+local before = attempts
+for i = 1, 10 do minute() end
+check(attempts == before, "exhausted recovery stays stopped")
+
+-- Completed delivery no longer touches inventory.
+serverPlayers = { retryPlayer }
+function retryPlayer:getInventory() error("completed kit must not be touched") end
+minute()
+check(retryPlayer.md.KRjobsKitPending == nil, "completed delivery clears its recovery marker")
+
+-- Dead characters are not eligible for timer recovery.
+local dead = newPlayer({ Kits[1].trait })
+dead.md = { KRjobsKitPending = 5, KRjobsKitItems = {} }
+dead.dead = true
+serverPlayers = { dead }
+minute()
+check(#dead.items == 0 and dead.md.KRjobsKitPending == 5, "timer leaves dead characters untouched")
 
 return failures
