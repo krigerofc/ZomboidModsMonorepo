@@ -1,10 +1,10 @@
 {
     "UI_trait_KFM_respiratory": "Respiratory history",
-    "UI_trait_KFM_respiratoryDesc": "Respiratory history. Selectable starting history seeds a recoverable Field Medicine state. Actual care and game context change active effects; no acquired native trait-point changes.",
+    "UI_trait_KFM_respiratoryDesc": "A history of breathing trouble. Exertion costs more endurance while the condition is active. Rest, paced recovery and the appropriate breathing aid help recovery.",
     "UI_trait_KFM_cardiac": "Cardiorespiratory history",
-    "UI_trait_KFM_cardiacDesc": "Cardiorespiratory history. Selectable starting history seeds a recoverable Field Medicine state. Actual care and game context change active effects; no acquired native trait-point changes.",
+    "UI_trait_KFM_cardiacDesc": "A history of heart and breathing strain. Heavy exertion adds fatigue and severe exhaustion can cause a brief faint. Rest and appropriate care help recovery.",
     "UI_trait_KFM_stresssensitivity": "Stress sensitivity history",
-    "UI_trait_KFM_stresssensitivityDesc": "Stress sensitivity history. Selectable starting history seeds a recoverable Field Medicine state. Actual care and game context change active effects; no acquired native trait-point changes.",
+    "UI_trait_KFM_stresssensitivityDesc": "Stress leaves you on edge. Slightly better focus during examinations, but faster fatigue and occasional unsettling perceptions until recovery.",
     "UI_trait_KFM_resilience": "Practiced recovery habits",
-    "UI_trait_KFM_resilienceDesc": "Practiced recovery habits. Selectable starting history seeds a recoverable Field Medicine state. Actual care and game context change active effects; no acquired native trait-point changes."
+    "UI_trait_KFM_resilienceDesc": "Practiced recovery habits. A temporary benefit to medical task speed and endurance recovery while resting."
 }

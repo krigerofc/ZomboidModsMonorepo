@@ -66,6 +66,15 @@ for (const f of luaFiles.filter((f) => f.includes('Contents'))) {
 }
 ok('layout (B42 only), mod.info, workshop.txt (no id), image sizes, no vanilla overwrite');
 
+
+// Native B42 creation UI lists non-profession traits only in cost>0 / cost<0 buckets.
+const startingTraits=read(path.join(MOD,'42/media/scripts/KFM_traits.txt'));
+for (const id of ['respiratory','cardiac','stresssensitivity','resilience']) {
+  const block=startingTraits.match(new RegExp('character_trait_definition kfm:'+id+'\\s*\\{([^}]+)\\}'));
+  const cost=block&&block[1].match(/Cost\s*=\s*(-?\d+)/);
+  if(!cost||Number(cost[1])===0) fail('starting trait invisible in native creation UI: '+id);
+}
+
 // ---------- 4. Knox guard: no code path reads the zombie infection
 const knoxApi = /\b(isInfected|IsInfected|getInfectionLevel|isFakeInfected|IsFakeInfected|getApparentInfectionLevel|getInfectionTime|setInfected|SetInfected|SetFakeInfected|getInfectionMortalityDuration)\s*\(/;
 for (const f of luaFiles.filter((f) => f.includes('Contents'))) {

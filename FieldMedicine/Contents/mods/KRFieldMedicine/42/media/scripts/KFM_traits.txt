@@ -5,7 +5,7 @@ module Base
  IsProfessionTrait = false,
  DisabledInMultiplayer = false,
  CharacterTrait = kfm:respiratory,
- Cost = 0,
+ Cost = -2,
  UIName = UI_trait_KFM_respiratory,
  UIDescription = UI_trait_KFM_respiratoryDesc,
  MutuallyExclusiveTraits = base:asthmatic,
@@ -15,7 +15,7 @@ module Base
  IsProfessionTrait = false,
  DisabledInMultiplayer = false,
  CharacterTrait = kfm:cardiac,
- Cost = 0,
+ Cost = -3,
  UIName = UI_trait_KFM_cardiac,
  UIDescription = UI_trait_KFM_cardiacDesc,
  }
@@ -24,7 +24,7 @@ module Base
  IsProfessionTrait = false,
  DisabledInMultiplayer = false,
  CharacterTrait = kfm:stresssensitivity,
- Cost = 0,
+ Cost = -1,
  UIName = UI_trait_KFM_stresssensitivity,
  UIDescription = UI_trait_KFM_stresssensitivityDesc,
  }

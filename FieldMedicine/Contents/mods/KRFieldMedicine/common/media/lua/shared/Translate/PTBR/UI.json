@@ -1,10 +1,10 @@
 {
     "UI_trait_KFM_respiratory": "Histórico respiratório",
-    "UI_trait_KFM_respiratoryDesc": "Histórico respiratório. Histórico inicial selecionável cria estado recuperável do Medicina de Campo. Cuidado e contexto mudam efeitos ativos; não altera pontos de traços adquiridos.",
+    "UI_trait_KFM_respiratoryDesc": "Histórico de dificuldade respiratória. O esforço custa mais fôlego enquanto o quadro está ativo. Repouso, recuperação gradual e auxílio respiratório adequado ajudam na recuperação.",
     "UI_trait_KFM_cardiac": "Histórico cardiorrespiratório",
-    "UI_trait_KFM_cardiacDesc": "Histórico cardiorrespiratório. Histórico inicial selecionável cria estado recuperável do Medicina de Campo. Cuidado e contexto mudam efeitos ativos; não altera pontos de traços adquiridos.",
+    "UI_trait_KFM_cardiacDesc": "Histórico de sobrecarga cardíaca e respiratória. O esforço intenso acrescenta fadiga e a exaustão grave pode causar desmaio breve. Repouso e cuidados adequados ajudam na recuperação.",
     "UI_trait_KFM_stresssensitivity": "Histórico de sensibilidade ao estresse",
-    "UI_trait_KFM_stresssensitivityDesc": "Histórico de sensibilidade ao estresse. Histórico inicial selecionável cria estado recuperável do Medicina de Campo. Cuidado e contexto mudam efeitos ativos; não altera pontos de traços adquiridos.",
+    "UI_trait_KFM_stresssensitivityDesc": "O estresse deixa você em alerta. Há um pequeno ganho de foco nos exames, mas maior fadiga e percepções inquietantes ocasionais até a recuperação.",
     "UI_trait_KFM_resilience": "Hábitos de recuperação praticados",
-    "UI_trait_KFM_resilienceDesc": "Hábitos de recuperação praticados. Histórico inicial selecionável cria estado recuperável do Medicina de Campo. Cuidado e contexto mudam efeitos ativos; não altera pontos de traços adquiridos."
+    "UI_trait_KFM_resilienceDesc": "Hábitos de recuperação praticados. Benefício temporário à rapidez dos cuidados médicos e à recuperação de fôlego em repouso."
 }
