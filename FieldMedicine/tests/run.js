@@ -117,6 +117,7 @@ for (const f of Object.keys(tr.EN)) {
   if (!sameKeys(tr.EN[f], tr.PTBR[f] || {})) fail(`${f}: EN and PTBR key sets differ`);
   for (const [k, v] of Object.entries(tr.PTBR[f] || {})) {
     if (!v || v === k) fail(`PTBR empty ${k}`);
+    if (/[A-Za-z\u00c0-\u00ff]\?[A-Za-z\u00c0-\u00ff]|\?\?|\ufffd/.test(v)) fail(`PTBR damaged encoding ${k}`);
     const ph = (s) => (s.match(/%\d/g) || []).sort().join();
     if (ph(v) !== ph(tr.EN[f][k])) fail(`placeholder mismatch ${k}`);
   }

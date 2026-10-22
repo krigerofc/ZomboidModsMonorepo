@@ -35,7 +35,7 @@ function H.migrate(old)
     for k=1,math.min(32,type(e.findings)=="table"and #e.findings or 0)do local f=finding(e.findings[k]);if f then out.findings[#out.findings+1]=f end end
     append(s,out)
    elseif e.kind=="care"and(C.TREATMENTS[e.intervention]or e.intervention=="repellent")then
-    out.part=str(e.part,24);out.intervention=e.intervention;out.resource=str(e.resource,80);append(s,out)
+    out.observer=str(e.observer);out.part=str(e.part,24);out.intervention=e.intervention;out.resource=str(e.resource,80);append(s,out)
    end
   end
  end
@@ -60,15 +60,18 @@ function H.exam(old,observer,at,findings,level,tools)
  end
  return append(s,candidate)
 end
-function H.care(old,at,part,intervention,resource)
- local s=H.migrate(old);local e=H.migrate({events={{kind="care",at=at,part=part,intervention=intervention,resource=resource}}}).events[1]
+function H.care(old,at,part,intervention,resource,observer)
+ local s=H.migrate(old);local e=H.migrate({events={{kind="care",at=at,part=part,intervention=intervention,resource=resource,observer=observer}}}).events[1]
  return e and append(s,e)or s
 end
-function H.view(old,observer)
+function H.view(old,observer,isPatient)
  local s=H.migrate(old);local out={}
  for n=#s.events,1,-1 do
   local e=s.events[n]
   if e.kind=="care"or e.observer==observer then
+   if e.kind=="care"and not isPatient and e.observer~=observer and not A.GENERIC_CARE[e.intervention]then
+    e.redacted=true;e.intervention=nil;e.resource=nil
+   end
    e.observer=nil;out[#out+1]=e
    if #out==20 then break end
   end

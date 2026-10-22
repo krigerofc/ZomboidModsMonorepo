@@ -50,8 +50,15 @@ function Server.everyTenMinutes()
         local md = player:getModData().KFM
         if not md then md=Game.md(player) end
         if md and not player:isDead() then
+            local previous=Health.sessions[player]
+            Health.sessions[player]=now
+            local elapsed=previous and now-previous or 0
+            -- A missing simulation window is not sustained live workload.
+            local workloadElapsed=elapsed<=1/6+0.000001 and math.max(0,elapsed)or 0
             for part, st in pairs(cfg.Enabled and md.tq or {}) do
-                local stage = Core.tourniquetStage(now - (st.t or now), cfg)
+                -- Missing legacy clocks start conservatively; world time spent disconnected is never charged.
+                st.elapsedHours=math.max(0,tonumber(st.elapsedHours)or 0)+workloadElapsed
+                local stage = Core.tourniquetStage(st.elapsedHours+0.000001, cfg)
                 local bp = Game.partByName(player, part)
                 if bp and stage ~= "safe" then
                     bp:SetHealth(math.max(0, bp:getHealth() - Core.TOURNIQUET_HEALTH_LOSS))
@@ -64,11 +71,6 @@ function Server.everyTenMinutes()
                     Game.sync(bp)
                 end
             end
-            local previous=Health.sessions[player]
-            Health.sessions[player]=now
-            local elapsed=previous and now-previous or 0
-            -- A missing simulation window is not sustained live workload.
-            local workloadElapsed=elapsed<=1/6+0.000001 and math.max(0,elapsed)or 0
             Health.observe(player,workloadElapsed)
             Health.tick(player,math.max(0,math.min(1/6,elapsed)))
             for part, _ in pairs(md.reduced or {}) do

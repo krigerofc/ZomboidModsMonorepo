@@ -8,7 +8,7 @@ function A.tool(condition)
  if condition=="soreThroat"then return "tongue"end
  if condition=="flu"or condition=="respiratory"or condition=="respiratoryVulnerability"or condition=="cardiacVulnerability"then return "steth"end
 end
-local generic={support=true,hygiene=true,dry=true,warming=true,cooling=true,muscleRest=true,calmRoutine=true,sleepRoutine=true}
+A.GENERIC_CARE={repellent=true,support=true,hygiene=true,dry=true,warming=true,cooling=true,muscleRest=true,calmRoutine=true,sleepRoutine=true}
 function A.finding(e,level,tools,dynamic,known)
  if type(e)~="table"or e.phase=="resolved"or e.phase=="latent"then return nil end
  local def=(dynamic and D.DEFS or C.DEFS)[e.condition]
@@ -30,7 +30,7 @@ function A.finding(e,level,tools,dynamic,known)
   if dynamic then out.labelKey="IGUI_KFM_Trait_"..e.condition;out.benefit=e.benefit==true end
  end
  for _,kind in ipairs(def.care or {})do
-  if clinical or generic[kind]then out.care[#out.care+1]=kind end
+  if clinical or A.GENERIC_CARE[kind]then out.care[#out.care+1]=kind end
  end
  return out
 end

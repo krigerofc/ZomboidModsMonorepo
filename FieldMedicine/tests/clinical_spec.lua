@@ -30,4 +30,11 @@ local migrated=H.migrate({version=0,events={{kind="care",at=3,part="Hand_L",inte
 check(migrated.events[1].secret==nil and migrated.version==1,"old history whitelisted primitive migration")
 local before=H.new();before=H.exam(before,"doctor",1,{{confidence="clinical",condition="respiratory",symptoms={cough=true}}},8,{steth=true})
 check(#H.view(before,"patient")==0 and #H.view(before,"doctor")==1,"observer cannot inherit another examiner's diagnosis")
+
+local privacy=H.care(H.new(),10,"Torso_Upper","inhaler","Base.KFM_BreathingAid","performer")
+local hidden=H.view(privacy,"uninformed",false)[1]
+check(hidden and hidden.redacted==true and hidden.intervention==nil and hidden.resource==nil,"unexamined other observer receives only a redacted specific-care event")
+check(H.view(privacy,"performer",false)[1].intervention=="inhaler","performing doctor retains factual medication record")
+check(H.view(privacy,"patient",true)[1].resource=="Base.KFM_BreathingAid","patient knows medication actually administered")
+
 return failed

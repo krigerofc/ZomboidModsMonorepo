@@ -64,3 +64,5 @@ Rigidez/fadiga comum após exercício permanece nativa. Distensão exige esforç
 - Histórico por personagem: até64eventos, exibe20mais recentes; exames iguais do mesmo observador coalescem por1h. Registro de exame preserva o achado conhecido então; eventos de cuidado mostram intervenção/recurso. Um novo personagem na mesma conta não herda as observações do antigo.
 - Testar três janelas abertas: revogar/expirar consentimento fecha todas sem erro. Reconectar/trocar personagem fecha relatórios antigos. Dois clientes devem confirmar isso de verdade.
 - Checks locais:31arquivos Lua,16JSON,299chaves EN/PTBR e9suítes; não equivalem a aceite de gameplayMP.
+
+Revisão final: confirmar que um novo observador sem exame recebe apenas registro resumido de cuidado específico, enquanto paciente e profissional que o realizou veem o recurso real. Torniquete usa horas ativas simuladas: desconectar por oito horas não causa salto de isquemia ao retornar; uso online prolongado continua perigoso. Registros legados sem relógio ativo retomam de forma conservadora.

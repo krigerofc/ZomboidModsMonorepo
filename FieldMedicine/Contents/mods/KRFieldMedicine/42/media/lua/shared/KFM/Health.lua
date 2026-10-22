@@ -220,7 +220,7 @@ function H.project(patient,doctor)
   if d and((d.family=="psychological"and cfg.PsychologicalConditionsEnabled)or(d.family=="cardiorespiratory"and cfg.DynamicCardiorespiratoryEnabled))then add(e,true)end
  end
  Game.md(patient).medicalHistory=History.migrate(Game.md(patient).medicalHistory)
- out.history=History.view(Game.md(patient).medicalHistory,observerKey(doctor))
+ out.history=History.view(Game.md(patient).medicalHistory,observerKey(doctor),doctor==patient)
  return out
 end
 function H.examine(patient,doctor,steth,tongue)
@@ -239,7 +239,7 @@ function H.examine(patient,doctor,steth,tongue)
  for _,key in ipairs(keys)do findings[#findings+1]=view.episodes[key]end
  local md=Game.md(patient)
  md.medicalHistory=History.exam(md.medicalHistory,observerKey(doctor),Game.nowHours(),findings,level,{steth=steth~=nil,tongue=tongue~=nil})
- view.history=History.view(md.medicalHistory,observerKey(doctor))
+ view.history=History.view(md.medicalHistory,observerKey(doctor),doctor==patient)
  return view
 end
 function H.clearObserver(patient,doctor)
@@ -358,7 +358,7 @@ function H.treat(doctor,patient,key,treatment,item,episodeId)
   md.prevention=md.prevention or {}
   if(md.prevention.repellentUntil or 0)>H.state(patient).clock then return false end
   md.prevention.repellentUntil=H.state(patient).clock+4
-  Game.removeItem(doctor,item);md.medicalHistory=History.care(md.medicalHistory,Game.nowHours(),nil,treatment,required);H.push(patient,doctor);return true
+  Game.removeItem(doctor,item);md.medicalHistory=History.care(md.medicalHistory,Game.nowHours(),nil,treatment,required,observerKey(doctor));H.push(patient,doctor);return true
  end
  local nextState,changed
  if dynamicId then nextState,changed=D.treat(H.dynamic(patient),dynamicId,treatment,Game.doctorLevel(doctor))
@@ -390,7 +390,7 @@ function H.treat(doctor,patient,key,treatment,item,episodeId)
   local gloves=Game.surgicalProtection(doctor)
   if not gloves and Game.rng()<0.03*cfg.DiseaseFrequency then Game.md(doctor).health=I.seed(H.state(doctor),"viral","care:"..patient:getOnlineID()..":"..old.id,nil,false)end
  end
- md.medicalHistory=History.care(md.medicalHistory,Game.nowHours(),episode.part,treatment,required or(treatment=="hygiene"and item:getFullType()or nil))
+ md.medicalHistory=History.care(md.medicalHistory,Game.nowHours(),episode.part,treatment,required or(treatment=="hygiene"and item:getFullType()or nil),observerKey(doctor))
  Game.grantXp(doctor,patient,"care_"..treatment,key);H.push(patient,doctor)
  return true
 end

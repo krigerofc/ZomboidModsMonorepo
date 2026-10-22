@@ -364,11 +364,9 @@ do
     check(pat:part("Hand_R").bleedingTime == 4, "other arm untouched")
     fire("EveryTenMinutes")
     check(pat:part("UpperArm_L").health == 100, "safe window: no damage")
-    world.hours = world.hours + 3
-    fire("EveryTenMinutes")
-    check(pat:part("UpperArm_L").health == 99 and pat:part("UpperArm_L").pain > 0, "ischemia after safe hours")
-    world.hours = world.hours + 4
-    fire("EveryTenMinutes")
+    for n=1,13 do world.hours=world.hours+1/6;fire("EveryTenMinutes")end
+    check(pat:part("UpperArm_L").health < 100 and pat:part("UpperArm_L").pain > 0, "ischemia after safe hours")
+    for n=1,30 do world.hours=world.hours+1/6;fire("EveryTenMinutes")end
     check(pat:part("UpperArm_L").fracture == Core.TOURNIQUET_DAMAGE_FRACTURE and st.dmg, "lasting damage after 3x safe hours")
     pat:part("Hand_L").stitched_ = true
     local off = act(medic, pat, "UpperArm_L", "tourniquetOff")
@@ -979,6 +977,20 @@ do
  check(not action:isValid(),"foreign body part cannot be passed as consented nearby patient's limb")
  action:complete()
  check(wrong.infLevel==6 and water.water.amount==1 and #log.xp==0,"mismatched patient/limb cannot mutate remote health or resources/XP")
+end
+
+
+-- A disconnected patient is not simulated: tourniquet age must not jump on return.
+do
+ local _,Game=resetWorld({server=true});local player=newPlayer({level=8})
+ local belt=player.inv:AddItem(newItem("Base.Belt2"));act(player,player,"UpperArm_L","tourniquet",belt):complete()
+ fire("EveryTenMinutes");local st=Game.md(player).tq.UpperArm_L
+ local all=world.players;world.players={};world.hours=world.hours+8;fire("EveryTenMinutes")
+ world.players=all;fire("EveryTenMinutes")
+ check(player:part("UpperArm_L").health==100 and player:part("UpperArm_L").fracture==0,"offline tourniquet duration does not apply ischemia or fracture on reconnection")
+ check(near(st.elapsedHours or 0,0),"offline duration is excluded from persistent active tourniquet clock")
+ for n=1,13 do world.hours=world.hours+1/6;fire("EveryTenMinutes")end
+ check(player:part("UpperArm_L").health<100,"online active tourniquet hours still cause ischemia")
 end
 
 check(#missingText == 0, "missing translation keys: " .. table.concat(missingText, ","))

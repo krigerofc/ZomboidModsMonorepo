@@ -61,7 +61,9 @@ function M.build(payload,translate,partName)
   local e=events[n]
   if type(e)=="table"then
    local at=tostring(math.floor(num(e.at)*10)/10)
-   if e.kind=="care"and(C.TREATMENTS[e.intervention]or e.intervention=="repellent")then
+   if e.kind=="care"and e.redacted==true then
+    history=history..heading(t("IGUI_KFM_History_Care",at))..line(location(e.part))..line(t("IGUI_KFM_History_CareHidden"))
+   elseif e.kind=="care"and(C.TREATMENTS[e.intervention]or e.intervention=="repellent")then
     history=history..heading(t("IGUI_KFM_History_Care",at))..line(location(e.part))..line(t("ContextMenu_KFM_Care_"..e.intervention))
     if type(e.resource)=="string"then history=history..line(t("IGUI_KFM_History_Resource",safe(e.resource)))end
    elseif e.kind=="exam"then

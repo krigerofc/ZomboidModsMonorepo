@@ -26,3 +26,6 @@ No detailed pharmacology/doses/withdrawal, surgery/amputation/prostheses, new lo
 4. History survives state roundtrip/reconnect, stays bounded/coalesced, captures actual exams/care without future diagnosis leakage.
 5. EN/PTBR UI exposes symptoms, region, confidence, next care and history; fallback rendering equally filtered; unknown/old payloads safe.
 6. All FieldMedicine tests and dependent ZD contracts pass; native registration/load smoke is separate from actual SP/MP gameplay and reported honestly.
+
+## Review clarification22/10
+The patient knows which medication was actually administered to their own body, and the performer knows what they used. Exact specific-care intervention/resource history is visible only to those two. Other consented observers receive date, region and a redacted care event; generic supportive care remains visible. This is factual medication history, never a diagnosis disclosure. Tourniquet ischemia advances only through live simulated online windows, consistent with disease offline pause; old records lacking an active clock start conservatively.

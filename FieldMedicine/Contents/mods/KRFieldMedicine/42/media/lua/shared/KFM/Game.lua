@@ -268,7 +268,7 @@ end
 -- md.tq[partName] = { t = worldHours applied, item = fullType, itemId = itemId, saved = { [part] = bleedingTime }, dmg = bool }
 function Game.tqSnapshot(patient)
     local out = {}
-    for part, st in pairs(Game.md(patient).tq) do out[part] = { t = st.t, item = st.item } end
+    for part, st in pairs(Game.md(patient).tq) do out[part] = { t = st.t, item = st.item, elapsedHours=st.elapsedHours or 0 } end
     return out
 end
 
@@ -311,7 +311,7 @@ end
 
 function Game.applyTourniquet(patient, bp, fullType, itemId)
     local part = Game.partName(bp)
-    local st = { t = Game.nowHours(), item = fullType, itemId = itemId, saved = {}, dmg = false }
+    local st = { t = Game.nowHours(), elapsedHours=0, item = fullType, itemId = itemId, saved = {}, dmg = false }
     Game.md(patient).tq[part] = st
     Game.suppressBleeding(patient, part, st)
 end
