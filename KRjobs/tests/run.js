@@ -99,8 +99,16 @@ ok(`translations: EN == PTBR key sets (B42 ${Object.keys(TR[42].EN).length} keys
 // ---------- 5. B42 scripts ----------
 const PROF_KEYS = ['CharacterProfession', 'Cost', 'UIName', 'UIDescription', 'IconPathName', 'GrantedTraits', 'XPBoosts', 'GrantedRecipes'];
 const TRAIT_KEYS = ['CharacterTrait', 'UIName', 'Cost', 'UIDescription', 'IsProfessionTrait', 'DisabledInMultiplayer', 'GrantedRecipes', 'GrantedTraits', 'XPBoosts', 'MutuallyExclusiveTraits', 'Texture'];
+// B42.19.2 ScriptParser.stripComments removes only /* ... */; CreateFromToken
+// silently ignores the whole module when its trimmed token does not start with module.
+// This models that lexical boundary, not the complete native script parser.
+const nativeModuleToken = (src) => src.replace(/\/\*[\s\S]*?\*\//g, '').trim().indexOf('module') === 0;
+if (nativeModuleToken('// GENERATED\nmodule Base\n{\n}\n')) fail('native module boundary must reject a leading // header');
+if (!nativeModuleToken('/* GENERATED */\nmodule Base\n{\n}\n')) fail('native module boundary must accept a leading block comment');
+ok('native module boundary controls: // header rejected, block comment accepted');
 function parseScript(file, kw) {
   const src = fs.readFileSync(file, 'utf8');
+  if (!nativeModuleToken(src)) fail(path.basename(file) + ' is ignored by the native B42 module boundary (only block comments may precede module)');
   if ((src.match(/{/g) || []).length !== (src.match(/}/g) || []).length) fail('braces unbalanced in ' + path.basename(file));
   if (!/^module Base\s*$/m.test(src)) fail(path.basename(file) + ' must use module Base (unqualified recipe names resolve like vanilla)');
   const out = {};
