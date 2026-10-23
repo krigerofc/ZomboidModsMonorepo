@@ -1,5 +1,6 @@
 local C=require "ZD/Core"
-local G={pending={},mirror={},sessions={},tracked={},revision=0,sessionSerial=0,PROTOCOL=1,LEASE_SECONDS=5}
+local Concealment=require "ZD/Concealment"
+local G={pending={},mirror={},sessions={},tracked={},revision=0,sessionSerial=0,PROTOCOL=2,BACKEND="lua-invisibility-v1",LEASE_SECONDS=5}
 ZD=ZD or {};ZD.Game=G
 function G.finite(v)return type(v)=="number" and v==v and v~=math.huge and v~=-math.huge end
 function G.now()return getGameTime():getWorldAgeHours()end
@@ -17,16 +18,10 @@ function G.identity(player)
  end)
  return ok and v or nil
 end
-function G.bridgeAvailable(player)
- local ok,ready=pcall(function()return player:getZombieDisguiseBridgeVersion()==1 and player.setZombieDisguiseLease~=nil and player.clearZombieDisguiseLease~=nil end)
- return ok and ready==true
-end
-function G.clearNative(player)pcall(function()player:clearZombieDisguiseLease()end)end
-function G.native(player,expires)
- if not G.bridgeAvailable(player) or not G.finite(expires) or expires<=G.now() or expires>G.now()+8 then return false end
- local ok,v=pcall(function()return player:setZombieDisguiseLease(expires,G.LEASE_SECONDS)end)
- return ok and v==true
-end
+function G.backendAvailable(player)return Concealment.available(player)end
+function G.clearConcealment(player)return Concealment.clear(player)end
+function G.isConcealed(player)return Concealment.active(player)end
+function G.applyConcealment(player,expires,authorisedReplica)return Concealment.apply(player,expires,authorisedReplica)end
 function G.healthAvailable()
  return KFM and KFM.Exposure and KFM.Exposure.version==1 and type(KFM.Exposure.register)=="function" and type(KFM.Exposure.remove)=="function" and KFM.Game and type(KFM.Game.cfg)=="function"
 end
@@ -46,7 +41,7 @@ function G.players()
  return players
 end
 function G.unavailableReason(player)
- if not G.bridgeAvailable(player)then return "Tooltip_ZD_Backend"end
+ if not G.backendAvailable(player)then return "Tooltip_ZD_Backend"end
  if isClient() and G.remoteReady~=true then return "Tooltip_ZD_Peers"end
  if isServer() and G.peersReady and not G.peersReady() then return "Tooltip_ZD_Peers"end
  return nil
@@ -59,12 +54,12 @@ function G.session(player)
 end
 function G.state(player)
  local md=player:getModData();local s=md.ZD
- if not s or s.version~=3 then
-  s={version=3,serial=s and G.finite(s.serial)and math.max(0,math.floor(s.serial))or 0,active=false,regions=s and s.regions or {},source=s and s.source or nil}
+ if not s or s.version~=4 then
+  s={version=4,serial=s and G.finite(s.serial)and math.max(0,math.floor(s.serial))or 0,active=false,regions=s and s.regions or {},source=s and s.source or nil}
   md.ZD=s;md.ZD_active=nil;md.ZD_parts=nil;md.ZD_elapsedMinutes=nil
  end
- -- Saved modData is not a native lease; every process/session starts inactive.
- if not G.sessions[player]then s.active=false;G.clearNative(player);G.session(player)end
+ -- Saved modData is not an invisibility lease; every process/session starts inactive.
+ if not G.sessions[player]then s.active=false;G.clearConcealment(player);G.session(player)end
  return s
 end
 function G.view(player)
@@ -84,7 +79,7 @@ function G.valid(player,body)
 end
 function G.packet(player,revision)
  local s=G.state(player)
- return {version=1,epoch=G.epoch(),revision=revision,id=player:getOnlineID(),identity=G.identity(player),session=G.session(player),serial=s.serial or 0,active=s.active==true,expires=s.expires or 0,coverage=s.coverage or 0}
+ return {version=G.PROTOCOL,epoch=G.epoch(),revision=revision,id=player:getOnlineID(),identity=G.identity(player),session=G.session(player),serial=s.serial or 0,active=s.active==true,expires=s.expires or 0,coverage=s.coverage or 0}
 end
 function G.push(player)
  if isServer()then
@@ -95,7 +90,7 @@ function G.push(player)
 end
 function G.revoke(player,reason)
  if isClient()then return end
- local s=G.state(player);G.clearNative(player);s.active=false;s.reason=reason
+ local s=G.state(player);G.clearConcealment(player);s.active=false;s.reason=reason
  G.pending[player]=nil;G.push(player)
 end
 function G.grant(player,proof)
@@ -113,13 +108,13 @@ function G.grant(player,proof)
   exposed=true
  end
  local expires=G.now()+G.cfg().DurationMinutes/60
- if not G.native(player,expires)then G.clearNative(player);if exposed then KFM.Exposure.remove(player,source)end;return false end
+ if not G.applyConcealment(player,expires)then G.clearConcealment(player);if exposed then KFM.Exposure.remove(player,source)end;return false end
  local smeared=pcall(function()
   for part,_ in pairs(regions)do visual:setBlood(BloodBodyPartType[part],math.max(0.8,previous[part]))end
  end)
  if not smeared then
   for part,blood in pairs(previous)do pcall(function()visual:setBlood(BloodBodyPartType[part],blood)end)end
-  G.clearNative(player);if exposed then KFM.Exposure.remove(player,source)end;return false
+  G.clearConcealment(player);if exposed then KFM.Exposure.remove(player,source)end;return false
  end
  if s.source and s.source~=source and G.healthAvailable()then KFM.Exposure.remove(player,s.source)end
  s.serial=serial;s.source=exposed and source or nil;s.regions=regions;s.active=true;s.started=G.now();s.expires=expires;s.coverage=1;s.refreshed=G.millis()

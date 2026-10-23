@@ -1,4 +1,4 @@
 {
     "name": "Disfarce Zumbi",
-    "description": "Mod B42 independente com integração opcional de exposição ao sangue do Medicina de Campo. A camuflagem continua indisponível enquanto o problema de inicialização da extensão é investigado. Remover a dependência médica não recupera a camuflagem. Carregar este mod não exige mudanças no inicializador."
+    "description": "Disfarce temporário com a invisibilidade do próprio jogo. Sem extensão nativa; Medicina de Campo é opcional. Correr, atacar, expirar, lavar, morrer, desconectar ou salvar encerram o efeito. Este modo pode afetar a visibilidade para outros jogadores e a reação a sons. Na42.19.2 inspecionada, single-player comum sem depuração não é suportado; multiplayer e single-player com depuração precisam de validação em partida."
 }

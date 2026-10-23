@@ -8,6 +8,7 @@ KFM=nil
 for _,name in ipairs({"KFM/Health","KFM/Game"})do
  package.preload[name]=function()attempted[name]=true;error("FieldMedicine is not installed")end
 end
+getDebug=function()return true end
 isClient=function()return client end;isServer=function()return server end
 getTimestampMs=function()return ms end;getGameTime=function()return{getWorldAgeHours=function()return hours end}end
 getOnlinePlayers=function()return{size=function()return #players end,get=function(_,i)return players[i+1]end}end
@@ -28,11 +29,10 @@ function p:getModData()return self.md end;function p:getOnlineID()return 1 end
 function p:getUsername()return"Standalone"end;function p:getDescriptor()return{getID=function()return 10 end}end
 function p:isDead()return false end;function p:isRunning()return false end;function p:isSprinting()return false end;function p:isAttacking()return false end
 function p:getHumanVisual()return{getBlood=function(_,n)return self.blood[n]or 0 end,setBlood=function(_,n,v)self.blood[n]=v end}end
-function p:getZombieDisguiseBridgeVersion()return 1 end
-function p:setZombieDisguiseLease()self.lease=not self.reject;return self.lease end
-function p:clearZombieDisguiseLease()self.lease=false end
+function p:isInvisible()return self.lease end
+function p:setInvisible(value,forced)if not self.reject then self.lease=value end end
 players[1]=p
-S.onCommand("ZombieDisguise","ready",p,{nonce="standalone",bridge=1})
+S.onCommand("ZombieDisguise","ready",p,{nonce="standalone",backend="lua-invisibility-v1",protocol=2})
 check(G.available(p),"medical absence does not block a ready backend")
 check(G.grant(p,{actor=p,completed=true})and p.lease and next(p.blood)~=nil,"standalone grant has no medical API calls")
 check(G.state(p).source==nil,"standalone grant creates no phantom medical exposure source")
@@ -52,13 +52,14 @@ server=false
 check(#G.players()==1 and G.players()[1]==p,"single-player enumeration works without medicine")
 server=true
 check(#G.players()==1 and G.players()[1]==p,"dedicated enumeration works without medicine")
-local bridge=p.getZombieDisguiseBridgeVersion;p.getZombieDisguiseBridgeVersion=nil
+local bridge=p.setInvisible;p.setInvisible=nil
 check(not G.available(p)and G.unavailableReason(p)=="Tooltip_ZD_Backend","independence never pretends the missing native backend is working")
-p.getZombieDisguiseBridgeVersion=bridge
+p.setInvisible=bridge
 client=true;server=false
 local Client=dofile(MODLUA.."/client/ZD/Client.lua")
 Client.reset();Client.request(p,true)
-Client.onServerCommand("ZombieDisguise","snapshot",{version=1,nonce=Client.nonce,epoch="standalone",revision=1,ready=true,leases={{version=1,epoch="standalone",revision=1,id=1,identity=G.identity(p),session="s1",serial=1,active=true,expires=hours+1}}})
+p.lease=true -- Native player replication can arrive before the authoritative mod lease.
+Client.onServerCommand("ZombieDisguise","snapshot",{version=2,nonce=Client.nonce,epoch="standalone",revision=1,ready=true,leases={{version=2,epoch="standalone",revision=1,id=1,identity=G.identity(p),session="s1",serial=1,active=true,expires=hours+1}}})
 check(p.lease and G.view(p).active,"client accepts validated snapshot without FieldMedicine")
 Client.tick();check(p.lease,"client maintenance has no optional health dependency")
 ms=ms+6000;Client.tick();check(not p.lease,"standalone client still expires stale native lease")

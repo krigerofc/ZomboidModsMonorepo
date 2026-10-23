@@ -25,8 +25,9 @@ function S.tickPlayer(player,refresh)
  elseif cfg.BreakOnRun and (player:isRunning()or player:isSprinting())then G.revoke(player,"running")
  elseif cfg.BreakOnAttack and player:isAttacking()then G.revoke(player,"attack")
  elseif s.coverage<cfg.RequiredCoverage then G.revoke(player,"washed")
+ elseif not G.isConcealed(player)then G.revoke(player,"visibilityLost")
  elseif refresh then
-  if G.native(player,s.expires)then s.refreshed=G.millis();G.push(player)else G.revoke(player,"backend")end
+  if G.applyConcealment(player,s.expires)then s.refreshed=G.millis();G.push(player)else G.revoke(player,"backend")end
  end
 end
 function S.reconcile(player)
@@ -35,11 +36,11 @@ function S.reconcile(player)
 end
 function S.onCommand(module,command,player,args)
  if module~="ZombieDisguise"or not player or (command~="sync"and command~="ready")or type(args)~="table"or type(args.nonce)~="string"or #args.nonce>160 then return end
- S.ready[player]=args.bridge==1 and G.identity(player) and {at=G.millis(),identity=G.identity(player)}or nil
+ S.ready[player]=args.protocol==G.PROTOCOL and args.backend==G.BACKEND and G.identity(player) and {at=G.millis(),identity=G.identity(player)}or nil
  if command=="ready"then return end
  local leases={}
  for _,p in ipairs(G.players())do S.tickPlayer(p,false);leases[#leases+1]=G.packet(p,G.revision)end
- sendServerCommand(player,"ZombieDisguise","snapshot",{version=1,epoch=G.epoch(),nonce=args.nonce,revision=G.revision,ready=S.peersReady(),leases=leases})
+ sendServerCommand(player,"ZombieDisguise","snapshot",{version=G.PROTOCOL,epoch=G.epoch(),nonce=args.nonce,revision=G.revision,ready=S.peersReady(),leases=leases})
 end
 function S.fastTick()
  if isClient()then return end
@@ -57,7 +58,7 @@ function S.tick()for _,p in ipairs(G.players())do S.tickPlayer(p,false)end end
 function S.onDeath(p)if p and not isClient()then G.revoke(p,"death")end end
 function S.onAttack(p)if p and not isClient()and G.cfg().BreakOnAttack and G.state(p).active then G.revoke(p,"attack")end end
 function S.reset()
- for p,_ in pairs(G.tracked)do G.clearNative(p);local s=p:getModData().ZD;if s then s.active=false end end
+ for p,_ in pairs(G.tracked)do G.clearConcealment(p);local s=p:getModData().ZD;if s then s.active=false end end
  G.pending={};G.tracked={};G.sessions={};G.serverEpoch=nil;G.revision=0;S.ready={}
 end
 Events.OnClientCommand.Add(S.onCommand)

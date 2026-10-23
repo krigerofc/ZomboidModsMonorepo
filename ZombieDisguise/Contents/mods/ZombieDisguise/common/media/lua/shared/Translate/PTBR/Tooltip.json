@@ -1,9 +1,9 @@
 {
-    "Tooltip_ZD_Backend": "Camuflagem indisponível sem um sistema de percepção funcional. A instalação nativa está suspensa após uma falha de inicialização; não reinstale a extensão retirada. Medicina de Campo é opcional. Nenhum sangue é aplicado enquanto a camuflagem estiver indisponível.",
-    "Tooltip_ZD_Peers": "Aguardando a confirmação da extensão nativa de todos os clientes conectados. Um cliente sem a extensão impede novas camuflagens e encerra as ativas.",
+    "Tooltip_ZD_Backend": "O jogo não permite invisibilidade temporária neste contexto, ou a API pública está indisponível. Single-player comum sem depuração está bloqueado na42.19.2 inspecionada. Nenhum sangue é aplicado quando o efeito é recusado. Não exige extensão nativa.",
+    "Tooltip_ZD_Peers": "Aguardando a confirmação desta versão Lua de todos os clientes conectados. Versões antigas ou confirmações ausentes impedem novos disfarces e encerram os efeitos ativos.",
     "Tooltip_ZD_HealthDisabled": "A integração opcional do Medicina de Campo está desativada; a camuflagem não depende dela.",
-    "Tooltip_ZD_Risk": "Aplique sangue sobre a pele. A camuflagem padrão dura 120 minutos de jogo. Correr ou atacar rompe o efeito. Com Medicina de Campo instalado e ativado, sangue em feridas ou rosto pode causar doenças comuns. Remova o sangue com lavagem para reduzir exposição; remédios não renovam camuflagem.",
+    "Tooltip_ZD_Risk": "Aplique sangue sobre a pele. A duração padrão é120 minutos de jogo. Correr, atacar ou salvar rompe o efeito. Usa invisibilidade nativa, incluindo seu comportamento visual e sonoro. Com Medicina de Campo instalado e ativado, sangue em feridas ou rosto pode causar doenças comuns. Remova o sangue com lavagem para reduzir exposição; remédios não renovam camuflagem.",
     "Tooltip_ZD_Dependency": "Medicina de Campo é opcional. A integração de exposição ao sangue só é usada com a API v1 compatível e ativada.",
-    "Tooltip_ZD_Active": "A camuflagem existente não renova automaticamente. Expirar ou agir de forma hostil mantém exposição pelo sangue até a lavagem.",
+    "Tooltip_ZD_Active": "O disfarce existente não renova automaticamente. Salvar, expirar ou agir de forma hostil encerra o efeito. Com Medicina de Campo, a exposição residual permanece até a lavagem.",
     "Tooltip_ZD_Reach": "Use cadáver zumbi acessível no mesmo piso a até dois quadrados. Fique parado até concluir a ação."
 }

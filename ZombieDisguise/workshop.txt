@@ -3,6 +3,7 @@ id=0
 title=Zombie Disguise
 tags=Build 42;Multiplayer;Balance;Realistic
 visibility=public
-description=Independent B42 development mod; Field Medicine is optional. Medical blood exposure is integrated only when its compatible API is enabled. Camouflage remains unavailable after the native startup integration was withdrawn. No administrative privileges or Knox transmission changes.
+
+description=Temporary blood disguise using the game's built-in invisibility. No native companion; Field Medicine is optional. Running, attacking, expiry, washing, death, disconnect and saving clear the temporary effect. This mode can affect visibility to other players and sound reactions. On inspected42.19.2, ordinary non-debug single-player is unsupported; multiplayer and debug single-player require actual gameplay validation.
 description=
-description=Mod B42 independente em desenvolvimento; Medicina de Campo é opcional. Integra exposição médica ao sangue somente com a API compatível ativada. Camuflagem indisponível após a retirada da integração nativa de inicialização. Sem privilégios administrativos nem alterações da transmissão Knox.
+description=Modo Lua de invisibilidade temporária; não exige extensão e a medicina é opcional. Pode afetar a visibilidade para outros jogadores e sons. Single-player comum42.19.2 não é suportado. Multiplayer e single-player com depuração ainda precisam de teste real.

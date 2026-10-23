@@ -1,19 +1,25 @@
-# Zombie Disguise 2.1.1
+# Zombie Disguise 2.2.0 — experimental Lua invisibility
 
-**2026-10-23: native startup integration withdrawn.** The user reported that Project Zomboid stopped opening after installation. The five launch files have been restored byte-for-byte from the pre-installation backups, and the installed agent JAR removed. The exact launch failure has not been captured; native fixtures and offline tests did not validate the normal executable launcher. Do not install or publish the native companion as ready until the startup failure is diagnosed and real launcher acceptance passes. No game was launched for this rollback; restoration is verified, successful opening still needs user confirmation. The Lua mods and existing saves were preserved. Disguise camouflage is unavailable while the companion is disabled.
+The user approved temporary built-in invisibility on 23 October2026. This replaces the withdrawn native integration. No extension, launcher change or FieldMedicine dependency is installed. The user confirmed the game opened after the earlier rollback.
 
-B42 only; KRFieldMedicine is optional. The existing perception backend needs a native companion, whose startup integration is currently withdrawn. The previous hard-disabled Lua foundation is superseded by the native bridge implementation. Existing mod ID ZombieDisguise and game-style artwork are retained.
+## Behaviour
 
-Native support is pinned to the installed 42.19.2 class hashes. The companion transforms eleven classes in memory, with no game JAR replacement or administrative/ghost/invisibility flags. Public character bridge methods manage finite, weak-object-identity leases. Unknown or partially unsupported builds leave camouflage unavailable.
+A completed, server-validated zombie-corpse timed action grants bounded camouflage. Running or attacking (sandbox controlled), washing below the required blood coverage, expiry, death, disconnect and saving cancel the effect. The authoritative server rejects actors already invisible; only a validated server lease may adopt vanilla-replicated invisibility on a client. Identity, session, epoch, protocol2, revision and serial checks prevent stale grants. Heartbeats refresh once per second and expire after five real seconds; a newer valid heartbeat can recover a temporary timeout without reviving a genuinely revoked serial.
 
-Production Lua validates the corpse timed action on the server, registers regional medical exposure and rolls back rejected grants. Versioned snapshots refresh short leases across peers; stale/foreign snapshots, disconnected peers, running/attacking, expiry and death revoke protection. Washing reconciles residual medical exposure independently of native availability. Active native protection is never restored from persisted modData after a process restart.
+The public setInvisible(value,true) call is verified by reading isInvisible back. This mode also changes human-player visibility and may change sound reactions. It is not selective zombie perception. Independent client-only mods writing the same flag, or another system changing that flag during a lease, cannot be reliably distinguished. Avoid combining such systems until tested.
 
-Real native fixtures passed spotting, existing pursuit/cache cancellation, late path callbacks, attacks, expiry and production Lua health registration/revocation. Offline Lua tests cover action and packet contracts. Full UI corpse-action completion and two connected ordinary clients are still pending; no multiplayer gameplay certification is claimed.
+Ownership markers allow cleanup after reconnect; saved data never authorizes restoring camouflage. Saving deliberately ends the temporary effect. Rejected application rolls back medical exposure and blood visuals. Cleanup retries if the public setter refuses to clear owned invisibility.
 
-See [delivery evidence](../docs/NATIVE-DISGUISE-2026-10-22.md), [native implementation](native/README.md) and [reversible installation](INSTALL-NATIVE.md). The user requested no further game launches; continue code-only verification.
+FieldMedicine remains optional. When its enabled Exposure API v1 is present, blood exposure and washing are integrated; standalone mode adds no disease simulation.
 
-## Independence update — 2026-10-23
+## Confirmed engine limitation
 
-Zombie Disguise 2.1.1 no longer requires KRFieldMedicine. It loads without importing medical files; server player enumeration is local and client leases do not depend on medical settings. When a compatible FieldMedicine Exposure API v1 is present and enabled, medical registration, rejected-grant rollback and washing cleanup remain integrated. Disabled or absent medicine does not block the backend. Standalone mode adds no replacement disease simulation.
+Read-only inspection of installed42.19.2 bytecode shows both setInvisible overloads eventually call PlayerCheats.set. Its permission gate allows debug, GameClient or GameServer contexts. Ordinary non-debug single-player is therefore unsupported and the mod refuses before smearing blood. No roles, Core.debug changes, hidden cheat storage, native agents or game-class patches are used. Debug single-player and multiplayer are implementation targets, not gameplay-certified modes.
 
-The native startup integration remains withdrawn. The user confirmed the game opens after rollback. This change removes the medical dependency only; it does not deliver an extension-free perception backend or restore camouflage. No game, server or client was launched and no native extension or launcher changes were installed. Offline standalone and medical integration specs passed; connected gameplay is unverified.
+ConnectedPacket and ExtraInfoPacket can replicate the vanilla invisible flag before the custom lease. Client adoption is restricted to an already validated server lease; ordinary server grants never adopt an existing flag.
+
+## Verification
+
+Three offline Lua suites pass: visibility adapter, standalone loading and authoritative action/packet integration. These use Fengari and simulated engine objects. They cover setter refusal/errors, ownership, lease bounds, timeout recovery, pre-replicated flags, action proof, rollback, optional medicine and stale identity/packet rejection. They do not establish actual zombie behaviour, human visibility, UI action execution, saving or connected multiplayer correctness.
+
+No game, server or client was launched for2.2.0. The withdrawn native sources/install tools remain historical development material outside Contents. Do not run the archived installer. See MANUAL_TEST.md and ../docs/DISGUISE-LUA-2026-10-23.md.

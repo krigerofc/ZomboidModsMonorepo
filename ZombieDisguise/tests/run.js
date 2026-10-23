@@ -6,7 +6,7 @@ check(!fs.existsSync(path.join(mod,"mod.info")),"B42 only");
 check(!/^require=.*KRFieldMedicine/m.test(fs.readFileSync(path.join(mod,"42/mod.info"),"utf8")),"FieldMedicine is optional");
 for(const f of walk(mod).filter(f=>f.endsWith(".lua"))){try{parse.parse(fs.readFileSync(f,"utf8"),{luaVersion:"5.1"})}catch(e){check(false,path.relative(root,f)+": "+e.message)}}
 for(const [rel,w,h] of [["42/poster.png",512,512],["42/icon.png",64,64]]){const p=path.join(mod,rel);check(fs.existsSync(p),"art "+rel);if(fs.existsSync(p)){const b=fs.readFileSync(p);check(b.readUInt32BE(16)===w&&b.readUInt32BE(20)===h,"art dimensions "+rel)}}
-for(const spec of ["standalone_spec.lua","disguise_spec.lua"]){
+for(const spec of ["visibility_spec.lua","standalone_spec.lua","disguise_spec.lua"]){
 const L=lauxlib.luaL_newstate();lualib.luaL_openlibs(L);const fwd=p=>p.replace(/\\/g,"/");
 const code="package.path="+JSON.stringify(fwd(game)+"/shared/?.lua;"+fwd(game)+"/server/?.lua;")+"..package.path; MODLUA="+JSON.stringify(fwd(game))+"; return dofile("+JSON.stringify(fwd(path.join(__dirname,spec)))+")";
 if(lauxlib.luaL_dostring(L,to_luastring(code))!==lua.LUA_OK)check(false,spec+": "+lua.lua_tojsstring(L,-1));else check(lua.lua_tonumber(L,-1)===0,spec);

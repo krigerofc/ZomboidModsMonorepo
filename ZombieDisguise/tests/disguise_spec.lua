@@ -3,6 +3,7 @@ local function check(v,m)if not v then failed=failed+1;print(" FAIL [disguise] "
 local hours,ms,client,server=100,1000,false,true
 local players,packets={},{}
 local function list(t)return{size=function()return #t end,get=function(_,i)return t[i+1]end}end
+getDebug=function()return true end
 isClient=function()return client end;isServer=function()return server end;isMultiplayer=function()return client or server end
 getTimestampMs=function()return ms end;getGameTime=function()return{getWorldAgeHours=function()return hours end}end
 getOnlinePlayers=function()return list(players)end;getNumActivePlayers=function()return #players end;getSpecificPlayer=function(i)return players[i+1]end
@@ -32,9 +33,8 @@ local function actor(id)
  function p:getSquare()return self.square end;function p:isDead()return self.dead==true end
  function p:isRunning()return self.running==true end;function p:isSprinting()return false end;function p:isAttacking()return self.attack==true end
  function p:getHumanVisual()local me=self;return{getBlood=function(_,n)return me.blood[n]or 0 end,setBlood=function(_,n,v)me.blood[n]=v end}end
- function p:getZombieDisguiseBridgeVersion()return 1 end
- function p:setZombieDisguiseLease(expiry,ttl)self.calls=self.calls+1;self.ttl=ttl;self.lease=not self.reject;return not self.reject end
- function p:clearZombieDisguiseLease()self.lease=false end
+ function p:isInvisible()return self.lease end
+ function p:setInvisible(value,forced)self.calls=self.calls+1;if not self.reject then self.lease=value end end
  players[#players+1]=p;return p
 end
 local function corpse()
@@ -46,15 +46,15 @@ local G=require"ZD/Game"
 local S=dofile(MODLUA.."/server/ZD/Server.lua")
 dofile(MODLUA.."/shared/TimedActions/ZDDisguiseAction.lua")
 local Client=dofile(MODLUA.."/client/ZD/Client.lua")
-check(type(G.bridgeAvailable)=="function","native bridge adapter exists")
-if not G.bridgeAvailable then return failed end
+check(type(G.backendAvailable)=="function","native bridge adapter exists")
+if not G.backendAvailable then return failed end
 local function action(p,b,progress)local a=ZDDisguiseAction:new(p,b or corpse());a.netAction={getProgress=function()return progress or 0 end};return a end
 local function apply(p)local a=action(p,nil,1);a:serverStart();return a:complete()end
-local function ready(p)S.onCommand("ZombieDisguise","sync",p,{nonce="request"..p.id,bridge=1})end
+local function ready(p)S.onCommand("ZombieDisguise","sync",p,{nonce="request"..p.id,backend="lua-invisibility-v1",protocol=2})end
 local p=actor(0);ready(p)
-local bridge=p.getZombieDisguiseBridgeVersion;p.getZombieDisguiseBridgeVersion=nil
+local bridge=p.setInvisible;p.setInvisible=nil
 check(not G.available(p) and G.unavailableReason(p)=="Tooltip_ZD_Backend","missing bridge explicitly unavailable")
-check(not apply(p)and next(p.blood)==nil,"missing bridge cannot smear blood");p.getZombieDisguiseBridgeVersion=bridge
+check(not apply(p)and next(p.blood)==nil,"missing bridge cannot smear blood");p.setInvisible=bridge
 local a=action(p,nil,1);check(not a:complete(),"completion without start rejected")
 a=action(p,nil,0);a:serverStart();check(not a:complete(),"unfinished action rejected")
 a=action(p,nil,0/0);a:serverStart();check(not a:complete(),"NaN progress rejected")
@@ -63,8 +63,8 @@ a=action(p,nil,1);a:serverStart();a.corpseBody.index=-1;check(not a:complete(),"
 local register=KFM.Exposure.register;KFM.Exposure.register=function()return false end
 check(not apply(p)and not p.lease and next(p.blood)==nil,"health rejection leaves no blood or native lease");KFM.Exposure.register=register
 p.reject=true;check(not apply(p)and next(p.blood)==nil and next(registered[p]or{})==nil,"native rejection rolls health source back");p.reject=false
-check(apply(p)and p.lease and p.ttl==5 and G.state(p).expires==102,"completed action grants bounded lease")
-local count=p.calls;ms=ms+999;S.fastTick();check(p.calls==count,"refresh rate bounded");ms=ms+1;S.fastTick();check(p.calls==count+1,"refresh every real second")
+check(apply(p)and p.lease and G.state(p).expires==102,"completed action grants bounded lease")
+local count=p.calls;ms=ms+999;S.fastTick();check(p.calls==count,"refresh rate bounded");ms=ms+1;S.fastTick();check(p.calls==count and G.state(p).refreshed==ms,"lease refresh extends heartbeat without rewriting invisibility")
 local broadcast=false;for _,packet in ipairs(packets)do if packet[1]=="ZombieDisguise"and packet[2]=="lease"then broadcast=true end end
 check(broadcast,"lease broadcasts to every simulation owner")
 p.running=true;S.fastTick();check(not p.lease and next(registered[p]or{})~=nil,"running preserves residual blood risk");p.running=false
@@ -74,8 +74,8 @@ apply(p);hours=103;S.fastTick();check(not p.lease and next(registered[p]or{})~=n
 SandboxVars.KFM.Enabled=false;check(apply(p),"disabled optional health does not prevent grant");G.revoke(p,"test");SandboxVars.KFM.Enabled=true
 local other=actor(1);ready(other);ready(p)
 client=true;server=false;Client.reset();Client.onCreatePlayer(0,p)
-Client.onServerCommand("ZombieDisguise","snapshot",{version=1,nonce=Client.nonce,epoch="e1",revision=10,ready=true,leases={{version=1,epoch="e1",revision=10,id=other.id,identity=G.identity(other),session="session",serial=0,active=false,expires=0}}})
-local packet={version=1,epoch="e1",revision=11,id=other.id,identity=G.identity(other),session="session",serial=1,active=true,expires=hours+1,coverage=1}
+Client.onServerCommand("ZombieDisguise","snapshot",{version=2,nonce=Client.nonce,epoch="e1",revision=10,ready=true,leases={{version=2,epoch="e1",revision=10,id=other.id,identity=G.identity(other),session="session",serial=0,active=false,expires=0}}})
+local packet={version=2,epoch="e1",revision=11,id=other.id,identity=G.identity(other),session="session",serial=1,active=true,expires=hours+1,coverage=1}
 Client.onServerCommand("ZombieDisguise","lease",packet)
 check(other.lease and G.view(other).active,"remote simulated player receives native lease")
 local calls=other.calls
@@ -87,8 +87,9 @@ check(other.calls==calls,"unbounded expiry rejected");packet.expires=hours+1;pac
 check(other.calls==calls,"zero serial rejected");packet.serial=1;packet.active=false;Client.onServerCommand("ZombieDisguise","lease",packet)
 check(not other.lease,"new revocation clears lease");packet.revision=13;packet.active=true;Client.onServerCommand("ZombieDisguise","lease",packet)
 check(not other.lease,"revoked serial cannot reactivate");packet.revision=14;packet.serial=2;Client.onServerCommand("ZombieDisguise","lease",packet)
-check(other.lease,"new completed serial can activate");ms=ms+6000;Client.tick();check(not other.lease,"lost refresh expires local cache")
+check(other.lease,"new completed serial can activate");ms=ms+6000;require('ZD/Concealment').tick();Client.tick();check(not other.lease,"lost refresh expires local cache")
 packet.revision=15;Client.onServerCommand("ZombieDisguise","lease",packet)
+check(other.lease,"fresh same-serial heartbeat recovers after a local timeout")
 local replacement=actor(1);players[2]=replacement;players[3]=nil;ms=ms+1000;Client.tick()
 check(not other.lease and not replacement.lease,"online ID reuse cannot transfer lease")
 Client.reset();check(not p.lease and not replacement.lease,"disconnect resets leases")
@@ -118,7 +119,7 @@ local saved=KFM.Exposure;KFM.Exposure=nil
 check(G.available(p),"missing optional exposure API does not block camouflage");KFM.Exposure=saved
 SandboxVars.KFM.Enabled=false;check(G.available(p),"disabled optional health does not block camouflage");SandboxVars.KFM.Enabled=true
 server=false
-check(apply(p),"single player needs native bridge but no network acknowledgment")
+check(apply(p),"debug single player needs built-in API but no network acknowledgment")
 S.reset();check(not p.lease and not G.state(p).active,"world reset retires saved native disguise")
 local migrated=actor(3);migrated.md.ZD={version=2,serial=5,source="disguise:5",regions={Head=0.8},active=true}
 check(G.state(migrated).serial==5 and not G.state(migrated).active,"migration preserves source serial while clearing active status")

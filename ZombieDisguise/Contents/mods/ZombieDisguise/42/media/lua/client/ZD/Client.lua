@@ -12,7 +12,7 @@ function Client.actor(id)
  return Client.localActor(id)
 end
 function Client.reset()
- for _,s in pairs(Client.cache)do G.clearNative(s.actor)end
+ for _,s in pairs(Client.cache)do G.clearConcealment(s.actor)end
  Client.cache={};G.mirror={};Client.epoch=nil;Client.floor=0;Client.highest=0;Client.nonce=nil;Client.lastSync=nil;G.remoteReady=false
 end
 function Client.request(player,force)
@@ -24,13 +24,13 @@ function Client.request(player,force)
  Client.counter=Client.counter+1;Client.nonce=tostring(now)..":"..Client.counter;Client.lastSync=now
  for i=0,getNumActivePlayers()-1 do
   local localPlayer=getSpecificPlayer(i)
-  if localPlayer then sendClientCommand(localPlayer,"ZombieDisguise","ready",{nonce=Client.nonce,bridge=G.bridgeAvailable(localPlayer)and 1 or 0})end
+  if localPlayer then sendClientCommand(localPlayer,"ZombieDisguise","ready",{nonce=Client.nonce,protocol=G.PROTOCOL,backend=G.backendAvailable(localPlayer)and G.BACKEND or false})end
  end
- sendClientCommand(player,"ZombieDisguise","sync",{nonce=Client.nonce,bridge=G.bridgeAvailable(player)and 1 or 0})
+ sendClientCommand(player,"ZombieDisguise","sync",{nonce=Client.nonce,protocol=G.PROTOCOL,backend=G.backendAvailable(player)and G.BACKEND or false})
 end
 local function integer(v,min)return G.finite(v)and v%1==0 and v>=min end
 function Client.validPacket(a)
- if type(a)~="table"or a.version~=1 or type(a.epoch)~="string"or #a.epoch>160 or not integer(a.revision,0)
+ if type(a)~="table"or a.version~=G.PROTOCOL or type(a.epoch)~="string"or #a.epoch>160 or not integer(a.revision,0)
   or not integer(a.id,0)or type(a.identity)~="string"or #a.identity>512 or type(a.session)~="string"or #a.session>200
   or not integer(a.serial,0)or type(a.active)~="boolean"then return false end
  if a.active and (a.serial<1 or not G.finite(a.expires)or a.expires<=G.now()or a.expires>G.now()+8)then return false end
@@ -41,7 +41,7 @@ function Client.install(a,snapshot)
  if not actor or G.identity(actor)~=a.identity then return end
  if not snapshot then
   if not old or old.actor~=actor or old.identity~=a.identity or old.session~=a.session then
-   if old then G.clearNative(old.actor);old.active=false end
+   if old then G.clearConcealment(old.actor);old.active=false end
    Client.request();return
   end
   if a.revision<=old.revision or a.serial<old.serial or (a.active and old.revoked and a.serial<=old.serial)then return end
@@ -50,18 +50,18 @@ function Client.install(a,snapshot)
  if old and old.session==a.session and old.serial==a.serial and old.revoked then revoked=true end
  local active=a.active and not revoked and not actor:isDead()and G.cfg().Enabled
  local s={actor=actor,id=a.id,identity=a.identity,session=a.session,revision=a.revision,serial=a.serial,expires=a.expires,coverage=a.coverage or 0,active=false,received=G.millis(),revoked=revoked}
- if active and G.native(actor,a.expires)then s.active=true else G.clearNative(actor)end
+ if active and G.applyConcealment(actor,a.expires,true)then s.active=true else G.clearConcealment(actor)end
  Client.cache[key]=s;G.mirror[key]=s
 end
 function Client.onServerCommand(module,command,args)
  if not isClient()or module~="ZombieDisguise"or type(args)~="table"then return end
  if command=="snapshot"then
-  if args.version~=1 or args.nonce~=Client.nonce or not Client.nonce or type(args.epoch)~="string"or #args.epoch>160
+  if args.version~=G.PROTOCOL or args.nonce~=Client.nonce or not Client.nonce or type(args.epoch)~="string"or #args.epoch>160
    or not integer(args.revision,0)or type(args.leases)~="table"or #args.leases>512 then return end
   if Client.epoch==args.epoch and args.revision<(Client.highest or 0) then return end
   for _,a in ipairs(args.leases)do if not Client.validPacket(a)or a.epoch~=args.epoch or a.revision>args.revision then return end end
   local previous=Client.cache
-  for _,s in pairs(previous)do G.clearNative(s.actor)end
+  for _,s in pairs(previous)do G.clearConcealment(s.actor)end
   Client.cache={};G.mirror={};Client.epoch=args.epoch;Client.floor=args.revision;Client.highest=args.revision;Client.nonce=nil;G.remoteReady=args.ready==true
   -- Preserve same-session revocation tombstones through resync.
   for _,a in ipairs(args.leases)do
@@ -84,7 +84,7 @@ function Client.tick()
    local invalid=Client.actor(s.id)~=p or G.identity(p)~=s.identity or p:isDead()or not cfg.Enabled
     or G.now()>=s.expires or (cfg.BreakOnRun and (p:isRunning()or p:isSprinting()))or (cfg.BreakOnAttack and p:isAttacking())
    if invalid or now<s.received or now-s.received>=G.LEASE_SECONDS*1000 then
-    G.clearNative(p);s.active=false
+    G.clearConcealment(p);s.active=false
     if invalid then s.revoked=true end
    end
   end
