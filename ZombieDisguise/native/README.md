@@ -1,5 +1,7 @@
 # Native camouflage companion v1
 
+**2026-10-23: native startup integration withdrawn.** The user reported that Project Zomboid stopped opening after installation. The five launch files have been restored byte-for-byte from the pre-installation backups, and the installed agent JAR removed. The exact launch failure has not been captured; native fixtures and offline tests did not validate the normal executable launcher. Do not install or publish the native companion as ready until the startup failure is diagnosed and real launcher acceptance passes. No game was launched for this rollback; restoration is verified, successful opening still needs user confirmation. The Lua mods and existing saves were preserved. Disguise camouflage is unavailable while the companion is disabled.
+
 Windows / installed Project Zomboid **42.19.2** class identities only. This companion transforms eleven exact engine classes in memory. It does not replace the game JAR, enable ghost mode, grant capabilities or persist native protection in saves. Unsupported classes leave camouflage unavailable and allow the game to start unchanged.
 
 Public character bridge: getZombieDisguiseBridgeVersion(), setZombieDisguiseLease(worldExpiryHours, ttlSeconds), clearZombieDisguiseLease(). Protection uses weak object identity, a finite game-hour expiry and a monotonic wall-clock TTL. The Lua server approves the blood action and distributes short leases to all participating clients. Every client and server must install the compatible companion.

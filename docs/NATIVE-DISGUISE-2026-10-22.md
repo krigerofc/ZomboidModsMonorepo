@@ -1,5 +1,7 @@
 # Zombie Disguise 2.1.0 — delivery and verification
 
+**2026-10-23: native startup integration withdrawn.** The user reported that Project Zomboid stopped opening after installation. The five launch files have been restored byte-for-byte from the pre-installation backups, and the installed agent JAR removed. The exact launch failure has not been captured; native fixtures and offline tests did not validate the normal executable launcher. Do not install or publish the native companion as ready until the startup failure is diagnosed and real launcher acceptance passes. No game was launched for this rollback; restoration is verified, successful opening still needs user confirmation. The Lua mods and existing saves were preserved. Disguise camouflage is unavailable while the companion is disabled.
+
 Native selective camouflage is implemented and installed with the B42 Lua mod. Requires KRFieldMedicine and the matching native companion on the server and every client. Supported engine: installed 42.19.2 with eleven exact class hashes; other builds keep camouflage unavailable. No game JAR replacement, player role/capability changes, ghost mode or Steam upload.
 
 ## Behavior

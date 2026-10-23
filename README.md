@@ -1,5 +1,7 @@
 # Zomboid Mods
 
+**2026-10-23: native startup integration withdrawn.** The user reported that Project Zomboid stopped opening after installation. The five launch files have been restored byte-for-byte from the pre-installation backups, and the installed agent JAR removed. The exact launch failure has not been captured; native fixtures and offline tests did not validate the normal executable launcher. Do not install or publish the native companion as ready until the startup failure is diagnosed and real launcher acceptance passes. No game was launched for this rollback; restoration is verified, successful opening still needs user confirmation. The Lua mods and existing saves were preserved. Disguise camouflage is unavailable while the companion is disabled.
+
 Reestruturação local de seis mods do Kriger, em desenvolvimento na branch feat/mods-overhaul-20261021. As fontes originais de Workshop e os saves existentes permanecem preservados. Nenhuma alteração desta reestruturação foi publicada na Steam.
 
 | Pasta | Nome / Mod ID | Builds | Estado atual |
