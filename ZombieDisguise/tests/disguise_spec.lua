@@ -71,7 +71,7 @@ p.running=true;S.fastTick();check(not p.lease and next(registered[p]or{})~=nil,"
 apply(p);for _,part in ipairs(C.PARTS)do p.blood[part]=0 end;S.tickPlayer(p)
 check(not p.lease and next(registered[p]or{})==nil,"washing removes native lease and exposure")
 apply(p);hours=103;S.fastTick();check(not p.lease and next(registered[p]or{})~=nil,"expiry preserves residual exposure")
-SandboxVars.KFM.Enabled=false;check(not apply(p),"health disabled prevents grant");SandboxVars.KFM.Enabled=true
+SandboxVars.KFM.Enabled=false;check(apply(p),"disabled optional health does not prevent grant");G.revoke(p,"test");SandboxVars.KFM.Enabled=true
 local other=actor(1);ready(other);ready(p)
 client=true;server=false;Client.reset();Client.onCreatePlayer(0,p)
 Client.onServerCommand("ZombieDisguise","snapshot",{version=1,nonce=Client.nonce,epoch="e1",revision=10,ready=true,leases={{version=1,epoch="e1",revision=10,id=other.id,identity=G.identity(other),session="session",serial=0,active=false,expires=0}}})
@@ -115,8 +115,8 @@ ready(p);check(apply(p),"can reapply after sandbox enabled")
 ms=ms+16000;S.fastTick();check(not p.lease and not G.available(p),"lost peer acknowledgments revoke and disable")
 ready(p);ready(replacement);ready(unready)
 local saved=KFM.Exposure;KFM.Exposure=nil
-check(G.unavailableReason(p)=="Tooltip_ZD_Dependency","missing exposure API has precise reason");KFM.Exposure=saved
-SandboxVars.KFM.Enabled=false;check(G.unavailableReason(p)=="Tooltip_ZD_HealthDisabled","disabled health has precise reason");SandboxVars.KFM.Enabled=true
+check(G.available(p),"missing optional exposure API does not block camouflage");KFM.Exposure=saved
+SandboxVars.KFM.Enabled=false;check(G.available(p),"disabled optional health does not block camouflage");SandboxVars.KFM.Enabled=true
 server=false
 check(apply(p),"single player needs native bridge but no network acknowledgment")
 S.reset();check(not p.lease and not G.state(p).active,"world reset retires saved native disguise")

@@ -1,9 +1,8 @@
-name=Field Medicine: Zombie Disguise
+name=Zombie Disguise
 id=ZombieDisguise
-require=KRFieldMedicine
 author=Kriger
 versionMin=42.15
-modversion=2.1.0
+modversion=2.1.1
 poster=poster.png
 icon=icon.png
-description=Blood camouflage with shared Field Medicine exposure. Requires the supported native companion on the game and every multiplayer server/client. Actions stay unavailable when the native bridge or any client acknowledgment is missing. Running, attacking, expiry and washing end camouflage; residual blood remains a health risk until washed.
+description=Independent B42 mod with optional Field Medicine blood-exposure integration. Camouflage remains unavailable while its native startup problem is investigated; removing the medical dependency does not restore camouflage. No launcher changes are required to load this mod.

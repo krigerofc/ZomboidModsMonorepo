@@ -1,10 +1,9 @@
 local G=require "ZD/Game"
-local Game=require "KFM/Game"
 local S={ready={}}
 ZD.Server=S
 function S.peersReady()
  local now=G.millis()
- for _,p in ipairs(Game.players())do local ack=S.ready[p];if not ack or ack.identity~=G.identity(p)or now<ack.at or now-ack.at>15000 then return false end end
+ for _,p in ipairs(G.players())do local ack=S.ready[p];if not ack or ack.identity~=G.identity(p)or now<ack.at or now-ack.at>15000 then return false end end
  return true
 end
 G.peersReady=S.peersReady
@@ -39,13 +38,13 @@ function S.onCommand(module,command,player,args)
  S.ready[player]=args.bridge==1 and G.identity(player) and {at=G.millis(),identity=G.identity(player)}or nil
  if command=="ready"then return end
  local leases={}
- for _,p in ipairs(Game.players())do S.tickPlayer(p,false);leases[#leases+1]=G.packet(p,G.revision)end
+ for _,p in ipairs(G.players())do S.tickPlayer(p,false);leases[#leases+1]=G.packet(p,G.revision)end
  sendServerCommand(player,"ZombieDisguise","snapshot",{version=1,epoch=G.epoch(),nonce=args.nonce,revision=G.revision,ready=S.peersReady(),leases=leases})
 end
 function S.fastTick()
  if isClient()then return end
  local now=G.millis();local present={}
- for _,p in ipairs(Game.players())do
+ for _,p in ipairs(G.players())do
   present[p]=true
   local s=G.state(p);local due=not s.refreshed or now<s.refreshed or now-s.refreshed>=1000
   S.tickPlayer(p,due)
@@ -54,7 +53,7 @@ function S.fastTick()
   G.revoke(p,"disconnect");G.tracked[p]=nil;G.sessions[p]=nil;S.ready[p]=nil;G.pending[p]=nil
  end end
 end
-function S.tick()for _,p in ipairs(Game.players())do S.tickPlayer(p,false)end end
+function S.tick()for _,p in ipairs(G.players())do S.tickPlayer(p,false)end end
 function S.onDeath(p)if p and not isClient()then G.revoke(p,"death")end end
 function S.onAttack(p)if p and not isClient()and G.cfg().BreakOnAttack and G.state(p).active then G.revoke(p,"attack")end end
 function S.reset()

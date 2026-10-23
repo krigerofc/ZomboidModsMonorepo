@@ -1,7 +1,6 @@
 local C=require "ZD/Core"
 local G={pending={},mirror={},sessions={},tracked={},revision=0,sessionSerial=0,PROTOCOL=1,LEASE_SECONDS=5}
 ZD=ZD or {};ZD.Game=G
-pcall(require,"KFM/Health")
 function G.finite(v)return type(v)=="number" and v==v and v~=math.huge and v~=-math.huge end
 function G.now()return getGameTime():getWorldAgeHours()end
 function G.millis()return getTimestampMs()end
@@ -31,9 +30,22 @@ end
 function G.healthAvailable()
  return KFM and KFM.Exposure and KFM.Exposure.version==1 and type(KFM.Exposure.register)=="function" and type(KFM.Exposure.remove)=="function" and KFM.Game and type(KFM.Game.cfg)=="function"
 end
+function G.healthEnabled()
+ if not G.healthAvailable()then return false end
+ local ok,cfg=pcall(KFM.Game.cfg)
+ return ok and type(cfg)=="table" and cfg.Enabled==true
+end
+function G.players()
+ local players={}
+ if isClient()or isServer()then
+  local online=getOnlinePlayers()
+  if online then for i=0,online:size()-1 do players[#players+1]=online:get(i)end end
+ else
+  for i=0,getNumActivePlayers()-1 do local player=getSpecificPlayer(i);if player then players[#players+1]=player end end
+ end
+ return players
+end
 function G.unavailableReason(player)
- if not G.healthAvailable()then return "Tooltip_ZD_Dependency"end
- if not KFM.Game.cfg().Enabled then return "Tooltip_ZD_HealthDisabled"end
  if not G.bridgeAvailable(player)then return "Tooltip_ZD_Backend"end
  if isClient() and G.remoteReady~=true then return "Tooltip_ZD_Peers"end
  if isServer() and G.peersReady and not G.peersReady() then return "Tooltip_ZD_Peers"end
@@ -94,19 +106,23 @@ function G.grant(player,proof)
  local serial=(s.serial or 0)+1;local source="disguise:"..serial
  local regions,previous={},{};local visual=player:getHumanVisual()
  for _,part in ipairs(C.PARTS)do if BloodBodyPartType[part]then regions[part]=0.8;previous[part]=visual:getBlood(BloodBodyPartType[part])end end
- local ok,registered=pcall(KFM.Exposure.register,player,source,regions)
- if not ok or registered~=true then pcall(KFM.Exposure.remove,player,source);return false end
+ local exposed=false
+ if G.healthEnabled()then
+  local ok,registered=pcall(KFM.Exposure.register,player,source,regions)
+  if not ok or registered~=true then pcall(KFM.Exposure.remove,player,source);return false end
+  exposed=true
+ end
  local expires=G.now()+G.cfg().DurationMinutes/60
- if not G.native(player,expires)then G.clearNative(player);KFM.Exposure.remove(player,source);return false end
+ if not G.native(player,expires)then G.clearNative(player);if exposed then KFM.Exposure.remove(player,source)end;return false end
  local smeared=pcall(function()
   for part,_ in pairs(regions)do visual:setBlood(BloodBodyPartType[part],math.max(0.8,previous[part]))end
  end)
  if not smeared then
   for part,blood in pairs(previous)do pcall(function()visual:setBlood(BloodBodyPartType[part],blood)end)end
-  G.clearNative(player);KFM.Exposure.remove(player,source);return false
+  G.clearNative(player);if exposed then KFM.Exposure.remove(player,source)end;return false
  end
- if s.source and s.source~=source then KFM.Exposure.remove(player,s.source)end
- s.serial=serial;s.source=source;s.regions=regions;s.active=true;s.started=G.now();s.expires=expires;s.coverage=1;s.refreshed=G.millis()
+ if s.source and s.source~=source and G.healthAvailable()then KFM.Exposure.remove(player,s.source)end
+ s.serial=serial;s.source=exposed and source or nil;s.regions=regions;s.active=true;s.started=G.now();s.expires=expires;s.coverage=1;s.refreshed=G.millis()
  syncVisuals(player);sendHumanVisual(player);G.push(player)
  return true
 end

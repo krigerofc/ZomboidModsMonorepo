@@ -1,7 +1,7 @@
 {
-    "Sandbox_ZombieDisguise": "Field Medicine: Zombie Disguise",
+    "Sandbox_ZombieDisguise": "Zombie Disguise",
     "Sandbox_ZD_Enabled": "Enable blood camouflage",
-    "Sandbox_ZD_Enabled_tooltip": "Disabling removes only camouflage protection owned by this expansion.",
+    "Sandbox_ZD_Enabled_tooltip": "Disabling removes only camouflage protection owned by this mod.",
     "Sandbox_ZD_DurationMinutes": "Camouflage duration (game minutes)",
     "Sandbox_ZD_DurationMinutes_tooltip": "Default120. Expiry does not wash blood or cure illness.",
     "Sandbox_ZD_RequiredCoverage": "Required remaining blood coverage",

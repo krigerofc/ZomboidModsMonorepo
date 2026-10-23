@@ -1,7 +1,7 @@
 {
-    "Sandbox_ZombieDisguise": "Medicina de Campo: Disfarce Zumbi",
+    "Sandbox_ZombieDisguise": "Disfarce Zumbi",
     "Sandbox_ZD_Enabled": "Ativar camuflagem com sangue",
-    "Sandbox_ZD_Enabled_tooltip": "Desativar remove apenas proteção de camuflagem pertencente a esta expansão.",
+    "Sandbox_ZD_Enabled_tooltip": "Desativar remove apenas proteção de camuflagem pertencente a este mod.",
     "Sandbox_ZD_DurationMinutes": "Duração da camuflagem (minutos de jogo)",
     "Sandbox_ZD_DurationMinutes_tooltip": "Padrão120. Expirar não lava sangue nem cura doenças.",
     "Sandbox_ZD_RequiredCoverage": "Cobertura de sangue restante exigida",

@@ -8,7 +8,7 @@ function planInstall(options){
  for(const p of [gameDir,modDir,agentSource,backupDir])if(/["%!\r\n]/.test(p))throw Error("Unsupported launcher path characters");
  if(!fs.existsSync(path.join(gameDir,"projectzomboid.jar")))throw Error("Project Zomboid installation missing");
  const info=fs.readFileSync(path.join(modDir,"42/mod.info"),"utf8");
- if(!/^id=ZombieDisguise\r?$/m.test(info)||!/^require=KRFieldMedicine\r?$/m.test(info))throw Error("Expected ZombieDisguise mod metadata");
+ if(!/^id=ZombieDisguise\r?$/m.test(info))throw Error("Expected ZombieDisguise mod metadata");
  const jar=fs.readFileSync(agentSource);
  if(jar.length<4||jar.readUInt32LE(0)!==0x04034b50)throw Error("Expected native agent JAR archive");
  const agentTarget=path.join(modDir,"native","zd-native-agent.jar"),argument="-javaagent:"+agentTarget;

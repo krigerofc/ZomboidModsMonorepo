@@ -1,6 +1,6 @@
 {
   "name": "field-medicine-zombie-disguise",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": true,
   "scripts": {
     "test": "node tests/run.js",

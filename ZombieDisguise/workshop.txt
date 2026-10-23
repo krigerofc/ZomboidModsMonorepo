@@ -1,8 +1,8 @@
 version=1
 id=0
-title=Field Medicine: Zombie Disguise
+title=Zombie Disguise
 tags=Build 42;Multiplayer;Balance;Realistic
 visibility=public
-description=B42 development expansion requiring Field Medicine. The shared blood-exposure and validated action lifecycle are implemented, but camouflage remains disabled until a supported native perception adapter is verified for ordinary players. No administrative privileges, Knox diagnosis or transmission changes.
+description=Independent B42 development mod; Field Medicine is optional. Medical blood exposure is integrated only when its compatible API is enabled. Camouflage remains unavailable after the native startup integration was withdrawn. No administrative privileges or Knox transmission changes.
 description=
-description=Expansão B42 em desenvolvimento que exige Medicina de Campo. Exposição compartilhada ao sangue e validação das ações implementadas; camuflagem desativada até validar a percepção nativa para jogadores comuns. Sem privilégios administrativos, diagnóstico ou alteração de transmissão Knox.
+description=Mod B42 independente em desenvolvimento; Medicina de Campo é opcional. Integra exposição médica ao sangue somente com a API compatível ativada. Camuflagem indisponível após a retirada da integração nativa de inicialização. Sem privilégios administrativos nem alterações da transmissão Knox.

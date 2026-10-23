@@ -1,4 +1,4 @@
 {
-    "name": "Medicina de Campo: Disfarce Zumbi",
-    "description": "Camuflagem com sangue e exposição compartilhada do Medicina de Campo. Exige a extensão nativa compatível no jogo e em todos os servidores/clientes multijogador. A ação fica indisponível sem a ponte nativa ou a confirmação de algum cliente. Correr, atacar, expirar e lavar encerram a camuflagem; o sangue residual mantém o risco à saúde até a lavagem."
+    "name": "Disfarce Zumbi",
+    "description": "Mod B42 independente com integração opcional de exposição ao sangue do Medicina de Campo. A camuflagem continua indisponível enquanto o problema de inicialização da extensão é investigado. Remover a dependência médica não recupera a camuflagem. Carregar este mod não exige mudanças no inicializador."
 }

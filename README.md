@@ -11,7 +11,7 @@ Reestruturação local de seis mods do Kriger, em desenvolvimento na branch feat
 | KRjobs | KRjobs / Krjobs | B41+B42 | 24 profissões B42 confirmadas no menu nativo; kits autoritativos com recuperação limitada |
 | BasicVehicleMaintenance | MoreVehiclesRepairs | B42 | Reparos, carga, potência e aparência implementados; validação em partida/MP pendente |
 | FieldMedicine | Field Medicine '93 / KRFieldMedicine | B42 | Doenças, lesões regionais, exame e prontuário implementados; build para teste |
-| ZombieDisguise | ZombieDisguise | B42 | Versão 2.1.0 com extensão nativa 42.19.2 instalada; aceite com dois clientes pendente |
+| ZombieDisguise | ZombieDisguise | B42 | Versão 2.1.1 independente da medicina; camuflagem indisponível e extensão retirada |
 
 ## Escopo e decisões atuais
 
@@ -20,7 +20,7 @@ Reestruturação local de seis mods do Kriger, em desenvolvimento na branch feat
 - KRjobs: corrigido o carregamento nativo das definições; as24 profissões B42 aparecem traduzidas no widget real de criação. B41 tem20 definições, ainda sem execução real nesta revisão.
 - Veículos: melhorias limitadas de capacidade/potência por instância, pintura, remoção de ferrugem e lavagem nativa. Compatibilidade pretendida para modelos com peças genéricas do jogo; sistemas exclusivos de outros mods ficam fora do suporte obrigatório. Velocidade máxima não foi entregue porque a persistência nativa não foi comprovada.
 - Medicina: novas doenças sazonais, contaminação, cuidados específicos, lesões por frio, condições cardiorrespiratórias e psicológicas recuperáveis, exame detalhado e efeitos perceptivos locais estão implementados, com exame filtrado por habilidade/instrumento e prontuário por personagem. Ver HEALTH-PHASE2.md no projeto.
-- Disguise: somente B42, dependência obrigatória de medicina e exposição compartilhada. A extensão nativa aprovada implementa camuflagem seletiva por detecção dos zumbis na 42.19.2, sem alterar privilégios ou modo fantasma. Precisa estar instalada no servidor e em todos os clientes. Ver [entrega e limites](docs/NATIVE-DISGUISE-2026-10-22.md).
+- Disguise: somente B42, medicina opcional e exposição compartilhada quando a API está ativa. A extensão nativa aprovada implementa camuflagem seletiva por detecção dos zumbis na 42.19.2, sem alterar privilégios ou modo fantasma. Precisa estar instalada no servidor e em todos os clientes. Ver [entrega e limites](docs/NATIVE-DISGUISE-2026-10-22.md).
 
 ## Evidência e limites
 

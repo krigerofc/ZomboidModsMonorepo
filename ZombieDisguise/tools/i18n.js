@@ -1,12 +1,12 @@
 const fs=require("fs"),path=require("path");const T={
   "Mod": {
     "name": [
-      "Field Medicine: Zombie Disguise",
-      "Medicina de Campo: Disfarce Zumbi"
+      "Zombie Disguise",
+      "Disfarce Zumbi"
     ],
     "description": [
-    "Blood camouflage with shared Field Medicine exposure. Requires the supported native companion on the game and every multiplayer server/client. Actions stay unavailable when the native bridge or any client acknowledgment is missing. Running, attacking, expiry and washing end camouflage; residual blood remains a health risk until washed.",
-    "Camuflagem com sangue e exposição compartilhada do Medicina de Campo. Exige a extensão nativa compatível no jogo e em todos os servidores/clientes multijogador. A ação fica indisponível sem a ponte nativa ou a confirmação de algum cliente. Correr, atacar, expirar e lavar encerram a camuflagem; o sangue residual mantém o risco à saúde até a lavagem."
+    "Independent B42 mod with optional Field Medicine blood-exposure integration. The current camouflage backend remains unavailable while its native startup problem is investigated. Removing the medical dependency does not restore camouflage. No launcher changes are required to load this mod.",
+    "Mod B42 independente com integração opcional de exposição ao sangue do Medicina de Campo. A camuflagem continua indisponível enquanto o problema de inicialização da extensão é investigado. Remover a dependência médica não recupera a camuflagem. Carregar este mod não exige mudanças no inicializador."
 ]
   },
   "ContextMenu": {
@@ -21,24 +21,24 @@ const fs=require("fs"),path=require("path");const T={
   },
   "Tooltip": {
     "Tooltip_ZD_Backend": [
-    "The supported native zombie-perception companion is missing or incompatible. Install it in the game and on every multiplayer server/client, then restart. No blood is applied without the bridge.",
-    "A extensão nativa compatível de percepção dos zumbis está ausente ou é incompatível. Instale-a no jogo e em todos os servidores/clientes multijogador e reinicie. Nenhum sangue é aplicado sem a ponte."
+    "Camouflage is unavailable without a working perception backend. Native installation is suspended after a startup failure; do not reinstall the withdrawn extension. Field Medicine is optional. No blood is applied while camouflage is unavailable.",
+    "Camuflagem indisponível sem um sistema de percepção funcional. A instalação nativa está suspensa após uma falha de inicialização; não reinstale a extensão retirada. Medicina de Campo é opcional. Nenhum sangue é aplicado enquanto a camuflagem estiver indisponível."
 ],
     "Tooltip_ZD_Peers": [
     "Waiting for the native companion acknowledgment from every connected client. A client without the extension disables new camouflage and revokes active camouflage.",
     "Aguardando a confirmação da extensão nativa de todos os clientes conectados. Um cliente sem a extensão impede novas camuflagens e encerra as ativas."
 ],
     "Tooltip_ZD_HealthDisabled": [
-      "Field Medicine is disabled in sandbox settings. Enable it before using this expansion.",
-      "Medicina de Campo está desativado nas opções de sandbox. Ative-o antes de usar esta expansão."
+      "Optional Field Medicine integration is disabled; camouflage does not require it.",
+      "A integração opcional do Medicina de Campo está desativada; a camuflagem não depende dela."
     ],
     "Tooltip_ZD_Risk": [
-      "Apply blood to exposed skin. Default camouflage lasts 120 game minutes. Running or attacking breaks it. Blood over wounds or the face can cause common illness through Field Medicine. Wash actual blood off to reduce exposure; medicines do not renew camouflage.",
-      "Aplique sangue sobre a pele. A camuflagem padrão dura 120 minutos de jogo. Correr ou atacar rompe o efeito. Sangue em feridas ou rosto pode causar doenças comuns pelo Medicina de Campo. Remova o sangue com lavagem para reduzir exposição; remédios não renovam camuflagem."
+      "Apply blood to exposed skin. Default camouflage lasts 120 game minutes. Running or attacking breaks it. With Field Medicine installed and enabled, blood over wounds or the face can cause common illness. Wash actual blood off to reduce exposure; medicines do not renew camouflage.",
+      "Aplique sangue sobre a pele. A camuflagem padrão dura 120 minutos de jogo. Correr ou atacar rompe o efeito. Com Medicina de Campo instalado e ativado, sangue em feridas ou rosto pode causar doenças comuns. Remova o sangue com lavagem para reduzir exposição; remédios não renovam camuflagem."
     ],
     "Tooltip_ZD_Dependency": [
-      "Requires a compatible Field Medicine (KRFieldMedicine) exposure API v1. Camouflage is unavailable.",
-      "Exige Medicina de Campo (KRFieldMedicine) com API de exposição v1 compatível. Camuflagem indisponível."
+      "Field Medicine is optional. Blood-exposure integration is used only when a compatible API v1 is enabled.",
+      "Medicina de Campo é opcional. A integração de exposição ao sangue só é usada com a API v1 compatível e ativada."
     ],
     "Tooltip_ZD_Active": [
       "Existing camouflage does not renew automatically. Expiry or hostile activity leaves residual blood exposure until washing.",
@@ -51,16 +51,16 @@ const fs=require("fs"),path=require("path");const T={
   },
   "Sandbox": {
     "Sandbox_ZombieDisguise": [
-      "Field Medicine: Zombie Disguise",
-      "Medicina de Campo: Disfarce Zumbi"
+      "Zombie Disguise",
+      "Disfarce Zumbi"
     ],
     "Sandbox_ZD_Enabled": [
       "Enable blood camouflage",
       "Ativar camuflagem com sangue"
     ],
     "Sandbox_ZD_Enabled_tooltip": [
-      "Disabling removes only camouflage protection owned by this expansion.",
-      "Desativar remove apenas proteção de camuflagem pertencente a esta expansão."
+      "Disabling removes only camouflage protection owned by this mod.",
+      "Desativar remove apenas proteção de camuflagem pertencente a este mod."
     ],
     "Sandbox_ZD_DurationMinutes": [
       "Camouflage duration (game minutes)",

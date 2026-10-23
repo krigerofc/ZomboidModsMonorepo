@@ -48,7 +48,7 @@ function Client.install(a,snapshot)
  end
  local revoked=not a.active
  if old and old.session==a.session and old.serial==a.serial and old.revoked then revoked=true end
- local active=a.active and not revoked and not actor:isDead()and G.cfg().Enabled and G.healthAvailable()and KFM.Game.cfg().Enabled
+ local active=a.active and not revoked and not actor:isDead()and G.cfg().Enabled
  local s={actor=actor,id=a.id,identity=a.identity,session=a.session,revision=a.revision,serial=a.serial,expires=a.expires,coverage=a.coverage or 0,active=false,received=G.millis(),revoked=revoked}
  if active and G.native(actor,a.expires)then s.active=true else G.clearNative(actor)end
  Client.cache[key]=s;G.mirror[key]=s
@@ -81,7 +81,7 @@ function Client.tick()
  for _,s in pairs(Client.cache)do
   if s.active then
    local p=s.actor
-   local invalid=Client.actor(s.id)~=p or G.identity(p)~=s.identity or p:isDead()or not cfg.Enabled or not G.healthAvailable()or not KFM.Game.cfg().Enabled
+   local invalid=Client.actor(s.id)~=p or G.identity(p)~=s.identity or p:isDead()or not cfg.Enabled
     or G.now()>=s.expires or (cfg.BreakOnRun and (p:isRunning()or p:isSprinting()))or (cfg.BreakOnAttack and p:isAttacking())
    if invalid or now<s.received or now-s.received>=G.LEASE_SECONDS*1000 then
     G.clearNative(p);s.active=false

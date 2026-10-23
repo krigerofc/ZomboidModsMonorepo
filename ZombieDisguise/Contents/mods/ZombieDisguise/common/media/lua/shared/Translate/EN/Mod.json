@@ -1,4 +1,4 @@
 {
-    "name": "Field Medicine: Zombie Disguise",
-    "description": "Blood camouflage with shared Field Medicine exposure. Requires the supported native companion on the game and every multiplayer server/client. Actions stay unavailable when the native bridge or any client acknowledgment is missing. Running, attacking, expiry and washing end camouflage; residual blood remains a health risk until washed."
+    "name": "Zombie Disguise",
+    "description": "Independent B42 mod with optional Field Medicine blood-exposure integration. The current camouflage backend remains unavailable while its native startup problem is investigated. Removing the medical dependency does not restore camouflage. No launcher changes are required to load this mod."
 }

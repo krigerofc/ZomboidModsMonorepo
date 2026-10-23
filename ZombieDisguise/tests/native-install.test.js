@@ -10,7 +10,7 @@ function fixture(t){
  fs.writeFileSync(path.join(game,"ProjectZomboid64.json"),JSON.stringify({mainClass:"zombie/gameStates/MainScreenState",vmArgs:["-Xmx3072m","-Duser.option=keep"]},null,2));
  fs.writeFileSync(path.join(game,"ProjectZomboid64.bat"),'@echo off\r\n".\\jre64\\bin\\java.exe" -Xmx3072m -cp .;projectzomboid.jar zombie.gameStates.MainScreenState %1 %2\r\nIF ERRORLEVEL 1 (\r\n".\\jre64\\bin\\java.exe" -cp .;projectzomboid.jar zombie.gameStates.MainScreenState %1 %2\r\n)\r\n');
  fs.writeFileSync(path.join(game,"ProjectZomboidServer.bat"),'".\\jre64\\bin\\java.exe" -Xmx3072m -cp .;projectzomboid.jar zombie.network.GameServer\r\n');
- fs.writeFileSync(path.join(mod,"42/mod.info"),"id=ZombieDisguise\nrequire=KRFieldMedicine\n");
+ fs.writeFileSync(path.join(mod,"42/mod.info"),"id=ZombieDisguise\n");
  fs.writeFileSync(agent,Buffer.from([80,75,3,4,0,0,0,0]));
  return {root,gameDir:game,modDir:mod,agentSource:agent,backupDir:path.join(root,"backup")};
 }

@@ -1,9 +1,9 @@
 {
-    "Tooltip_ZD_Backend": "The supported native zombie-perception companion is missing or incompatible. Install it in the game and on every multiplayer server/client, then restart. No blood is applied without the bridge.",
+    "Tooltip_ZD_Backend": "Camouflage is unavailable without a working perception backend. Native installation is suspended after a startup failure; do not reinstall the withdrawn extension. Field Medicine is optional. No blood is applied while camouflage is unavailable.",
     "Tooltip_ZD_Peers": "Waiting for the native companion acknowledgment from every connected client. A client without the extension disables new camouflage and revokes active camouflage.",
-    "Tooltip_ZD_HealthDisabled": "Field Medicine is disabled in sandbox settings. Enable it before using this expansion.",
-    "Tooltip_ZD_Risk": "Apply blood to exposed skin. Default camouflage lasts 120 game minutes. Running or attacking breaks it. Blood over wounds or the face can cause common illness through Field Medicine. Wash actual blood off to reduce exposure; medicines do not renew camouflage.",
-    "Tooltip_ZD_Dependency": "Requires a compatible Field Medicine (KRFieldMedicine) exposure API v1. Camouflage is unavailable.",
+    "Tooltip_ZD_HealthDisabled": "Optional Field Medicine integration is disabled; camouflage does not require it.",
+    "Tooltip_ZD_Risk": "Apply blood to exposed skin. Default camouflage lasts 120 game minutes. Running or attacking breaks it. With Field Medicine installed and enabled, blood over wounds or the face can cause common illness. Wash actual blood off to reduce exposure; medicines do not renew camouflage.",
+    "Tooltip_ZD_Dependency": "Field Medicine is optional. Blood-exposure integration is used only when a compatible API v1 is enabled.",
     "Tooltip_ZD_Active": "Existing camouflage does not renew automatically. Expiry or hostile activity leaves residual blood exposure until washing.",
     "Tooltip_ZD_Reach": "Use an accessible zombie corpse on the same floor within two tiles. Stay still until the action completes."
 }
