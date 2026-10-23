@@ -4,12 +4,21 @@ local B={VERSION=1,TTL_MS=5000,owned={}}
 local function finite(v)return type(v)=="number"and v==v and v~=math.huge and v~=-math.huge end
 local function now()return getGameTime():getWorldAgeHours()end
 local function millis()return getTimestampMs()end
+-- Same public pair as DebugContextMenu; both pairs alias the same engine flag.
+local function methods(player)
+ if not player then return end
+ if player.setGhostMode and player.isGhostMode then return "isGhostMode","setGhostMode"end
+ if player.setInvisible and player.isInvisible then return "isInvisible","setInvisible"end
+end
 local function invisible(player)
- local ok,value=pcall(function()return player:isInvisible()end)
+ local ok,value=pcall(function()local getter=methods(player);return getter and player[getter](player)end)
  return ok and type(value)=="boolean",value
 end
+local function write(player,value)
+ return pcall(function()local _,setter=methods(player);if not setter then error("Visibility API unavailable")end;player[setter](player,value,true)end)
+end
 function B.available(player)
- local ok,methods=pcall(function()return player~=nil and player.setInvisible~=nil and player.isInvisible~=nil end)
+ local ok,methods=pcall(function()return methods(player)~=nil end)
  if not ok or not methods then return false end
  -- Installed42.19.2 PlayerCheats.set refuses ordinary SP, including the forced overload.
  if not isClient()and not isServer()then
@@ -27,7 +36,7 @@ function B.clear(player)
  if not own and not(type(marker)=="table"and marker.version==1 and marker.owned==true)then return true end
  local ok,value=invisible(player)
  if ok and value then
-  local changed=pcall(function()player:setInvisible(false,true)end)
+  local changed=write(player,false)
   ok,value=invisible(player)
   if not changed or not ok or value then
    own=own or {};B.owned[player]=own
@@ -52,7 +61,7 @@ function B.apply(player,expires,authorisedReplica)
   own={started=time};B.owned[player]=own
   player:getModData().ZD_invisibility={version=1,owned=true}
   local changed=true
-  if not current then changed=pcall(function()player:setInvisible(true,true)end)end
+  if not current then changed=write(player,true)end
   local readable,enabled=invisible(player)
   if not changed or not readable or enabled~=true then B.clear(player);return false end
  end

@@ -5,8 +5,8 @@ const fs=require("fs"),path=require("path");const T={
       "Disfarce Zumbi"
     ],
     "description": [
-    "Temporary blood disguise using the game's built-in invisibility. No native companion; Field Medicine is optional. Running, attacking, expiry, washing, death, disconnect and saving clear the temporary effect. This mode can affect visibility to other players and sound reactions. On inspected42.19.2, ordinary non-debug single-player is unsupported; multiplayer and debug single-player require actual gameplay validation.",
-    "Disfarce temporário com a invisibilidade do próprio jogo. Sem extensão nativa; Medicina de Campo é opcional. Correr, atacar, expirar, lavar, morrer, desconectar ou salvar encerram o efeito. Este modo pode afetar a visibilidade para outros jogadores e a reação a sons. Na42.19.2 inspecionada, single-player comum sem depuração não é suportado; multiplayer e single-player com depuração precisam de validação em partida."
+    "Temporary blood disguise using the game's built-in ghost mode (invisibility). No native companion; Field Medicine is optional. Running, attacking, expiry, washing, death, disconnect and saving clear the temporary effect. This mode can affect visibility to other players and sound reactions. On inspected42.19.2, ordinary non-debug single-player is unsupported; multiplayer and debug single-player require actual gameplay validation.",
+    "Disfarce temporário com a modo fantasma (invisibilidade) do próprio jogo. Sem extensão nativa; Medicina de Campo é opcional. Correr, atacar, expirar, lavar, morrer, desconectar ou salvar encerram o efeito. Este modo pode afetar a visibilidade para outros jogadores e a reação a sons. Na42.19.2 inspecionada, single-player comum sem depuração não é suportado; multiplayer e single-player com depuração precisam de validação em partida."
 ]
   },
   "ContextMenu": {
@@ -33,7 +33,7 @@ const fs=require("fs"),path=require("path");const T={
       "A integração opcional do Medicina de Campo está desativada; a camuflagem não depende dela."
     ],
     "Tooltip_ZD_Risk": [
-      "Apply blood to exposed skin. Default duration is120 game minutes. Running, attacking or saving breaks it. Uses built-in invisibility, including its visibility and sound behavior. With Field Medicine installed and enabled, blood over wounds or the face can cause common illness. Wash actual blood off to reduce exposure; medicines do not renew camouflage.",
+      "Apply blood to exposed skin. Default duration is120 game minutes. Running, attacking or saving breaks it. Uses built-in ghost mode (invisibility), including its visibility and sound behavior. With Field Medicine installed and enabled, blood over wounds or the face can cause common illness. Wash actual blood off to reduce exposure; medicines do not renew camouflage.",
       "Aplique sangue sobre a pele. A duração padrão é120 minutos de jogo. Correr, atacar ou salvar rompe o efeito. Usa invisibilidade nativa, incluindo seu comportamento visual e sonoro. Com Medicina de Campo instalado e ativado, sangue em feridas ou rosto pode causar doenças comuns. Remova o sangue com lavagem para reduzir exposição; remédios não renovam camuflagem."
     ],
     "Tooltip_ZD_Dependency": [

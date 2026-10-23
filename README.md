@@ -1,6 +1,6 @@
 # Zomboid Mods
 
-**Current Disguise status (23 October2026):**2.2.0 uses user-approved temporary built-in invisibility, with optional medicine and no extension or launcher changes. Ordinary non-debug single-player42.19.2 is unsupported by the inspected public API. Multiplayer/debug-SP require actual gameplay validation. Offline tests pass; see [current Lua delivery](docs/DISGUISE-LUA-2026-10-23.md). Earlier native integration was withdrawn and the user confirmed the game opens after rollback.
+**Current Disguise status (23 October2026):**2.2.1 uses user-approved temporary built-in invisibility, with optional medicine and no extension or launcher changes. Ordinary non-debug single-player42.19.2 is unsupported by the inspected public API. Multiplayer/debug-SP require actual gameplay validation. Offline tests pass; see [current Lua delivery](docs/DISGUISE-LUA-2026-10-23.md). Earlier native integration was withdrawn and the user confirmed the game opens after rollback.
 
 Reestruturação local de seis mods do Kriger, em desenvolvimento na branch feat/mods-overhaul-20261021. As fontes originais de Workshop e os saves existentes permanecem preservados. Nenhuma alteração desta reestruturação foi publicada na Steam.
 
@@ -11,7 +11,7 @@ Reestruturação local de seis mods do Kriger, em desenvolvimento na branch feat
 | KRjobs | KRjobs / Krjobs | B41+B42 | 24 profissões B42 confirmadas no menu nativo; kits autoritativos com recuperação limitada |
 | BasicVehicleMaintenance | MoreVehiclesRepairs | B42 | Reparos, carga, potência e aparência implementados; validação em partida/MP pendente |
 | FieldMedicine | Field Medicine '93 / KRFieldMedicine | B42 | Doenças, lesões regionais, exame e prontuário implementados; build para teste |
-| ZombieDisguise | ZombieDisguise | B42 |2.2.0 Lua experimental; sem extensão; SP comum42.19.2 indisponível; MP pendente |
+| ZombieDisguise | ZombieDisguise | B42 |2.2.1 Lua experimental; sem extensão; SP comum42.19.2 indisponível; MP pendente |
 
 ## Escopo e decisões atuais
 
@@ -45,4 +45,4 @@ RetroProfessions e VehicleMaintenance são as versões antigas substituídas por
 
 ## English
 
-This branch contains the next local versions of six mods. Build & Haul and Passive Skills passed offline verification and task review. Vehicle customization and expanded health are implemented for testing; experimental camouflage2.2.0 uses built-in invisibility without a native extension. Ordinary single-player42.19.2 is unsupported; debug-SP and connected multiplayer acceptance remain pending. All24 KRjobs professions and4 starting medical traits were confirmed with translated labels in the native B42 character-creation widgets. No gameplay/multiplayer certification, Steam upload or existing-save changes are claimed.
+This branch contains the next local versions of six mods. Build & Haul and Passive Skills passed offline verification and task review. Vehicle customization and expanded health are implemented for testing; experimental camouflage2.2.1 uses built-in invisibility without a native extension. Ordinary single-player42.19.2 is unsupported; debug-SP and connected multiplayer acceptance remain pending. All24 KRjobs professions and4 starting medical traits were confirmed with translated labels in the native B42 character-creation widgets. No gameplay/multiplayer certification, Steam upload or existing-save changes are claimed.

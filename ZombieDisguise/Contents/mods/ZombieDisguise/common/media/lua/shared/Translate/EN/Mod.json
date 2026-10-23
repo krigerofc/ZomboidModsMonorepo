@@ -1,4 +1,4 @@
 {
     "name": "Zombie Disguise",
-    "description": "Temporary blood disguise using the game's built-in invisibility. No native companion; Field Medicine is optional. Running, attacking, expiry, washing, death, disconnect and saving clear the temporary effect. This mode can affect visibility to other players and sound reactions. On inspected42.19.2, ordinary non-debug single-player is unsupported; multiplayer and debug single-player require actual gameplay validation."
+    "description": "Temporary blood disguise using the game's built-in ghost mode (invisibility). No native companion; Field Medicine is optional. Running, attacking, expiry, washing, death, disconnect and saving clear the temporary effect. This mode can affect visibility to other players and sound reactions. On inspected42.19.2, ordinary non-debug single-player is unsupported; multiplayer and debug single-player require actual gameplay validation."
 }
