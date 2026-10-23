@@ -5,9 +5,9 @@ const fs=require("fs"),path=require("path");const T={
       "Medicina de Campo: Disfarce Zumbi"
     ],
     "description": [
-      "B42 development expansion requiring Field Medicine. The shared blood-exposure and validated action lifecycle are implemented, but camouflage remains disabled until a supported native perception adapter is verified for ordinary players. No administrative privileges, Knox diagnosis or transmission changes.",
-      "Expansão B42 em desenvolvimento que exige Medicina de Campo. Exposição compartilhada ao sangue e validação das ações implementadas; camuflagem desativada até validar a percepção nativa para jogadores comuns. Sem privilégios administrativos, diagnóstico ou alteração de transmissão Knox."
-    ]
+    "Blood camouflage with shared Field Medicine exposure. Requires the supported native companion on the game and every multiplayer server/client. Actions stay unavailable when the native bridge or any client acknowledgment is missing. Running, attacking, expiry and washing end camouflage; residual blood remains a health risk until washed.",
+    "Camuflagem com sangue e exposição compartilhada do Medicina de Campo. Exige a extensão nativa compatível no jogo e em todos os servidores/clientes multijogador. A ação fica indisponível sem a ponte nativa ou a confirmação de algum cliente. Correr, atacar, expirar e lavar encerram a camuflagem; o sangue residual mantém o risco à saúde até a lavagem."
+]
   },
   "ContextMenu": {
     "ContextMenu_ZD_Apply": [
@@ -21,9 +21,13 @@ const fs=require("fs"),path=require("path");const T={
   },
   "Tooltip": {
     "Tooltip_ZD_Backend": [
-      "Camouflage is disabled in this development build: a supported zombie-perception adapter has not been validated for ordinary players. No blood is applied and no administrative permissions are granted.",
-      "Camuflagem desativada nesta versão de desenvolvimento: a integração com a percepção dos zumbis ainda não foi validada para jogadores comuns. Nenhum sangue é aplicado e nenhuma permissão administrativa é concedida."
-    ],
+    "The supported native zombie-perception companion is missing or incompatible. Install it in the game and on every multiplayer server/client, then restart. No blood is applied without the bridge.",
+    "A extensão nativa compatível de percepção dos zumbis está ausente ou é incompatível. Instale-a no jogo e em todos os servidores/clientes multijogador e reinicie. Nenhum sangue é aplicado sem a ponte."
+],
+    "Tooltip_ZD_Peers": [
+    "Waiting for the native companion acknowledgment from every connected client. A client without the extension disables new camouflage and revokes active camouflage.",
+    "Aguardando a confirmação da extensão nativa de todos os clientes conectados. Um cliente sem a extensão impede novas camuflagens e encerra as ativas."
+],
     "Tooltip_ZD_HealthDisabled": [
       "Field Medicine is disabled in sandbox settings. Enable it before using this expansion.",
       "Medicina de Campo está desativado nas opções de sandbox. Ative-o antes de usar esta expansão."

@@ -1,15 +1,11 @@
-# Zombie Disguise B42 - development foundation
+# Zombie Disguise 2.1.0
 
-Requires KRFieldMedicine and retains mod ID ZombieDisguise. B41 payload removed per the user decision. New game-style artwork is included at512/256/64pixels. No Steam upload.
+B42 only; requires KRFieldMedicine and the native camouflage companion on every client and server. The previous hard-disabled Lua foundation is superseded by the native bridge implementation. Existing mod ID ZombieDisguise and game-style artwork are retained.
 
-Implemented: corpse-only native timed action with server start/stop and completion progress validation; actor/corpse/square/movement checks; server-only state and finite duration; run/attack/death/disable lifecycle; actual regional blood coverage and washing; shared medical Exposure API v1; localized menus and sandbox options.
+Native support is pinned to the installed 42.19.2 class hashes. The companion transforms eleven classes in memory, with no game JAR replacement or administrative/ghost/invisibility flags. Public character bridge methods manage finite, weak-object-identity leases. Unknown or partially unsupported builds leave camouflage unavailable.
 
-Current hard gate: CONCEALMENT_READY=false. Availability identifies missing medical API, disabled health and the missing perception backend separately. It never applies blood when health is disabled or exposure registration rejects the operation. Washing reconciles old exposure sources even while the camouflage backend is disabled.
+Production Lua validates the corpse timed action on the server, registers regional medical exposure and rolls back rejected grants. Versioned snapshots refresh short leases across peers; stale/foreign snapshots, disconnected peers, running/attacking, expiry, death and disabled health revoke protection. Washing reconciles residual medical exposure independently of native availability. Active native protection is never restored from persisted modData after a process restart.
 
-Native42.19.2 evidence: setZombiesDontAttack(boolean) requires UseZombieDontAttackCheat. Clearing targets in OnZombieUpdate is insufficient because native spotting reacquires later in the same update. Public setInvisible(boolean,isForced) exists, but it changes ghost/invisibility, human visibility, sound and other gameplay branches, so it is not a selective camouflage substitute. No Role mutation, capability grants, private reflection, global zombie freezing or ghost protection was added.
+Real native fixtures passed spotting, existing pursuit/cache cancellation, late path callbacks, attacks, expiry and production Lua health registration/revocation. Offline Lua tests cover action and packet contracts. Full UI corpse-action completion and two connected ordinary clients are still pending; no multiplayer gameplay certification is claimed.
 
-Official API reference: https://projectzomboid.com/modding/zombie/characters/IsoGameCharacter.html#setInvisible(boolean,boolean)
-
-Tests use Fengari and simulated engine objects. They prove state/action/exposure contracts, not actual camouflage, ordinary-client multiplayer or zombie ownership migration. Keep the flag false until native gameplay proof exists.
-
-Remaining: supported selective perception route, authoritative lease replication for each zombie simulation owner, close-range and already-pursuing encounters, two ordinary clients and ownership handoff. The expansion should not be installed as working camouflage yet.
+See [delivery evidence](../docs/NATIVE-DISGUISE-2026-10-22.md), [native implementation](native/README.md) and [reversible installation](INSTALL-NATIVE.md). The user requested no further game launches; continue code-only verification.

@@ -1,4 +1,4 @@
 {
     "name": "Medicina de Campo: Disfarce Zumbi",
-    "description": "Expansão B42 em desenvolvimento que exige Medicina de Campo. Exposição compartilhada ao sangue e validação das ações implementadas; camuflagem desativada até validar a percepção nativa para jogadores comuns. Sem privilégios administrativos, diagnóstico ou alteração de transmissão Knox."
+    "description": "Camuflagem com sangue e exposição compartilhada do Medicina de Campo. Exige a extensão nativa compatível no jogo e em todos os servidores/clientes multijogador. A ação fica indisponível sem a ponte nativa ou a confirmação de algum cliente. Correr, atacar, expirar e lavar encerram a camuflagem; o sangue residual mantém o risco à saúde até a lavagem."
 }

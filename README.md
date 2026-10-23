@@ -9,7 +9,7 @@ Reestruturação local de seis mods do Kriger, em desenvolvimento na branch feat
 | KRjobs | KRjobs / Krjobs | B41+B42 | 24 profissões B42 confirmadas no menu nativo; kits autoritativos com recuperação limitada |
 | BasicVehicleMaintenance | MoreVehiclesRepairs | B42 | Reparos, carga, potência e aparência implementados; validação em partida/MP pendente |
 | FieldMedicine | Field Medicine '93 / KRFieldMedicine | B42 | Doenças, lesões regionais, exame e prontuário implementados; build para teste |
-| ZombieDisguise | ZombieDisguise | B42 | Expansão dependente de KRFieldMedicine em implementação; camuflagem desativada enquanto o caminho de IA é corrigido |
+| ZombieDisguise | ZombieDisguise | B42 | Versão 2.1.0 com extensão nativa 42.19.2 instalada; aceite com dois clientes pendente |
 
 ## Escopo e decisões atuais
 
@@ -18,7 +18,7 @@ Reestruturação local de seis mods do Kriger, em desenvolvimento na branch feat
 - KRjobs: corrigido o carregamento nativo das definições; as24 profissões B42 aparecem traduzidas no widget real de criação. B41 tem20 definições, ainda sem execução real nesta revisão.
 - Veículos: melhorias limitadas de capacidade/potência por instância, pintura, remoção de ferrugem e lavagem nativa. Compatibilidade pretendida para modelos com peças genéricas do jogo; sistemas exclusivos de outros mods ficam fora do suporte obrigatório. Velocidade máxima não foi entregue porque a persistência nativa não foi comprovada.
 - Medicina: novas doenças sazonais, contaminação, cuidados específicos, lesões por frio, condições cardiorrespiratórias e psicológicas recuperáveis, exame detalhado e efeitos perceptivos locais estão implementados, com exame filtrado por habilidade/instrumento e prontuário por personagem. Ver HEALTH-PHASE2.md no projeto.
-- Disguise: somente B42, dependência obrigatória de medicina e exposição compartilhada. O antigo setter de proteção é restrito a permissões de cheat na instalação local; não há promessa de invisibilidade enquanto a alternativa legítima não estiver comprovada.
+- Disguise: somente B42, dependência obrigatória de medicina e exposição compartilhada. A extensão nativa aprovada implementa camuflagem seletiva por detecção dos zumbis na 42.19.2, sem alterar privilégios ou modo fantasma. Precisa estar instalada no servidor e em todos os clientes. Ver [entrega e limites](docs/NATIVE-DISGUISE-2026-10-22.md).
 
 ## Evidência e limites
 
@@ -43,4 +43,4 @@ RetroProfessions e VehicleMaintenance são as versões antigas substituídas por
 
 ## English
 
-This branch contains the next local versions of six mods. Build & Haul and Passive Skills passed offline verification and task review. Vehicle customization and expanded health are implemented for testing; dependent camouflage remains in development. All24 KRjobs professions and4 starting medical traits were confirmed with translated labels in the native B42 character-creation widgets. No gameplay/multiplayer certification, Steam upload or existing-save changes are claimed.
+This branch contains the next local versions of six mods. Build & Haul and Passive Skills passed offline verification and task review. Vehicle customization and expanded health are implemented for testing; dependent camouflage 2.1.0 includes the approved native companion for exact 42.19.2 classes. Its isolated engine fixture passed 104 checks, while full corpse-action UI and connected multiplayer acceptance remain pending. All24 KRjobs professions and4 starting medical traits were confirmed with translated labels in the native B42 character-creation widgets. No gameplay/multiplayer certification, Steam upload or existing-save changes are claimed.

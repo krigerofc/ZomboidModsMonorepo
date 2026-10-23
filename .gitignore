@@ -1,2 +1,3 @@
 ModTemplate/
 .claude/settings.local.json
+/outputs/

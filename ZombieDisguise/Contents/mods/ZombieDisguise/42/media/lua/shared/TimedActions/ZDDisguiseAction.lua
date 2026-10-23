@@ -3,7 +3,7 @@ require "TimedActions/ISBaseTimedAction"
 local G=require "ZD/Game"
 ZDDisguiseAction=ISBaseTimedAction:derive("ZDDisguiseAction")
 function ZDDisguiseAction:isValid()
- return G.available() and G.cfg().Enabled and G.valid(self.character,self.corpseBody) and not G.state(self.character).active
+ return G.available(self.character) and G.cfg().Enabled and G.valid(self.character,self.corpseBody) and not G.view(self.character).active
 end
 function ZDDisguiseAction:waitToStart()
  self.character:faceThisObject(self.corpseBody)
@@ -36,9 +36,10 @@ function ZDDisguiseAction:complete()
  local p=G.pending[self.character]
  if not p or p.action~=self or p.actor~=self.character or p.corpse~=self.corpseBody then return false end
  local progress=self.netAction and self.netAction:getProgress() or (self.action and self:getJobDelta()) or 0
- if progress<0.999 or not self:isValid() or self.corpseBody:getSquare()~=p.square or self.corpseBody:getStaticMovingObjectIndex()~=p.index
+ if not G.finite(progress) or progress<0.999 or progress>1 or not self:isValid() or self.corpseBody:getSquare()~=p.square or self.corpseBody:getStaticMovingObjectIndex()~=p.index
   or self.character:getX()~=p.x or self.character:getY()~=p.y or self.character:getZ()~=p.z then G.pending[self.character]=nil;return false end
  G.pending[self.character]=nil
+ p.completed=true
  return G.grant(self.character,p)
 end
 function ZDDisguiseAction:getDuration()return 420 end

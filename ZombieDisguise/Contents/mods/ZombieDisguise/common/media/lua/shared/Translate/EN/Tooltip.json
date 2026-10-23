@@ -1,5 +1,6 @@
 {
-    "Tooltip_ZD_Backend": "Camouflage is disabled in this development build: a supported zombie-perception adapter has not been validated for ordinary players. No blood is applied and no administrative permissions are granted.",
+    "Tooltip_ZD_Backend": "The supported native zombie-perception companion is missing or incompatible. Install it in the game and on every multiplayer server/client, then restart. No blood is applied without the bridge.",
+    "Tooltip_ZD_Peers": "Waiting for the native companion acknowledgment from every connected client. A client without the extension disables new camouflage and revokes active camouflage.",
     "Tooltip_ZD_HealthDisabled": "Field Medicine is disabled in sandbox settings. Enable it before using this expansion.",
     "Tooltip_ZD_Risk": "Apply blood to exposed skin. Default camouflage lasts 120 game minutes. Running or attacking breaks it. Blood over wounds or the face can cause common illness through Field Medicine. Wash actual blood off to reduce exposure; medicines do not renew camouflage.",
     "Tooltip_ZD_Dependency": "Requires a compatible Field Medicine (KRFieldMedicine) exposure API v1. Camouflage is unavailable.",

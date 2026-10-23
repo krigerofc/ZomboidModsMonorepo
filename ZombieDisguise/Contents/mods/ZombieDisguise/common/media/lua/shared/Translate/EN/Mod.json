@@ -1,4 +1,4 @@
 {
     "name": "Field Medicine: Zombie Disguise",
-    "description": "B42 development expansion requiring Field Medicine. The shared blood-exposure and validated action lifecycle are implemented, but camouflage remains disabled until a supported native perception adapter is verified for ordinary players. No administrative privileges, Knox diagnosis or transmission changes."
+    "description": "Blood camouflage with shared Field Medicine exposure. Requires the supported native companion on the game and every multiplayer server/client. Actions stay unavailable when the native bridge or any client acknowledgment is missing. Running, attacking, expiry and washing end camouflage; residual blood remains a health risk until washed."
 }
